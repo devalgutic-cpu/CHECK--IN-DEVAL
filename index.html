@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CHECK-IN DEVAL | Control de Asistencia</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1e3a8a',
+                        secondary: '#3b82f6',
+                        accent: '#10b981',
+                        dark: '#1f2937',
+                        light: '#f3f4f6'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .fade-in { animation: fadeIn 0.3s ease-in-out; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800 font-sans overflow-hidden">
+
+    <!-- ==========================================
+         PANTALLA DE LOGIN (GMAIL)
+         ========================================== -->
+    <div id="view-login" class="fixed inset-0 bg-blue-900 flex flex-col items-center justify-center z-50">
+        <div class="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
+        
+        <div class="bg-white p-10 rounded-2xl shadow-2xl max-w-md w-full text-center relative z-10 mx-4">
+            <div class="bg-blue-100 w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner">
+                <i class="ph-fill ph-shield-check text-6xl text-primary"></i>
+            </div>
+            <h1 class="text-3xl font-extrabold text-dark mb-2 tracking-tight">CHECK-IN DEVAL</h1>
+            <p class="text-gray-500 text-sm mb-8">Sistema de Control de Asistencia y Novedades Diarias</p>
+            
+            <button onclick="iniciarSesionGoogle()" class="w-full bg-white border border-gray-300 text-gray-700 font-bold py-3 px-4 rounded-lg flex items-center justify-center gap-3 hover:bg-gray-50 hover:shadow-md transition-all">
+                <svg viewBox="0 0 24 24" class="w-6 h-6"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+                Ingresar con cuenta Google
+            </button>
+            
+            <div id="login-spinner" class="hidden mt-6">
+                <i class="ph ph-spinner animate-spin text-3xl text-primary"></i>
+                <p class="text-sm text-gray-500 mt-2">Autenticando...</p>
+            </div>
+        </div>
+        
+        <div class="absolute bottom-6 text-blue-200 text-xs text-center w-full z-10">
+            &copy; 2026 DEVAL - Todos los derechos reservados.
+        </div>
+    </div>
+
+    <!-- ==========================================
+         APLICACIÓN PRINCIPAL (Oculta al inicio)
+         ========================================== -->
+    <div id="app-layout" class="hidden flex flex-col h-screen w-full">
+        <!-- Navegación Superior -->
+        <nav class="bg-primary text-white shadow-md z-10 shrink-0">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between h-16 overflow-x-auto no-scrollbar">
+                    <div class="flex items-center gap-3 shrink-0 mr-4">
+                        <i class="ph-fill ph-shield-check text-3xl text-accent"></i>
+                        <span class="font-bold text-xl tracking-wide">CHECK-IN DEVAL</span>
+                    </div>
+                    <div class="flex space-x-2 sm:space-x-4 shrink-0">
+                        <button onclick="switchTab('config')" id="tab-config" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-blue-700 transition-colors flex items-center gap-2">
+                            <i class="ph ph-gear text-lg"></i> Configuración
+                        </button>
+                        <button onclick="switchTab('jefe')" id="tab-jefe" class="px-3 py-2 rounded-md text-sm font-medium bg-blue-800 hover:bg-blue-700 transition-colors flex items-center gap-2">
+                            <i class="ph ph-user-list text-lg"></i> Reporte Diario
+                        </button>
+                        <button onclick="switchTab('superior')" id="tab-superior" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-blue-700 transition-colors flex items-center gap-2">
+                            <i class="ph ph-chart-bar text-lg"></i> Dashboard
+                        </button>
+                        <button onclick="cerrarSesion()" class="ml-4 text-red-300 hover:text-white transition-colors" title="Cerrar Sesión">
+                            <i class="ph ph-sign-out text-2xl"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <main class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 no-scrollbar bg-gray-100">
+            
+            <!-- VISTA 0: CONFIGURACIÓN -->
+            <div id="view-config" class="max-w-5xl mx-auto fade-in hidden">
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden mb-8">
+                    <div class="bg-gray-50 px-6 py-4 border-b border-gray-200">
+                        <h2 class="text-xl font-bold text-dark flex items-center gap-2">
+                            <i class="ph ph-buildings text-secondary text-2xl"></i> Gestión de Oficinas DEVAL
+                        </h2>
+                        <p class="text-sm text-gray-500 mt-1">Crea nuevas oficinas o dependencias en el sistema.</p>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex items-end gap-4">
+                            <div class="flex-1">
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Nombre de la nueva oficina</label>
+                                <input type="text" id="input-nueva-oficina" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-secondary outline-none uppercase" placeholder="Ej. OFICINA DE TALENTO HUMANO">
+                            </div>
+                            <button onclick="agregarNuevaOficina()" class="bg-primary hover:bg-blue-800 text-white font-bold py-3 px-6 rounded-lg transition-colors flex items-center gap-2 h-[50px]">
+                                <i class="ph ph-plus-circle"></i> Crear Oficina
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                    <div class="bg-gray-50 px-6 py-4 border-b border-gray-200">
+                        <h2 class="text-xl font-bold text-dark flex items-center gap-2">
+                            <i class="ph ph-users text-secondary text-2xl"></i> Asignación de Personal Base
+                        </h2>
+                        <p class="text-sm text-gray-500 mt-1">Selecciona una oficina y asigna los funcionarios que laboran en ella permanentemente.</p>
+                    </div>
+                    <div class="p-6">
+                        <div class="mb-6">
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Seleccionar Oficina para configurar</label>
+                            <select id="select-oficina-config" onchange="cargarPersonalConfig()" class="w-full md:w-1/2 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-secondary outline-none">
+                                <option value="" disabled selected>Seleccione una oficina primero...</option>
+                            </select>
+                        </div>
+
+                        <div id="panel-personal-config" class="hidden">
+                            <div class="bg-blue-50 border border-blue-100 rounded-lg p-4 mb-6 flex flex-col md:flex-row gap-4 items-end">
+                                <div class="w-full md:w-1/5">
+                                    <label class="block text-xs font-semibold text-gray-600 mb-1">Categoría</label>
+                                    <select id="config-categoria" onchange="actualizarGradosConfig()" class="w-full p-2 border border-gray-300 rounded focus:ring-1 focus:ring-secondary outline-none bg-white text-xs font-bold">
+                                        <option value="OF">OF</option>
+                                        <option value="SUB/MNE">SUB/MNE</option>
+                                        <option value="PATR">PATR</option>
+                                        <option value="AUX">AUX</option>
+                                        <option value="NU">NU</option>
+                                    </select>
+                                </div>
+                                <div class="w-full md:w-1/5">
+                                    <label class="block text-xs font-semibold text-gray-600 mb-1">Grado</label>
+                                    <select id="config-grado" class="w-full p-2 border border-gray-300 rounded focus:ring-1 focus:ring-secondary outline-none bg-white text-xs font-bold">
+                                    </select>
+                                </div>
+                                <div class="w-full md:flex-1">
+                                    <label class="block text-xs font-semibold text-gray-600 mb-1">Apellidos</label>
+                                    <input type="text" id="config-apellidos" class="w-full p-2 border border-gray-300 rounded focus:ring-1 focus:ring-secondary outline-none uppercase" placeholder="Ej. PÉREZ GÓMEZ">
+                                </div>
+                                <div class="w-full md:flex-1">
+                                    <label class="block text-xs font-semibold text-gray-600 mb-1">Nombres</label>
+                                    <input type="text" id="config-nombres" class="w-full p-2 border border-gray-300 rounded focus:ring-1 focus:ring-secondary outline-none capitalize" placeholder="Ej. Juan Carlos">
+                                </div>
+                                <button onclick="agregarPersonaAOficina()" class="bg-accent hover:bg-emerald-600 text-white font-bold py-2 px-4 rounded w-full md:w-auto h-[42px] flex items-center justify-center gap-1 shrink-0">
+                                    <i class="ph ph-user-plus"></i> Añadir
+                                </button>
+                            </div>
+
+                            <div class="overflow-x-auto border border-gray-200 rounded-lg">
+                                <table class="w-full text-left border-collapse">
+                                    <thead class="bg-gray-100 text-gray-600 text-xs uppercase tracking-wider">
+                                        <tr>
+                                            <th class="p-3 font-semibold w-[15%]">Categoría</th>
+                                            <th class="p-3 font-semibold w-[15%]">Grado</th>
+                                            <th class="p-3 font-semibold w-[30%]">Apellidos</th>
+                                            <th class="p-3 font-semibold w-[30%]">Nombres</th>
+                                            <th class="p-3 font-semibold w-12 text-center">Acción</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tbody-config-personal" class="divide-y divide-gray-200 text-sm">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VISTA 1: PORTAL DE JEFES DE OFICINA -->
+            <div id="view-jefe" class="max-w-5xl mx-auto fade-in block">
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                    <div class="bg-gray-50 px-6 py-4 border-b border-gray-200 flex justify-between items-center flex-wrap gap-2">
+                        <h2 class="text-xl font-bold text-dark flex items-center gap-2">
+                            <i class="ph ph-clipboard-text text-secondary text-2xl"></i> Reporte Diario de Novedades
+                        </h2>
+                        <span id="current-date-display" class="text-sm font-medium text-gray-500 bg-gray-200 px-3 py-1 rounded-full"></span>
+                    </div>
+
+                    <div class="p-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Seleccione su Oficina</label>
+                                <select id="select-oficina-reporte" onchange="cargarPersonalParaReporte()" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-secondary outline-none transition-all">
+                                    <option value="" disabled selected>Seleccione su oficina...</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Fecha del Reporte</label>
+                                <input type="date" id="input-fecha" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-secondary outline-none text-gray-700">
+                            </div>
+                        </div>
+
+                        <div id="mensaje-sin-personal" class="hidden bg-yellow-50 text-yellow-700 p-4 rounded-lg border border-yellow-200 mb-4 flex items-center gap-3">
+                            <i class="ph-fill ph-warning-circle text-2xl"></i>
+                            <p>Esta oficina no tiene personal asignado. Ve a la pestaña de <b>Configuración</b> para agregar el personal base.</p>
+                        </div>
+
+                        <!-- Tabla de Personal Nominal (Con Campo Observaciones) -->
+                        <div id="contenedor-tabla-reporte" class="hidden overflow-x-auto border border-gray-200 rounded-lg mb-4">
+                            <table class="w-full text-left border-collapse" id="tabla-personal">
+                                <thead class="bg-gray-50 text-gray-600 text-sm uppercase tracking-wider">
+                                    <tr>
+                                        <th class="p-3 font-semibold w-[10%]">Cat.</th>
+                                        <th class="p-3 font-semibold w-[10%]">Grado</th>
+                                        <th class="p-3 font-semibold w-[25%]">Apellidos y Nombres</th>
+                                        <th class="p-3 font-semibold w-[25%]">Situación / Novedad</th>
+                                        <th class="p-3 font-semibold w-[30%]">Observaciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbody-personal-reporte" class="divide-y divide-gray-200">
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="flex justify-end items-center mt-6">
+                            <button id="btn-enviar-reporte" onclick="enviarReporte()" class="hidden bg-accent hover:bg-emerald-600 text-white font-bold py-3 px-8 rounded-lg shadow-md transition-transform transform hover:-translate-y-0.5 flex items-center gap-2">
+                                <i class="ph ph-paper-plane-tilt text-xl"></i> Guardar y Enviar Reporte
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VISTA 2: DASHBOARD DEL JEFE SUPERIOR -->
+            <div id="view-superior" class="max-w-7xl mx-auto fade-in hidden">
+                
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-6 gap-4">
+                    <div>
+                        <h1 class="text-2xl font-bold text-dark">Panel de Control General DEVAL</h1>
+                        <p class="text-gray-500">Vista en tiempo real del personal disponible y novedades.</p>
+                    </div>
+                    <div class="bg-white px-4 py-2 rounded-lg shadow-sm border border-gray-200 flex items-center gap-3 w-full sm:w-auto">
+                        <label class="text-sm font-semibold text-gray-600 whitespace-nowrap">Filtrar fecha:</label>
+                        <input type="date" id="filtro-fecha-dashboard" class="border-none outline-none text-gray-800 font-medium cursor-pointer w-full" onchange="actualizarDashboard()">
+                    </div>
+                </div>
+
+                <!-- Tarjetas de Resumen Modificadas -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                    
+                    <!-- Fuerza Efectiva (Total Registrado) -->
+                    <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100 flex items-center gap-4 border-l-4 border-l-primary">
+                        <div class="bg-blue-100 p-3 rounded-full text-primary"><i class="ph ph-buildings text-2xl"></i></div>
+                        <div>
+                            <p class="text-[11px] text-gray-500 font-bold uppercase">Fuerza Efectiva (Asignada)</p>
+                            <h3 class="text-xl font-bold text-gray-800" id="dash-fuerza-efectiva">0 - 0 - 0 - 0 - 0</h3>
+                            <p class="text-[10px] text-gray-400 mt-1 font-mono">OF - SUB - PT - AUX - NU</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Fuerza Disponible (Solo laborando) -->
+                    <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100 flex items-center gap-4 border-l-4 border-l-blue-400">
+                        <div class="bg-blue-50 p-3 rounded-full text-blue-500"><i class="ph ph-list-numbers text-2xl"></i></div>
+                        <div>
+                            <p class="text-[11px] text-gray-500 font-bold uppercase">Fuerza Disponible (Desgl.)</p>
+                            <h3 class="text-xl font-bold text-gray-800" id="dash-fuerza-disponible">0 - 0 - 0 - 0 - 0</h3>
+                            <p class="text-[10px] text-gray-400 mt-1 font-mono text-blue-500 font-semibold">Sin Novedad (Laborando)</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Total Disponibles Absoluto -->
+                    <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100 flex items-center gap-4 border-l-4 border-l-accent">
+                        <div class="bg-green-100 p-3 rounded-full text-accent"><i class="ph-fill ph-users-three text-2xl"></i></div>
+                        <div>
+                            <p class="text-[11px] text-gray-500 font-bold uppercase">Total Disponibles</p>
+                            <h3 class="text-xl font-bold text-gray-800" id="dash-total-disponible">0</h3>
+                            <p class="text-[10px] text-gray-400 mt-1">Sin importar categoría</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Total Novedades -->
+                    <div onclick="abrirModalNovedades('TODAS')" class="bg-white p-5 rounded-xl shadow-sm border border-gray-100 flex items-center gap-4 border-l-4 border-l-red-500 cursor-pointer hover:bg-red-50 transition-colors group">
+                        <div class="bg-red-100 p-3 rounded-full text-red-500 group-hover:scale-110 transition-transform"><i class="ph-fill ph-warning-circle text-2xl"></i></div>
+                        <div>
+                            <p class="text-[11px] text-gray-500 font-bold uppercase">Total Novedades</p>
+                            <h3 class="text-xl font-bold text-gray-800" id="dash-total-novedades">0</h3>
+                            <p class="text-[10px] text-red-400 mt-1 font-semibold flex items-center gap-1">Ver Detalle <i class="ph ph-arrow-right"></i></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                        <div class="bg-gray-50 px-6 py-4 border-b border-gray-200">
+                            <h3 class="font-bold text-gray-800">Estado de Reportes por Oficina</h3>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse min-w-[500px]">
+                                <thead class="bg-white border-b text-gray-500 text-xs uppercase tracking-wider">
+                                    <tr>
+                                        <th class="px-6 py-3 font-semibold">Oficina</th>
+                                        <th class="px-6 py-3 font-semibold text-center">Estado</th>
+                                        <th class="px-6 py-3 font-semibold text-center text-blue-600">Disponibles (OF-SUB-PT-AUX-NU)</th>
+                                        <th class="px-6 py-3 font-semibold text-center">Novedades</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbody-estado-oficinas" class="divide-y divide-gray-100 text-sm">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden flex flex-col">
+                        <div class="bg-gray-50 px-6 py-4 border-b border-gray-200">
+                            <h3 class="font-bold text-gray-800">Consolidado Novedades</h3>
+                            <p class="text-[10px] text-gray-500">Clic en una novedad para ver el personal</p>
+                        </div>
+                        <div class="p-6 flex-1">
+                            <ul id="lista-novedades" class="space-y-4">
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- ==========================================
+         MODAL EMERGENTE: DETALLE DE NOVEDADES
+         ========================================== -->
+    <div id="modal-novedades" class="fixed inset-0 bg-gray-900 bg-opacity-60 z-50 hidden flex items-center justify-center backdrop-blur-sm p-4">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-5xl overflow-hidden fade-in flex flex-col max-h-full">
+            
+            <div class="bg-gray-50 px-6 py-4 border-b border-gray-200 flex justify-between items-center shrink-0">
+                <div class="flex items-center gap-3">
+                    <div class="bg-red-100 text-red-500 p-2 rounded-lg"><i class="ph-fill ph-users-three text-xl"></i></div>
+                    <div>
+                        <h3 class="font-bold text-lg text-gray-800" id="modal-titulo">Personal con Novedad</h3>
+                        <p class="text-xs text-gray-500 font-mono" id="modal-subtitulo-fecha"></p>
+                    </div>
+                </div>
+                <button onclick="cerrarModalNovedades()" class="text-gray-400 hover:text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-full p-2 transition-colors">
+                    <i class="ph ph-x text-lg"></i>
+                </button>
+            </div>
+            
+            <div class="p-0 overflow-y-auto flex-1">
+                <table class="w-full text-left border-collapse text-sm">
+                    <thead class="bg-white sticky top-0 border-b border-gray-200 shadow-sm">
+                        <tr class="text-gray-500 uppercase tracking-wider text-xs">
+                            <th class="px-6 py-3 font-semibold w-[15%]">Oficina</th>
+                            <th class="px-6 py-3 font-semibold w-[10%]">Grado</th>
+                            <th class="px-6 py-3 font-semibold w-[25%]">Apellidos y Nombres</th>
+                            <th class="px-6 py-3 font-semibold w-[20%]">Tipo Novedad</th>
+                            <th class="px-6 py-3 font-semibold w-[30%]">Observaciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbody-modal-novedades" class="divide-y divide-gray-100">
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="bg-gray-50 px-6 py-3 border-t border-gray-200 text-right shrink-0">
+                <button onclick="cerrarModalNovedades()" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-2 px-6 rounded-lg transition-colors">
+                    Cerrar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- UI Modal/Toast -->
+    <div id="toast" class="fixed bottom-5 right-5 bg-gray-800 text-white px-6 py-3 rounded-lg shadow-lg transform transition-all duration-300 translate-y-20 opacity-0 flex items-center gap-3 z-[60]">
+        <i id="toast-icon" class="text-2xl"></i>
+        <span id="toast-message" class="font-medium"></span>
+    </div>
+
+    <script>
+        // --- BASE DE DATOS LOCAL ---
+        let listaOficinas = []; 
+        let personalBase = {};
+        let reportesAlmacenados = [];
+
+        const gradosPorCategoria = {
+            'OF': ['ST', 'TE', 'CT', 'MY', 'TC', 'CR'],
+            'SUB/MNE': ['SI', 'IT', 'IJ', 'SC', 'CM'],
+            'PATR': ['PT', 'PP'],
+            'AUX': ['AUX'],
+            'NU': ['NU']
+        };
+
+        // Lista de novedades actualizada
+        const opcionesNovedad = [
+            { val: 'Laborando', text: '✅ Sin Novedad (Laborando)', aisla: false },
+            { val: 'En servicio', text: '✅ En servicio', aisla: false },
+            { val: 'Vacaciones', text: '🏖️ Vacaciones', aisla: true },
+            { val: 'Permiso', text: '📄 Permiso', aisla: true },
+            { val: 'Cita Médica', text: '🏥 Cita Médica', aisla: true },
+            { val: 'Permiso Diferencial', text: '⚖️ Permiso Diferencial', aisla: true },
+            { val: 'Comisión Estudio', text: '📚 Comisión Estudio', aisla: true },
+            { val: 'Excusa del servicio', text: '🩺 Excusa del servicio', aisla: true },
+            { val: 'Ley Maria', text: '👶 Ley Maria', aisla: true },
+            { val: 'Licencia de Luto', text: '🕊️ Licencia de Luto', aisla: true }
+        ];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const hoy = new Date().toISOString().split('T')[0];
+            document.getElementById('input-fecha').value = hoy;
+            document.getElementById('filtro-fecha-dashboard').value = hoy;
+            
+            const opcionesFecha = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('current-date-display').textContent = new Date().toLocaleDateString('es-ES', opcionesFecha);
+
+            actualizarDropdownsOficinas();
+            actualizarGradosConfig();
+        });
+
+        // --- 0. LOGIN ---
+        function iniciarSesionGoogle() {
+            document.getElementById('login-spinner').classList.remove('hidden');
+            setTimeout(() => {
+                document.getElementById('view-login').classList.add('hidden');
+                document.getElementById('app-layout').classList.remove('hidden');
+                switchTab('jefe'); 
+                mostrarToast('Bienvenido a CHECK-IN DEVAL', 'success');
+            }, 1500);
+        }
+
+        function cerrarSesion() {
+            document.getElementById('app-layout').classList.add('hidden');
+            document.getElementById('login-spinner').classList.add('hidden');
+            document.getElementById('view-login').classList.remove('hidden');
+        }
+
+        // --- 1. CONFIGURACIÓN ---
+        function actualizarDropdownsOficinas() {
+            const selectConfig = document.getElementById('select-oficina-config');
+            const selectReporte = document.getElementById('select-oficina-reporte');
+            
+            let optionsHTML = `<option value="" disabled selected>Seleccione una oficina...</option>`;
+            listaOficinas.forEach(of => {
+                optionsHTML += `<option value="${of}">${of}</option>`;
+            });
+
+            const valConfig = selectConfig.value;
+            const valReporte = selectReporte.value;
+
+            selectConfig.innerHTML = optionsHTML;
+            selectReporte.innerHTML = optionsHTML;
+
+            if (listaOficinas.includes(valConfig)) selectConfig.value = valConfig;
+            if (listaOficinas.includes(valReporte)) selectReporte.value = valReporte;
+        }
+
+        function agregarNuevaOficina() {
+            const input = document.getElementById('input-nueva-oficina');
+            const nombre = input.value.trim().toUpperCase();
+
+            if (!nombre) {
+                mostrarToast('Escriba el nombre de la oficina', 'error');
+                return;
+            }
+            if (listaOficinas.includes(nombre)) {
+                mostrarToast('Esta oficina ya existe', 'error');
+                return;
+            }
+
+            listaOficinas.push(nombre);
+            personalBase[nombre] = [];
+            actualizarDropdownsOficinas();
+            
+            document.getElementById('select-oficina-config').value = nombre;
+            cargarPersonalConfig();
+            
+            input.value = '';
+            mostrarToast(`Oficina ${nombre} creada exitosamente`, 'success');
+        }
+
+        function actualizarGradosConfig() {
+            const categoria = document.getElementById('config-categoria').value;
+            const selectGrado = document.getElementById('config-grado');
+            
+            selectGrado.innerHTML = '';
+            
+            if (gradosPorCategoria[categoria]) {
+                gradosPorCategoria[categoria].forEach(grado => {
+                    selectGrado.innerHTML += `<option value="${grado}">${grado}</option>`;
+                });
+            }
+        }
+
+        function cargarPersonalConfig() {
+            const oficina = document.getElementById('select-oficina-config').value;
+            const panel = document.getElementById('panel-personal-config');
+            const tbody = document.getElementById('tbody-config-personal');
+            
+            if (!oficina) {
+                panel.classList.add('hidden');
+                return;
+            }
+            
+            panel.classList.remove('hidden');
+            tbody.innerHTML = '';
+
+            const personal = personalBase[oficina] || [];
+            
+            if (personal.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-gray-500">No hay personal base asignado a esta oficina aún.</td></tr>`;
+                return;
+            }
+
+            personal.forEach(p => {
+                tbody.innerHTML += `
+                    <tr class="bg-white hover:bg-gray-50">
+                        <td class="p-3 font-medium text-gray-500">${p.categoria}</td>
+                        <td class="p-3 font-bold text-gray-800">${p.grado}</td>
+                        <td class="p-3">${p.apellidos}</td>
+                        <td class="p-3">${p.nombres}</td>
+                        <td class="p-3 text-center">
+                            <button onclick="eliminarPersonaDeOficina('${oficina}', '${p.id}')" class="text-red-400 hover:text-red-600" title="Eliminar">
+                                <i class="ph-fill ph-trash text-lg"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function agregarPersonaAOficina() {
+            const oficina = document.getElementById('select-oficina-config').value;
+            const categoria = document.getElementById('config-categoria').value;
+            const grado = document.getElementById('config-grado').value;
+            const apellidos = document.getElementById('config-apellidos').value.trim().toUpperCase();
+            const nombres = document.getElementById('config-nombres').value.trim().toUpperCase();
+
+            if (!apellidos || !nombres) {
+                mostrarToast('Complete nombres y apellidos', 'error');
+                return;
+            }
+
+            const nuevaPersona = {
+                id: Date.now().toString(),
+                categoria, grado, apellidos, nombres
+            };
+
+            personalBase[oficina].push(nuevaPersona);
+            
+            document.getElementById('config-apellidos').value = '';
+            document.getElementById('config-nombres').value = '';
+            
+            cargarPersonalConfig();
+            mostrarToast('Funcionario añadido a la base', 'success');
+        }
+
+        function eliminarPersonaDeOficina(oficina, idPersona) {
+            personalBase[oficina] = personalBase[oficina].filter(p => p.id !== idPersona);
+            cargarPersonalConfig();
+        }
+
+        // --- 2. REPORTE DIARIO ---
+        function cargarPersonalParaReporte() {
+            const oficina = document.getElementById('select-oficina-reporte').value;
+            const contenedorTabla = document.getElementById('contenedor-tabla-reporte');
+            const tbody = document.getElementById('tbody-personal-reporte');
+            const mensajeVacio = document.getElementById('mensaje-sin-personal');
+            const btnEnviar = document.getElementById('btn-enviar-reporte');
+
+            if (!oficina) return;
+
+            const personal = personalBase[oficina] || [];
+            
+            if (personal.length === 0) {
+                contenedorTabla.classList.add('hidden');
+                btnEnviar.classList.add('hidden');
+                mensajeVacio.classList.remove('hidden');
+                return;
+            }
+
+            mensajeVacio.classList.add('hidden');
+            contenedorTabla.classList.remove('hidden');
+            btnEnviar.classList.remove('hidden');
+            
+            tbody.innerHTML = '';
+            
+            let opcionesHTML = '';
+            opcionesNovedad.forEach(opt => {
+                opcionesHTML += `<option value="${opt.val}" data-aisla="${opt.aisla}">${opt.text}</option>`;
+            });
+
+            personal.forEach((p) => {
+                tbody.innerHTML += `
+                    <tr class="bg-white hover:bg-gray-50" data-person-id="${p.id}">
+                        <td class="p-3 font-medium text-gray-700">
+                            <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs font-bold border border-blue-200">${p.categoria}</span>
+                            <input type="hidden" class="rep-categoria" value="${p.categoria}">
+                        </td>
+                        <td class="p-3 font-medium text-gray-700">
+                            <span class="bg-gray-100 px-2 py-1 rounded text-xs font-bold border border-gray-200">${p.grado}</span>
+                            <input type="hidden" class="rep-grado" value="${p.grado}">
+                        </td>
+                        <td class="p-3 font-medium text-gray-800">
+                            ${p.apellidos} ${p.nombres}
+                            <input type="hidden" class="rep-apellidos" value="${p.apellidos}">
+                            <input type="hidden" class="rep-nombres" value="${p.nombres}">
+                        </td>
+                        <td class="p-3">
+                            <select class="rep-novedad w-full p-2 border border-blue-200 rounded-md focus:ring-2 focus:ring-secondary outline-none bg-blue-50 text-blue-900 font-medium text-sm">
+                                ${opcionesHTML}
+                            </select>
+                        </td>
+                        <td class="p-3">
+                            <input type="text" class="rep-observaciones w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-secondary outline-none text-sm" placeholder="Añadir nota (opcional)...">
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function enviarReporte() {
+            const oficina = document.getElementById('select-oficina-reporte').value;
+            const fecha = document.getElementById('input-fecha').value;
+            const filas = document.querySelectorAll('#tbody-personal-reporte tr');
+            
+            const personalReportado = [];
+
+            filas.forEach(fila => {
+                const categoria = fila.querySelector('.rep-categoria').value;
+                const grado = fila.querySelector('.rep-grado').value;
+                const apellidos = fila.querySelector('.rep-apellidos').value;
+                const nombres = fila.querySelector('.rep-nombres').value;
+                const novedadSelect = fila.querySelector('.rep-novedad');
+                const novedad = novedadSelect.value;
+                const ausente = novedadSelect.options[novedadSelect.selectedIndex].getAttribute('data-aisla') === 'true';
+                const observaciones = fila.querySelector('.rep-observaciones').value.trim();
+
+                personalReportado.push({ categoria, grado, apellidos, nombres, novedad, ausente, observaciones });
+            });
+
+            const indiceExistente = reportesAlmacenados.findIndex(r => r.oficina === oficina && r.fecha === fecha);
+            const reporteData = { oficina, fecha, personal: personalReportado, fechaEnvio: new Date().toISOString() };
+            
+            if (indiceExistente >= 0) {
+                reportesAlmacenados[indiceExistente] = reporteData;
+            } else {
+                reportesAlmacenados.push(reporteData);
+            }
+
+            mostrarToast(`Reporte de ${oficina} enviado y guardado`, 'success');
+            actualizarDashboard();
+        }
+
+        // --- 3. DASHBOARD SUPERIOR ---
+        function actualizarDashboard() {
+            const fechaFiltro = document.getElementById('filtro-fecha-dashboard').value;
+            const reportesHoy = reportesAlmacenados.filter(r => r.fecha === fechaFiltro);
+
+            // 1. Calcular Fuerza Efectiva (Total Asignado en Configuración)
+            let base_of = 0, base_sub = 0, base_pt = 0, base_aux = 0, base_nu = 0;
+            Object.values(personalBase).forEach(oficinaPersonal => {
+                oficinaPersonal.forEach(p => {
+                    if (p.categoria === 'OF') base_of++;
+                    else if (p.categoria === 'SUB/MNE') base_sub++;
+                    else if (p.categoria === 'PATR') base_pt++;
+                    else if (p.categoria === 'AUX') base_aux++;
+                    else if (p.categoria === 'NU') base_nu++;
+                });
+            });
+            animarContador('dash-fuerza-efectiva', `${base_of} - ${base_sub} - ${base_pt} - ${base_aux} - ${base_nu}`);
+
+            // 2. Calcular Fuerza Disponible de los reportes diarios
+            let totales = {
+                disponible: 0, ausentes: 0,
+                of_disp: 0, sub_disp: 0, patr_disp: 0, aux_disp: 0, nu_disp: 0,
+                novedadesMap: {} 
+            };
+
+            opcionesNovedad.forEach(opt => { if(opt.aisla) totales.novedadesMap[opt.val] = 0; });
+
+            const tbodyEstado = document.getElementById('tbody-estado-oficinas');
+            tbodyEstado.innerHTML = '';
+
+            if (listaOficinas.length === 0) {
+                tbodyEstado.innerHTML = `<tr><td colspan="4" class="px-6 py-8 text-center text-gray-500">Aún no se han configurado Oficinas en DEVAL.</td></tr>`;
+            }
+
+            listaOficinas.forEach(nombreOficina => {
+                const reporteOficina = reportesHoy.find(r => r.oficina === nombreOficina);
+                let tr = document.createElement('tr');
+                
+                if (reporteOficina) {
+                    let of_d = 0, sub_d = 0, patr_d = 0, aux_d = 0, nu_d = 0, cantNovedades = 0;
+
+                    reporteOficina.personal.forEach(p => {
+                        if (!p.ausente) {
+                            totales.disponible++;
+                            if (p.categoria === 'OF') { of_d++; totales.of_disp++; }
+                            else if (p.categoria === 'SUB/MNE') { sub_d++; totales.sub_disp++; }
+                            else if (p.categoria === 'PATR') { patr_d++; totales.patr_disp++; }
+                            else if (p.categoria === 'AUX') { aux_d++; totales.aux_disp++; }
+                            else if (p.categoria === 'NU') { nu_d++; totales.nu_disp++; }
+                        } else {
+                            cantNovedades++;
+                            totales.ausentes++;
+                            if (totales.novedadesMap[p.novedad] !== undefined) totales.novedadesMap[p.novedad]++;
+                        }
+                    });
+
+                    tr.innerHTML = `
+                        <td class="px-4 py-4 font-bold text-gray-800"><i class="ph-fill ph-check-circle text-accent mr-1"></i> ${nombreOficina}</td>
+                        <td class="px-4 py-4 text-center"><span class="bg-green-100 text-green-800 text-xs font-semibold px-2 py-1 rounded-full">Reportado</span></td>
+                        <td class="px-4 py-4 text-center font-mono font-bold text-blue-600 bg-blue-50 border-x border-gray-100">${of_d}-${sub_d}-${patr_d}-${aux_d}-${nu_d}</td>
+                        <td class="px-4 py-4 text-center text-orange-600 font-semibold">${cantNovedades > 0 ? cantNovedades + ' aus.' : '-'}</td>
+                    `;
+                } else {
+                    tr.innerHTML = `
+                        <td class="px-4 py-4 font-medium text-gray-500"><i class="ph-fill ph-x-circle text-red-400 mr-1"></i> ${nombreOficina}</td>
+                        <td class="px-4 py-4 text-center"><span class="bg-red-100 text-red-800 text-xs font-semibold px-2 py-1 rounded-full">Pendiente</span></td>
+                        <td class="px-4 py-4 text-center font-mono text-gray-400 bg-gray-50 border-x border-gray-100">0-0-0-0-0</td>
+                        <td class="px-4 py-4 text-center text-gray-400">-</td>
+                    `;
+                }
+                tbodyEstado.appendChild(tr);
+            });
+
+            // Actualizar tarjetas restantes
+            animarContador('dash-fuerza-disponible', `${totales.of_disp} - ${totales.sub_disp} - ${totales.patr_disp} - ${totales.aux_disp} - ${totales.nu_disp}`);
+            animarContador('dash-total-disponible', totales.disponible);
+            animarContador('dash-total-novedades', totales.ausentes);
+
+            // Generar lista de novedades con iconos
+            const ulNovedades = document.getElementById('lista-novedades');
+            ulNovedades.innerHTML = '';
+            let totalAusentesLista = 0;
+
+            Object.entries(totales.novedadesMap).forEach(([novedad, cantidad]) => {
+                if (cantidad > 0) {
+                    totalAusentesLista += cantidad;
+                    let icon = 'ph-info'; let color = 'bg-gray-100 text-gray-600';
+                    
+                    if(novedad.includes('Vacaciones')) { icon = 'ph-airplane-tilt'; color = 'bg-blue-100 text-blue-600'; }
+                    else if(novedad.includes('Médica') || novedad.includes('Excusa')) { icon = 'ph-first-aid'; color = 'bg-red-100 text-red-600'; }
+                    else if(novedad.includes('Permiso')) { icon = 'ph-file-text'; color = 'bg-yellow-100 text-yellow-700'; }
+                    else if(novedad.includes('Estudio')) { icon = 'ph-books'; color = 'bg-purple-100 text-purple-600'; }
+                    else if(novedad.includes('Ley Maria')) { icon = 'ph-baby'; color = 'bg-pink-100 text-pink-600'; }
+                    else if(novedad.includes('Luto')) { icon = 'ph-flower-tulip'; color = 'bg-gray-800 text-white'; }
+
+                    ulNovedades.innerHTML += `
+                        <li onclick="abrirModalNovedades('${novedad}')" class="flex items-center justify-between p-3 bg-white rounded-lg border border-gray-200 shadow-sm cursor-pointer hover:bg-gray-50 hover:shadow transition-all group">
+                            <div class="flex items-center gap-3">
+                                <div class="${color} p-2 rounded-lg group-hover:scale-110 transition-transform"><i class="ph-fill ${icon} text-lg"></i></div>
+                                <span class="font-medium text-gray-700">${novedad}</span>
+                            </div>
+                            <div class="flex items-center gap-4">
+                                <span class="font-bold text-lg text-gray-800">${cantidad}</span>
+                                <i class="ph ph-caret-right text-gray-400 group-hover:text-secondary"></i>
+                            </div>
+                        </li>
+                    `;
+                }
+            });
+
+            if(totalAusentesLista === 0) {
+                ulNovedades.innerHTML = `<li class="text-center text-gray-500 py-6 border border-dashed border-gray-300 rounded-lg">Sin novedades registradas.</li>`;
+            }
+        }
+
+        // --- 4. MODAL DETALLE ---
+        function abrirModalNovedades(tipoFiltro) {
+            const fechaFiltro = document.getElementById('filtro-fecha-dashboard').value;
+            const reportesHoy = reportesAlmacenados.filter(r => r.fecha === fechaFiltro);
+            const tbody = document.getElementById('tbody-modal-novedades');
+            tbody.innerHTML = '';
+
+            let contador = 0;
+
+            reportesHoy.forEach(reporte => {
+                reporte.personal.forEach(p => {
+                    if (p.ausente && (tipoFiltro === 'TODAS' || p.novedad === tipoFiltro)) {
+                        contador++;
+                        tbody.innerHTML += `
+                            <tr class="hover:bg-gray-50 transition-colors">
+                                <td class="px-6 py-4 font-bold text-gray-700">${reporte.oficina}</td>
+                                <td class="px-6 py-4"><span class="bg-gray-100 px-2 py-1 rounded text-xs font-bold border border-gray-200">${p.grado}</span></td>
+                                <td class="px-6 py-4 font-medium text-gray-800">${p.apellidos} ${p.nombres}</td>
+                                <td class="px-6 py-4 font-semibold text-red-500">${p.novedad}</td>
+                                <td class="px-6 py-4 text-gray-600 italic text-xs">${p.observaciones || '<span class="text-gray-300">Sin observación</span>'}</td>
+                            </tr>
+                        `;
+                    }
+                });
+            });
+
+            if (contador === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="px-6 py-8 text-center text-gray-500">No hay personal registrado con este tipo de novedad en la fecha seleccionada.</td></tr>`;
+            }
+
+            document.getElementById('modal-titulo').textContent = tipoFiltro === 'TODAS' ? 'Detalle General de Novedades' : `Detalle: ${tipoFiltro}`;
+            document.getElementById('modal-subtitulo-fecha').textContent = `Fecha de corte: ${fechaFiltro}`;
+            
+            document.getElementById('modal-novedades').classList.remove('hidden');
+        }
+
+        function cerrarModalNovedades() {
+            document.getElementById('modal-novedades').classList.add('hidden');
+        }
+
+        // --- UTILIDADES ---
+        function switchTab(tabName) {
+            ['config', 'jefe', 'superior'].forEach(tab => {
+                document.getElementById(`view-${tab}`).classList.add('hidden');
+                document.getElementById(`tab-${tab}`).classList.remove('bg-blue-800');
+            });
+            
+            document.getElementById(`view-${tabName}`).classList.remove('hidden');
+            document.getElementById(`tab-${tabName}`).classList.add('bg-blue-800');
+
+            if (tabName === 'superior') actualizarDashboard();
+            if (tabName === 'jefe' && document.getElementById('select-oficina-reporte').value) {
+                cargarPersonalParaReporte(); 
+            }
+        }
+
+        function mostrarToast(mensaje, tipo = 'success') {
+            const toast = document.getElementById('toast');
+            const icon = document.getElementById('toast-icon');
+            document.getElementById('toast-message').textContent = mensaje;
+            
+            toast.className = `fixed bottom-5 right-5 text-white px-6 py-3 rounded-lg shadow-lg transform transition-all duration-300 flex items-center gap-3 z-[60] ${tipo === 'success' ? 'bg-emerald-600' : 'bg-red-500'}`;
+            icon.className = `ph-fill ${tipo === 'success' ? 'ph-check-circle' : 'ph-warning-circle'} text-2xl`;
+            
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            setTimeout(() => toast.classList.add('translate-y-20', 'opacity-0'), 3000);
+        }
+
+        function animarContador(idElemento, valorFinal) {
+            const el = document.getElementById(idElemento);
+            el.innerHTML = valorFinal;
+            el.classList.add('scale-110', 'text-secondary');
+            setTimeout(() => el.classList.remove('scale-110', 'text-secondary'), 200);
+        }
+    </script>
+</body>
+</html>
