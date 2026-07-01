@@ -6,6 +6,10 @@
     <title>CHECK-IN DEVAL | Control de Asistencia</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    
+    <!-- Librería Oficial de Login de Google -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    
     <script>
         tailwind.config = {
             theme: {
@@ -33,6 +37,9 @@
 </head>
 <body class="bg-gray-100 text-gray-800 font-sans overflow-hidden">
 
+    <!-- ==========================================
+         PANTALLA DE LOGIN OFICIAL (GOOGLE)
+         ========================================== -->
     <div id="view-login" class="fixed inset-0 bg-blue-900 flex flex-col items-center justify-center z-50">
         <div class="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
         
@@ -43,10 +50,27 @@
             <h1 class="text-3xl font-extrabold text-dark mb-2 tracking-tight">CHECK-IN DEVAL</h1>
             <p class="text-gray-500 text-sm mb-8">Sistema de Control de Asistencia y Novedades Diarias</p>
             
-            <button onclick="iniciarSesionGoogle()" class="w-full bg-white border border-gray-300 text-gray-700 font-bold py-3 px-4 rounded-lg flex items-center justify-center gap-3 hover:bg-gray-50 hover:shadow-md transition-all">
-                <svg viewBox="0 0 24 24" class="w-6 h-6"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
-                Ingresar con cuenta Google
-            </button>
+            <div id="view-login-button-area" class="flex justify-center w-full">
+                <!-- Configurador del botón de Google con tu LLAVE REAL -->
+                <div id="g_id_onload"
+                     data-client_id="648106062409-sc647ht5o79f5i2p9hl62hfj28gca001.apps.googleusercontent.com"
+                     data-context="signin"
+                     data-ux_mode="popup"
+                     data-callback="manejarRespuestaGoogle"
+                     data-auto_prompt="false">
+                </div>
+
+                <!-- El Botón visual de Google -->
+                <div class="g_id_signin"
+                     data-type="standard"
+                     data-shape="rectangular"
+                     data-theme="outline"
+                     data-text="signin_with"
+                     data-size="large"
+                     data-logo_alignment="left"
+                     data-width="300">
+                </div>
+            </div>
             
             <div id="login-spinner" class="hidden mt-6">
                 <i class="ph ph-spinner animate-spin text-3xl text-primary"></i>
@@ -59,7 +83,11 @@
         </div>
     </div>
 
+    <!-- ==========================================
+         APLICACIÓN PRINCIPAL
+         ========================================== -->
     <div id="app-layout" class="hidden flex flex-col h-screen w-full">
+        <!-- Navegación Superior -->
         <nav class="bg-primary text-white shadow-md z-10 shrink-0">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex items-center justify-between h-16 overflow-x-auto no-scrollbar">
@@ -87,6 +115,7 @@
 
         <main class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 no-scrollbar bg-gray-100">
             
+            <!-- VISTA 0: CONFIGURACIÓN -->
             <div id="view-config" class="max-w-5xl mx-auto fade-in hidden">
                 <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden mb-8">
                     <div class="bg-gray-50 px-6 py-4 border-b border-gray-200">
@@ -173,6 +202,7 @@
                 </div>
             </div>
 
+            <!-- VISTA 1: PORTAL DE JEFES DE OFICINA -->
             <div id="view-jefe" class="max-w-5xl mx-auto fade-in block">
                 <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
                     <div class="bg-gray-50 px-6 py-4 border-b border-gray-200 flex justify-between items-center flex-wrap gap-2">
@@ -201,6 +231,7 @@
                             <p>Esta oficina no tiene personal asignado. Ve a la pestaña de <b>Configuración</b> para agregar el personal base.</p>
                         </div>
 
+                        <!-- Tabla de Personal Nominal (Con Campo Observaciones) -->
                         <div id="contenedor-tabla-reporte" class="hidden overflow-x-auto border border-gray-200 rounded-lg mb-4">
                             <table class="w-full text-left border-collapse" id="tabla-personal">
                                 <thead class="bg-gray-50 text-gray-600 text-sm uppercase tracking-wider">
@@ -226,6 +257,7 @@
                 </div>
             </div>
 
+            <!-- VISTA 2: DASHBOARD DEL JEFE SUPERIOR -->
             <div id="view-superior" class="max-w-7xl mx-auto fade-in hidden">
                 
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-6 gap-4">
@@ -239,6 +271,7 @@
                     </div>
                 </div>
 
+                <!-- Tarjetas de Resumen Modificadas -->
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
                     
                     <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100 flex items-center gap-4 border-l-4 border-l-primary">
@@ -314,6 +347,9 @@
         </main>
     </div>
 
+    <!-- ==========================================
+         MODAL EMERGENTE: DETALLE DE NOVEDADES
+         ========================================== -->
     <div id="modal-novedades" class="fixed inset-0 bg-gray-900 bg-opacity-60 z-50 hidden flex items-center justify-center backdrop-blur-sm p-4">
         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-5xl overflow-hidden fade-in flex flex-col max-h-full">
             
@@ -354,6 +390,7 @@
         </div>
     </div>
 
+    <!-- UI Modal/Toast -->
     <div id="toast" class="fixed bottom-5 right-5 bg-gray-800 text-white px-6 py-3 rounded-lg shadow-lg transform transition-all duration-300 translate-y-20 opacity-0 flex items-center gap-3 z-[60]">
         <i id="toast-icon" class="text-2xl"></i>
         <span id="toast-message" class="font-medium"></span>
@@ -361,7 +398,7 @@
 
     <script>
         // --- BASE DE DATOS LOCAL Y URL GOOGLE ---
-        const URL_SECRETA_GOOGLE = "https://script.google.com/macros/s/AKfycbz8HoirU6qegh6myvuas1oi2NLRewEndTq99IukN3Og7gqBS0xx2QxLn4qmYU4UYQNuYg/exec";
+        const URL_SECRETA_GOOGLE = "https://script.google.com/macros/s/AKfycbw2Gz5Pgu59JBV315L79p5Gb8mULbCs0QaPuBeh9vHgIQ8S5l0Zyv3D9G4yENU1GGxV5Q/exec";
         
         let listaOficinas = []; 
         let personalBase = {};
@@ -375,7 +412,6 @@
             'NU': ['NU']
         };
 
-        // Lista de novedades actualizada
         const opcionesNovedad = [
             { val: 'Laborando', text: '✅ Sin Novedad (Laborando)', aisla: false },
             { val: 'En servicio', text: '✅ En servicio', aisla: false },
@@ -401,11 +437,24 @@
             actualizarGradosConfig();
         });
 
-        // --- 0. LOGIN Y SINCRONIZACIÓN CON GOOGLE SHEETS ---
-        function iniciarSesionGoogle() {
+        // --- 0. LOGIN OFICIAL DE GOOGLE ---
+        function manejarRespuestaGoogle(response) {
+            const base64Url = response.credential.split('.')[1];
+            const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+            const payload = decodeURIComponent(atob(base64).split('').map(function(c) {
+                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+            }).join(''));
+            
+            const datosUsuario = JSON.parse(payload);
+            
+            document.getElementById('view-login-button-area').classList.add('hidden');
             document.getElementById('login-spinner').classList.remove('hidden');
             
-            // Descargar datos desde Google Sheets
+            mostrarToast(`Hola, ${datosUsuario.name}`, 'success');
+            descargarDatosSheets();
+        }
+
+        function descargarDatosSheets() {
             fetch(URL_SECRETA_GOOGLE)
             .then(res => res.json())
             .then(filas => {
@@ -415,18 +464,15 @@
 
                 if (filas && filas.length > 1) {
                     filas.forEach((fila, index) => {
-                        if (index === 0) return; // Saltar la fila de títulos
-                        
+                        if (index === 0) return; 
                         const [fecha, oficina, categoria, grado, apellidos, nombres, novedad, observaciones] = fila;
                         
                         if (oficina) {
-                            // Reconstruir lista de oficinas
                             if (!listaOficinas.includes(oficina)) {
                                 listaOficinas.push(oficina);
                                 personalBase[oficina] = [];
                             }
                             
-                            // Reconstruir personal (evitando duplicados en la configuración visual)
                             const yaExistePersona = personalBase[oficina].some(p => p.apellidos === apellidos && p.nombres === nombres);
                             if (!yaExistePersona) {
                                 personalBase[oficina].push({
@@ -438,18 +484,11 @@
                                 });
                             }
 
-                            // Limpiar el formato de fecha por si Google lo envía como string ISO con hora
                             const strFecha = typeof fecha === 'string' && fecha.includes('T') ? fecha.split('T')[0] : fecha;
-                            
-                            // Reconstruir los reportes históricos
                             let reporteExistente = reportesAlmacenados.find(r => r.oficina === oficina && r.fecha === strFecha);
                             
                             const personaReporte = { 
-                                categoria, 
-                                grado, 
-                                apellidos, 
-                                nombres, 
-                                novedad, 
+                                categoria, grado, apellidos, nombres, novedad, 
                                 ausente: !['Laborando', 'En servicio'].includes(novedad), 
                                 observaciones 
                             };
@@ -457,11 +496,7 @@
                             if (reporteExistente) {
                                 reporteExistente.personal.push(personaReporte);
                             } else {
-                                reportesAlmacenados.push({
-                                    oficina: oficina,
-                                    fecha: strFecha,
-                                    personal: [personaReporte]
-                                });
+                                reportesAlmacenados.push({ oficina: oficina, fecha: strFecha, personal: [personaReporte] });
                             }
                         }
                     });
@@ -473,19 +508,18 @@
                 document.getElementById('view-login').classList.add('hidden');
                 document.getElementById('app-layout').classList.remove('hidden');
                 switchTab('jefe'); 
-                mostrarToast('Datos sincronizados desde la nube', 'success');
+                mostrarToast('Datos sincronizados', 'success');
             })
             .catch(err => {
                 console.error("Error al sincronizar:", err);
-                mostrarToast('Error de conexión. Iniciando en modo local.', 'error');
-                
-                // Fallback: Entrar a la app aunque no haya internet
+                mostrarToast('Error de conexión. Modo local activo.', 'error');
                 document.getElementById('view-login').classList.add('hidden');
                 document.getElementById('app-layout').classList.remove('hidden');
                 switchTab('jefe');
             })
             .finally(() => {
                 document.getElementById('login-spinner').classList.add('hidden');
+                document.getElementById('view-login-button-area').classList.remove('hidden');
             });
         }
 
@@ -493,6 +527,7 @@
             document.getElementById('app-layout').classList.add('hidden');
             document.getElementById('login-spinner').classList.add('hidden');
             document.getElementById('view-login').classList.remove('hidden');
+            window.location.reload();
         }
 
         // --- 1. CONFIGURACIÓN ---
@@ -517,72 +552,62 @@
 
         function agregarNuevaOficina() {
             const input = document.getElementById('input-nueva-oficina');
-            const nombre = input.value.trim().toUpperCase();
+            const nombreOficina = input.value.trim().toUpperCase();
 
-            if (!nombre) {
+            if (!nombreOficina) {
                 mostrarToast('Escriba el nombre de la oficina', 'error');
                 return;
             }
-            if (listaOficinas.includes(nombre)) {
+
+            if (listaOficinas.includes(nombreOficina)) {
                 mostrarToast('Esta oficina ya existe', 'error');
                 return;
             }
 
-            listaOficinas.push(nombre);
-            personalBase[nombre] = [];
+            listaOficinas.push(nombreOficina);
+            personalBase[nombreOficina] = [];
+
             actualizarDropdownsOficinas();
-            
-            document.getElementById('select-oficina-config').value = nombre;
-            cargarPersonalConfig();
-            
             input.value = '';
-            mostrarToast(`Oficina ${nombre} creada exitosamente`, 'success');
+            mostrarToast('Oficina creada localmente', 'success');
         }
 
         function actualizarGradosConfig() {
-            const categoria = document.getElementById('config-categoria').value;
+            const cat = document.getElementById('config-categoria').value;
             const selectGrado = document.getElementById('config-grado');
-            
-            selectGrado.innerHTML = '';
-            
-            if (gradosPorCategoria[categoria]) {
-                gradosPorCategoria[categoria].forEach(grado => {
-                    selectGrado.innerHTML += `<option value="${grado}">${grado}</option>`;
+            let html = '';
+            if (gradosPorCategoria[cat]) {
+                gradosPorCategoria[cat].forEach(g => {
+                    html += `<option value="${g}">${g}</option>`;
                 });
             }
+            selectGrado.innerHTML = html;
         }
 
         function cargarPersonalConfig() {
-            const oficina = document.getElementById('select-oficina-config').value;
+            const of = document.getElementById('select-oficina-config').value;
             const panel = document.getElementById('panel-personal-config');
             const tbody = document.getElementById('tbody-config-personal');
             
-            if (!oficina) {
-                panel.classList.add('hidden');
-                return;
-            }
-            
+            if (!of) { panel.classList.add('hidden'); return; }
             panel.classList.remove('hidden');
             tbody.innerHTML = '';
 
-            const personal = personalBase[oficina] || [];
-            
-            if (personal.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-gray-500">No hay personal base asignado a esta oficina aún.</td></tr>`;
+            const personas = personalBase[of] || [];
+            if (personas.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-gray-400 italic">No hay personal asignado en esta oficina.</td></tr>`;
                 return;
             }
 
-            personal.forEach(p => {
+            personas.forEach((p, idx) => {
                 tbody.innerHTML += `
-                    <tr class="bg-white hover:bg-gray-50">
-                        <td class="p-3 font-medium text-gray-500">${p.categoria}</td>
-                        <td class="p-3 font-bold text-gray-800">${p.grado}</td>
-                        <td class="p-3">${p.apellidos}</td>
+                    <tr class="hover:bg-gray-50">
+                        <td class="p-3 font-bold text-gray-600">${p.categoria}</td>
+                        <td class="p-3 font-semibold text-primary">${p.grado}</td>
+                        <td class="p-3 uppercase">${p.apellidos}</td>
                         <td class="p-3">${p.nombres}</td>
                         <td class="p-3 text-center">
-                            <button onclick="eliminarPersonaDeOficina('${oficina}', '${p.id}')" class="text-red-400 hover:text-red-600" title="Eliminar">
-                                <i class="ph-fill ph-trash text-lg"></i>
-                            </button>
+                            <button onclick="eliminarPersonaDeOficina('${of}', ${idx})" class="text-red-500 hover:text-red-700 p-1"><i class="ph ph-trash text-lg"></i></button>
                         </td>
                     </tr>
                 `;
@@ -590,89 +615,96 @@
         }
 
         function agregarPersonaAOficina() {
-            const oficina = document.getElementById('select-oficina-config').value;
-            const categoria = document.getElementById('config-categoria').value;
+            const of = document.getElementById('select-oficina-config').value;
+            const cat = document.getElementById('config-categoria').value;
             const grado = document.getElementById('config-grado').value;
             const apellidos = document.getElementById('config-apellidos').value.trim().toUpperCase();
-            const nombres = document.getElementById('config-nombres').value.trim().toUpperCase();
+            const nombres = document.getElementById('config-nombres').value.trim();
 
             if (!apellidos || !nombres) {
-                mostrarToast('Complete nombres y apellidos', 'error');
+                mostrarToast('Complete apellidos y nombres', 'error');
                 return;
             }
 
-            const nuevaPersona = {
-                id: Date.now().toString(),
-                categoria, grado, apellidos, nombres
-            };
+            if (!personalBase[of]) personalBase[of] = [];
+            personalBase[of].push({
+                id: 'local_' + Date.now(),
+                categoria: cat,
+                grado: grado,
+                apellidos: apellidos,
+                nombres: nombres
+            });
 
-            personalBase[oficina].push(nuevaPersona);
-            
             document.getElementById('config-apellidos').value = '';
             document.getElementById('config-nombres').value = '';
             
             cargarPersonalConfig();
-            mostrarToast('Funcionario añadido a la base', 'success');
+            mostrarToast('Funcionario añadido', 'success');
         }
 
-        function eliminarPersonaDeOficina(oficina, idPersona) {
-            personalBase[oficina] = personalBase[oficina].filter(p => p.id !== idPersona);
-            cargarPersonalConfig();
+        function eliminarPersonaDeOficina(oficina, idx) {
+            if (confirm('¿Está seguro de eliminar a este funcionario de la base nominal?')) {
+                personalBase[oficina].splice(idx, 1);
+                cargarPersonalConfig();
+                mostrarToast('Funcionario eliminado', 'success');
+            }
         }
 
-        // --- 2. REPORTE DIARIO Y ENVÍO A GOOGLE SHEETS ---
+        // --- 2. GESTIÓN DE REPORTES ---
         function cargarPersonalParaReporte() {
-            const oficina = document.getElementById('select-oficina-reporte').value;
-            const contenedorTabla = document.getElementById('contenedor-tabla-reporte');
-            const tbody = document.getElementById('tbody-personal-reporte');
-            const mensajeVacio = document.getElementById('mensaje-sin-personal');
+            const of = document.getElementById('select-oficina-reporte').value;
+            const fecha = document.getElementById('input-fecha').value;
+            const contTabla = document.getElementById('contenedor-tabla-reporte');
+            const msgSinPers = document.getElementById('mensaje-sin-personal');
             const btnEnviar = document.getElementById('btn-enviar-reporte');
+            const tbody = document.getElementById('tbody-personal-reporte');
 
-            if (!oficina) return;
+            if (!of || !fecha) return;
 
-            const personal = personalBase[oficina] || [];
-            
-            if (personal.length === 0) {
-                contenedorTabla.classList.add('hidden');
+            const personalNominal = personalBase[of] || [];
+            if (personalNominal.length === 0) {
+                contTabla.classList.add('hidden');
                 btnEnviar.classList.add('hidden');
-                mensajeVacio.classList.remove('hidden');
+                msgSinPers.classList.remove('hidden');
                 return;
             }
 
-            mensajeVacio.classList.add('hidden');
-            contenedorTabla.classList.remove('hidden');
+            msgSinPers.classList.add('hidden');
+            contTabla.classList.remove('hidden');
             btnEnviar.classList.remove('hidden');
-            
             tbody.innerHTML = '';
-            
-            let opcionesHTML = '';
-            opcionesNovedad.forEach(opt => {
-                opcionesHTML += `<option value="${opt.val}" data-aisla="${opt.aisla}">${opt.text}</option>`;
-            });
 
-            personal.forEach((p) => {
+            const reporteExistente = reportesAlmacenados.find(r => r.oficina === of && r.fecha === fecha);
+
+            personalNominal.forEach((p, idx) => {
+                let novedadActual = 'Laborando';
+                let obsActual = '';
+
+                if (reporteExistente) {
+                    const buscado = reporteExistente.personal.find(pers => pers.apellidos === p.apellidos && pers.nombres === p.nombres);
+                    if (buscado) {
+                        novedadActual = buscado.novedad || 'Laborando';
+                        obsActual = buscado.observaciones || '';
+                    }
+                }
+
+                let opcionesHTML = '';
+                opcionesNovedad.forEach(opt => {
+                    opcionesHTML += `<option value="${opt.val}" ${opt.val === novedadActual ? 'selected' : ''}>${opt.text}</option>`;
+                });
+
                 tbody.innerHTML += `
-                    <tr class="bg-white hover:bg-gray-50" data-person-id="${p.id}">
-                        <td class="p-3 font-medium text-gray-700">
-                            <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs font-bold border border-blue-200">${p.categoria}</span>
-                            <input type="hidden" class="rep-categoria" value="${p.categoria}">
-                        </td>
-                        <td class="p-3 font-medium text-gray-700">
-                            <span class="bg-gray-100 px-2 py-1 rounded text-xs font-bold border border-gray-200">${p.grado}</span>
-                            <input type="hidden" class="rep-grado" value="${p.grado}">
-                        </td>
-                        <td class="p-3 font-medium text-gray-800">
-                            ${p.apellidos} ${p.nombres}
-                            <input type="hidden" class="rep-apellidos" value="${p.apellidos}">
-                            <input type="hidden" class="rep-nombres" value="${p.nombres}">
-                        </td>
-                        <td class="p-3">
-                            <select class="rep-novedad w-full p-2 border border-blue-200 rounded-md focus:ring-2 focus:ring-secondary outline-none bg-blue-50 text-blue-900 font-medium text-sm">
+                    <tr class="hover:bg-gray-50" data-cat="${p.categoria}" data-grado="${p.grado}" data-apellidos="${p.apellidos}" data-nombres="${p.nombres}">
+                        <td class="p-3 font-bold text-gray-500 text-xs">${p.categoria}</td>
+                        <td class="p-3 font-semibold text-primary text-xs">${p.grado}</td>
+                        <td class="p-3 font-medium text-gray-800 text-sm uppercase">${p.apellidos} ${p.nombres}</td>
+                        <td class="p-2">
+                            <select class="w-full p-2 border border-gray-300 rounded text-xs font-semibold focus:ring-1 focus:ring-secondary outline-none select-novedad-fila bg-white">
                                 ${opcionesHTML}
                             </select>
                         </td>
-                        <td class="p-3">
-                            <input type="text" class="rep-observaciones w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-secondary outline-none text-sm" placeholder="Añadir nota (opcional)...">
+                        <td class="p-2">
+                            <input type="text" value="${obsActual}" class="w-full p-2 border border-gray-300 rounded text-xs focus:ring-1 focus:ring-secondary outline-none input-obs-fila" placeholder="Detalle la novedad aquí...">
                         </td>
                     </tr>
                 `;
@@ -680,225 +712,200 @@
         }
 
         function enviarReporte() {
-            const oficina = document.getElementById('select-oficina-reporte').value;
+            const of = document.getElementById('select-oficina-reporte').value;
             const fecha = document.getElementById('input-fecha').value;
             const filas = document.querySelectorAll('#tbody-personal-reporte tr');
-            
-            if (!oficina) {
-                mostrarToast('Seleccione una oficina primero', 'error');
+
+            if (!of || !fecha || filas.length === 0) {
+                mostrarToast('Error al generar reporte', 'error');
                 return;
             }
 
-            const personalReportado = [];
+            document.getElementById('btn-enviar-reporte').disabled = true;
+            mostrarToast('Enviando reporte a la nube...', 'info');
 
-            // 1. Recolectar datos de la tabla
-            filas.forEach(fila => {
-                const categoria = fila.querySelector('.rep-categoria').value;
-                const grado = fila.querySelector('.rep-grado').value;
-                const apellidos = fila.querySelector('.rep-apellidos').value;
-                const nombres = fila.querySelector('.rep-nombres').value;
-                const novedadSelect = fila.querySelector('.rep-novedad');
-                const novedad = novedadSelect.value;
-                const ausente = novedadSelect.options[novedadSelect.selectedIndex].getAttribute('data-aisla') === 'true';
-                const observaciones = fila.querySelector('.rep-observaciones').value.trim();
-
-                personalReportado.push({ categoria, grado, apellidos, nombres, novedad, ausente, observaciones });
+            let personalReportado = [];
+            filas.forEach(f => {
+                const novedad = f.querySelector('.select-novedad-fila').value;
+                const observaciones = f.querySelector('.input-obs-fila').value.trim();
+                personalReportado.push({
+                    categoria: f.getAttribute('data-cat'),
+                    grado: f.getAttribute('data-grado'),
+                    apellidos: f.getAttribute('data-apellidos'),
+                    nombres: f.getAttribute('data-nombres'),
+                    novedad: novedad,
+                    ausente: !['Laborando', 'En servicio'].includes(novedad),
+                    observaciones: observaciones
+                });
             });
 
-            // 2. Preparar el paquete de datos
-            const reporteData = { 
-                oficina: oficina, 
-                fecha: fecha, 
-                personal: personalReportado 
+            const datosAEnviar = {
+                fecha: fecha,
+                oficina: of,
+                personal: personalReportado
             };
 
-            // Mostrar estado de carga al usuario
-            const btnEnviar = document.getElementById('btn-enviar-reporte');
-            const textoOriginalBtn = btnEnviar.innerHTML;
-            btnEnviar.innerHTML = '<i class="ph ph-spinner animate-spin text-xl"></i> Guardando en nube...';
-            btnEnviar.disabled = true;
-
-            // 3. Enviar a Google Sheets
             fetch(URL_SECRETA_GOOGLE, {
                 method: 'POST',
-                body: JSON.stringify(reporteData),
-                headers: { 'Content-Type': 'text/plain;charset=utf-8' }
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(datosAEnviar)
             })
-            .then(res => res.json())
-            .then(resJSON => {
-                if(resJSON.estado === "exito") {
-                    mostrarToast(`Reporte guardado en la nube con éxito`, 'success');
-                    
-                    // Actualizar memoria local para que funcione el Dashboard sin tener que recargar la página
-                    const indiceExistente = reportesAlmacenados.findIndex(r => r.oficina === oficina && r.fecha === fecha);
-                    if (indiceExistente >= 0) {
-                        reportesAlmacenados[indiceExistente] = reporteData;
-                    } else {
-                        reportesAlmacenados.push(reporteData);
-                    }
-                    actualizarDashboard();
+            .then(() => {
+                let indice = reportesAlmacenados.findIndex(r => r.oficina === of && r.fecha === fecha);
+                if (indice !== -1) {
+                    reportesAlmacenados[indice].personal = personalReportado;
                 } else {
-                    mostrarToast('Google rechazó el almacenamiento: ' + resJSON.mensaje, 'error');
+                    reportesAlmacenados.push(datosAEnviar);
                 }
+                
+                mostrarToast('Reporte enviado y guardado con éxito', 'success');
+                actualizarDashboard();
             })
-            .catch(error => {
-                console.error("Error:", error);
-                mostrarToast('Error al conectar con la base de datos', 'error');
+            .catch(err => {
+                console.error(err);
+                mostrarToast('Error de conexión al enviar.', 'error');
             })
             .finally(() => {
-                btnEnviar.innerHTML = textoOriginalBtn;
-                btnEnviar.disabled = false;
+                document.getElementById('btn-enviar-reporte').disabled = false;
             });
         }
 
-        // --- 3. DASHBOARD SUPERIOR ---
+        // --- 3. DASHBOARD Y ANALÍTICA ---
         function actualizarDashboard() {
             const fechaFiltro = document.getElementById('filtro-fecha-dashboard').value;
-            const reportesHoy = reportesAlmacenados.filter(r => r.fecha === fechaFiltro);
+            if (!fechaFiltro) return;
 
-            // 1. Calcular Fuerza Efectiva (Total Asignado en Configuración)
-            let base_of = 0, base_sub = 0, base_pt = 0, base_aux = 0, base_nu = 0;
-            Object.values(personalBase).forEach(oficinaPersonal => {
-                oficinaPersonal.forEach(p => {
-                    if (p.categoria === 'OF') base_of++;
-                    else if (p.categoria === 'SUB/MNE') base_sub++;
-                    else if (p.categoria === 'PATR') base_pt++;
-                    else if (p.categoria === 'AUX') base_aux++;
-                    else if (p.categoria === 'NU') base_nu++;
+            let fuerzaNominal = { OF:0, 'SUB/MNE':0, PATR:0, AUX:0, NU:0 };
+            listaOficinas.forEach(of => {
+                (personalBase[of] || []).forEach(p => {
+                    if (fuerzaNominal[p.categoria] !== undefined) fuerzaNominal[p.categoria]++;
                 });
             });
-            animarContador('dash-fuerza-efectiva', `${base_of} - ${base_sub} - ${base_pt} - ${base_aux} - ${base_nu}`);
 
-            // 2. Calcular Fuerza Disponible de los reportes diarios
-            let totales = {
-                disponible: 0, ausentes: 0,
-                of_disp: 0, sub_disp: 0, patr_disp: 0, aux_disp: 0, nu_disp: 0,
-                novedadesMap: {} 
-            };
+            document.getElementById('dash-fuerza-efectiva').textContent = 
+                `${fuerzaNominal['OF']} - ${fuerzaNominal['SUB/MNE']} - ${fuerzaNominal['PATR']} - ${fuerzaNominal['AUX']} - ${fuerzaNominal['NU']}`;
 
-            opcionesNovedad.forEach(opt => { if(opt.aisla) totales.novedadesMap[opt.val] = 0; });
+            let disponiblesDesglose = { OF:0, 'SUB/MNE':0, PATR:0, AUX:0, NU:0 };
+            let totalDisponibles = 0;
+            let totalNovedades = 0;
+            let novedadesPorTipo = {};
 
-            const tbodyEstado = document.getElementById('tbody-estado-oficinas');
-            tbodyEstado.innerHTML = '';
-
-            if (listaOficinas.length === 0) {
-                tbodyEstado.innerHTML = `<tr><td colspan="4" class="px-6 py-8 text-center text-gray-500">Aún no se han configurado Oficinas en DEVAL.</td></tr>`;
-            }
-
-            listaOficinas.forEach(nombreOficina => {
-                const reporteOficina = reportesHoy.find(r => r.oficina === nombreOficina);
-                let tr = document.createElement('tr');
-                
-                if (reporteOficina) {
-                    let of_d = 0, sub_d = 0, patr_d = 0, aux_d = 0, nu_d = 0, cantNovedades = 0;
-
-                    reporteOficina.personal.forEach(p => {
+            listaOficinas.forEach(of => {
+                const rep = reportesAlmacenados.find(r => r.oficina === of && r.fecha === fechaFiltro);
+                if (rep) {
+                    rep.personal.forEach(p => {
                         if (!p.ausente) {
-                            totales.disponible++;
-                            if (p.categoria === 'OF') { of_d++; totales.of_disp++; }
-                            else if (p.categoria === 'SUB/MNE') { sub_d++; totales.sub_disp++; }
-                            else if (p.categoria === 'PATR') { patr_d++; totales.patr_disp++; }
-                            else if (p.categoria === 'AUX') { aux_d++; totales.aux_disp++; }
-                            else if (p.categoria === 'NU') { nu_d++; totales.nu_disp++; }
+                            if (disponiblesDesglose[p.categoria] !== undefined) disponiblesDesglose[p.categoria]++;
+                            totalDisponibles++;
                         } else {
-                            cantNovedades++;
-                            totales.ausentes++;
-                            if (totales.novedadesMap[p.novedad] !== undefined) totales.novedadesMap[p.novedad]++;
+                            totalNovedades++;
+                            novedadesPorTipo[p.novedad] = (novedadesPorTipo[p.novedad] || 0) + 1;
                         }
                     });
-
-                    tr.innerHTML = `
-                        <td class="px-4 py-4 font-bold text-gray-800"><i class="ph-fill ph-check-circle text-accent mr-1"></i> ${nombreOficina}</td>
-                        <td class="px-4 py-4 text-center"><span class="bg-green-100 text-green-800 text-xs font-semibold px-2 py-1 rounded-full">Reportado</span></td>
-                        <td class="px-4 py-4 text-center font-mono font-bold text-blue-600 bg-blue-50 border-x border-gray-100">${of_d}-${sub_d}-${patr_d}-${aux_d}-${nu_d}</td>
-                        <td class="px-4 py-4 text-center text-orange-600 font-semibold">${cantNovedades > 0 ? cantNovedades + ' aus.' : '-'}</td>
-                    `;
-                } else {
-                    tr.innerHTML = `
-                        <td class="px-4 py-4 font-medium text-gray-500"><i class="ph-fill ph-x-circle text-red-400 mr-1"></i> ${nombreOficina}</td>
-                        <td class="px-4 py-4 text-center"><span class="bg-red-100 text-red-800 text-xs font-semibold px-2 py-1 rounded-full">Pendiente</span></td>
-                        <td class="px-4 py-4 text-center font-mono text-gray-400 bg-gray-50 border-x border-gray-100">0-0-0-0-0</td>
-                        <td class="px-4 py-4 text-center text-gray-400">-</td>
-                    `;
                 }
-                tbodyEstado.appendChild(tr);
             });
 
-            // Actualizar tarjetas restantes
-            animarContador('dash-fuerza-disponible', `${totales.of_disp} - ${totales.sub_disp} - ${totales.patr_disp} - ${totales.aux_disp} - ${totales.nu_disp}`);
-            animarContador('dash-total-disponible', totales.disponible);
-            animarContador('dash-total-novedades', totales.ausentes);
+            document.getElementById('dash-fuerza-disponible').textContent = 
+                `${disponiblesDesglose['OF']} - ${disponiblesDesglose['SUB/MNE']} - ${disponiblesDesglose['PATR']} - ${disponiblesDesglose['AUX']} - ${disponiblesDesglose['NU']}`;
+            document.getElementById('dash-total-disponible').textContent = totalDisponibles;
+            document.getElementById('dash-total-novedades').textContent = totalNovedades;
 
-            // Generar lista de novedades con iconos
-            const ulNovedades = document.getElementById('lista-novedades');
-            ulNovedades.innerHTML = '';
-            let totalAusentesLista = 0;
+            const tbodyEst = document.getElementById('tbody-estado-oficinas');
+            tbodyEst.innerHTML = '';
 
-            Object.entries(totales.novedadesMap).forEach(([novedad, cantidad]) => {
-                if (cantidad > 0) {
-                    totalAusentesLista += cantidad;
-                    let icon = 'ph-info'; let color = 'bg-gray-100 text-gray-600';
+            listaOficinas.forEach(of => {
+                const rep = reportesAlmacenados.find(r => r.oficina === of && r.fecha === fechaFiltro);
+                let estadoHTML = `<span class="bg-red-100 text-red-700 text-xs px-2 py-1 rounded-full font-bold">❌ Sin Reporte</span>`;
+                let dispHTML = `<span class="text-gray-400 italic">--</span>`;
+                let novHTML = `<span class="text-gray-400 italic">--</span>`;
+
+                if (rep) {
+                    estadoHTML = `<span class="bg-emerald-100 text-emerald-700 text-xs px-2 py-1 rounded-full font-bold">✅ Reportado</span>`;
                     
-                    if(novedad.includes('Vacaciones')) { icon = 'ph-airplane-tilt'; color = 'bg-blue-100 text-blue-600'; }
-                    else if(novedad.includes('Médica') || novedad.includes('Excusa')) { icon = 'ph-first-aid'; color = 'bg-red-100 text-red-600'; }
-                    else if(novedad.includes('Permiso')) { icon = 'ph-file-text'; color = 'bg-yellow-100 text-yellow-700'; }
-                    else if(novedad.includes('Estudio')) { icon = 'ph-books'; color = 'bg-purple-100 text-purple-600'; }
-                    else if(novedad.includes('Ley Maria')) { icon = 'ph-baby'; color = 'bg-pink-100 text-pink-600'; }
-                    else if(novedad.includes('Luto')) { icon = 'ph-flower-tulip'; color = 'bg-gray-800 text-white'; }
+                    let d = { OF:0, 'SUB/MNE':0, PATR:0, AUX:0, NU:0 };
+                    let n = 0;
+                    rep.personal.forEach(p => {
+                        if (!p.ausente) d[p.categoria]++; else n++;
+                    });
 
-                    ulNovedades.innerHTML += `
-                        <li onclick="abrirModalNovedades('${novedad}')" class="flex items-center justify-between p-3 bg-white rounded-lg border border-gray-200 shadow-sm cursor-pointer hover:bg-gray-50 hover:shadow transition-all group">
-                            <div class="flex items-center gap-3">
-                                <div class="${color} p-2 rounded-lg group-hover:scale-110 transition-transform"><i class="ph-fill ${icon} text-lg"></i></div>
-                                <span class="font-medium text-gray-700">${novedad}</span>
-                            </div>
-                            <div class="flex items-center gap-4">
-                                <span class="font-bold text-lg text-gray-800">${cantidad}</span>
-                                <i class="ph ph-caret-right text-gray-400 group-hover:text-secondary"></i>
-                            </div>
-                        </li>
-                    `;
+                    dispHTML = `<span class="font-mono font-bold text-blue-600">${d['OF']}-${d['SUB/MNE']}-${d['PATR']}-${d['AUX']}-${d['NU']}</span>`;
+                    novHTML = n > 0 
+                        ? `<button onclick="abrirModalNovedades('${of}')" class="bg-red-50 hover:bg-red-100 text-red-600 font-bold px-3 py-1 rounded border border-red-200 transition-colors text-xs flex items-center gap-1 mx-auto">${n} Novedades <i class="ph ph-eye"></i></button>`
+                        : `<span class="text-emerald-500 font-bold text-xs">Sin Novedad</span>`;
                 }
+
+                tbodyEst.innerHTML += `
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-6 py-4 font-semibold text-gray-800">${of}</td>
+                        <td class="px-6 py-4 text-center">${estadoHTML}</td>
+                        <td class="px-6 py-4 text-center">${dispHTML}</td>
+                        <td class="px-6 py-4 text-center">${novHTML}</td>
+                    </tr>
+                `;
             });
 
-            if(totalAusentesLista === 0) {
-                ulNovedades.innerHTML = `<li class="text-center text-gray-500 py-6 border border-dashed border-gray-300 rounded-lg">Sin novedades registradas.</li>`;
+            const listaNov = document.getElementById('lista-novedades');
+            listaNov.innerHTML = '';
+            
+            if (Object.keys(novedadesPorTipo).length === 0) {
+                listaNov.innerHTML = `<div class="text-center text-gray-400 italic py-8">No hay novedades registradas hoy.</div>`;
+                return;
+            }
+
+            for (const [tipo, cant] of Object.entries(novedadesPorTipo)) {
+                listaNov.innerHTML += `
+                    <li onclick="abrirModalNovedades('TODAS')" class="flex items-center justify-between p-3 bg-gray-50 hover:bg-red-50 border border-gray-200 rounded-xl cursor-pointer transition-colors group">
+                        <span class="font-medium text-gray-700 group-hover:text-red-700">${tipo}</span>
+                        <span class="bg-red-500 text-white font-bold text-xs px-3 py-1 rounded-full">${cant}</span>
+                    </li>
+                `;
             }
         }
 
-        // --- 4. MODAL DETALLE ---
-        function abrirModalNovedades(tipoFiltro) {
-            const fechaFiltro = document.getElementById('filtro-fecha-dashboard').value;
-            const reportesHoy = reportesAlmacenados.filter(r => r.fecha === fechaFiltro);
+        function abrirModalNovedades(filtroOficina) {
+            const fecha = document.getElementById('filtro-fecha-dashboard').value;
+            const titulo = document.getElementById('modal-titulo');
+            const subtitulo = document.getElementById('modal-subtitulo-fecha');
             const tbody = document.getElementById('tbody-modal-novedades');
+
+            subtitulo.textContent = `Fecha de consulta: ${fecha}`;
             tbody.innerHTML = '';
 
-            let contador = 0;
-
-            reportesHoy.forEach(reporte => {
-                reporte.personal.forEach(p => {
-                    if (p.ausente && (tipoFiltro === 'TODAS' || p.novedad === tipoFiltro)) {
-                        contador++;
-                        tbody.innerHTML += `
-                            <tr class="hover:bg-gray-50 transition-colors">
-                                <td class="px-6 py-4 font-bold text-gray-700">${reporte.oficina}</td>
-                                <td class="px-6 py-4"><span class="bg-gray-100 px-2 py-1 rounded text-xs font-bold border border-gray-200">${p.grado}</span></td>
-                                <td class="px-6 py-4 font-medium text-gray-800">${p.apellidos} ${p.nombres}</td>
-                                <td class="px-6 py-4 font-semibold text-red-500">${p.novedad}</td>
-                                <td class="px-6 py-4 text-gray-600 italic text-xs">${p.observaciones || '<span class="text-gray-300">Sin observación</span>'}</td>
-                            </tr>
-                        `;
-                    }
-                });
-            });
-
-            if (contador === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" class="px-6 py-8 text-center text-gray-500">No hay personal registrado con este tipo de novedad en la fecha seleccionada.</td></tr>`;
+            if (filtroOficina === 'TODAS') {
+                titulo.textContent = "Consolidado General de Novedades";
+            } else {
+                titulo.textContent = `Novedades en: ${filtroOficina}`;
             }
 
-            document.getElementById('modal-titulo').textContent = tipoFiltro === 'TODAS' ? 'Detalle General de Novedades' : `Detalle: ${tipoFiltro}`;
-            document.getElementById('modal-subtitulo-fecha').textContent = `Fecha de corte: ${fechaFiltro}`;
-            
+            let filasInsertadas = 0;
+
+            listaOficinas.forEach(of => {
+                if (filtroOficina !== 'TODAS' && filtroOficina !== of) return;
+
+                const rep = reportesAlmacenados.find(r => r.oficina === of && r.fecha === fecha);
+                if (rep) {
+                    rep.personal.forEach(p => {
+                        if (p.ausente) {
+                            filasInsertadas++;
+                            tbody.innerHTML += `
+                                <tr class="hover:bg-red-50/50 transition-colors">
+                                    <td class="px-6 py-3 font-bold text-gray-500 text-xs uppercase">${of}</td>
+                                    <td class="px-6 py-3 font-semibold text-primary text-xs">${p.grado}</td>
+                                    <td class="px-6 py-3 font-medium uppercase text-gray-800">${p.apellidos} ${p.nombres}</td>
+                                    <td class="px-6 py-3"><span class="bg-red-100 text-red-700 font-bold text-xs px-2 py-1 rounded-md border border-red-200">${p.novedad}</span></td>
+                                    <td class="px-6 py-3 text-gray-600 text-xs italic">${p.observaciones || 'Sin observaciones descriptivas'}</td>
+                                </tr>
+                            `;
+                        }
+                    });
+                }
+            });
+
+            if (filasInsertadas === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-gray-400 italic">No se encontraron novedades bajo este criterio.</td></tr>`;
+            }
+
             document.getElementById('modal-novedades').classList.remove('hidden');
         }
 
@@ -906,39 +913,45 @@
             document.getElementById('modal-novedades').classList.add('hidden');
         }
 
-        // --- UTILIDADES ---
-        function switchTab(tabName) {
-            ['config', 'jefe', 'superior'].forEach(tab => {
-                document.getElementById(`view-${tab}`).classList.add('hidden');
-                document.getElementById(`tab-${tab}`).classList.remove('bg-blue-800');
-            });
-            
-            document.getElementById(`view-${tabName}`).classList.remove('hidden');
-            document.getElementById(`tab-${tabName}`).classList.add('bg-blue-800');
+        // --- UI AUXILIARES ---
+        function switchTab(tabId) {
+            document.getElementById('view-config').classList.add('hidden');
+            document.getElementById('view-jefe').classList.add('hidden');
+            document.getElementById('view-superior').classList.add('hidden');
 
-            if (tabName === 'superior') actualizarDashboard();
-            if (tabName === 'jefe' && document.getElementById('select-oficina-reporte').value) {
-                cargarPersonalParaReporte(); 
-            }
+            document.getElementById('tab-config').classList.remove('bg-blue-800');
+            document.getElementById('tab-jefe').classList.remove('bg-blue-800');
+            document.getElementById('tab-superior').classList.remove('bg-blue-800');
+
+            document.getElementById(`view-${tabId}`).classList.remove('hidden');
+            document.getElementById(`tab-${tabId}`).classList.add('bg-blue-800');
+
+            if (tabId === 'superior') actualizarDashboard();
+            if (tabId === 'jefe') cargarPersonalParaReporte();
         }
 
-        function mostrarToast(mensaje, tipo = 'success') {
+        function mostrarToast(mensaje, tipo = 'info') {
             const toast = document.getElementById('toast');
             const icon = document.getElementById('toast-icon');
-            document.getElementById('toast-message').textContent = mensaje;
-            
-            toast.className = `fixed bottom-5 right-5 text-white px-6 py-3 rounded-lg shadow-lg transform transition-all duration-300 flex items-center gap-3 z-[60] ${tipo === 'success' ? 'bg-emerald-600' : 'bg-red-500'}`;
-            icon.className = `ph-fill ${tipo === 'success' ? 'ph-check-circle' : 'ph-warning-circle'} text-2xl`;
-            
-            toast.classList.remove('translate-y-20', 'opacity-0');
-            setTimeout(() => toast.classList.add('translate-y-20', 'opacity-0'), 3000);
-        }
+            const msg = document.getElementById('toast-message');
 
-        function animarContador(idElemento, valorFinal) {
-            const el = document.getElementById(idElemento);
-            el.innerHTML = valorFinal;
-            el.classList.add('scale-110', 'text-secondary');
-            setTimeout(() => el.classList.remove('scale-110', 'text-secondary'), 200);
+            msg.textContent = mensaje;
+            toast.className = "fixed bottom-5 right-5 text-white px-6 py-3 rounded-lg shadow-lg transform transition-all duration-300 z-[60] flex items-center gap-3 opacity-100 translate-y-0 ";
+
+            if (tipo === 'success') {
+                toast.classList.add('bg-emerald-600');
+                icon.className = "ph-fill ph-check-circle";
+            } else if (tipo === 'error') {
+                toast.classList.add('bg-red-600');
+                icon.className = "ph-fill ph-x-circle";
+            } else if (tipo === 'info') {
+                toast.classList.add('bg-blue-600');
+                icon.className = "ph-fill ph-info";
+            }
+
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 4000);
         }
     </script>
 </body>
