@@ -627,6 +627,7 @@
             
             const personalReportado = [];
 
+            // 1. Recolectar datos de la tabla
             filas.forEach(fila => {
                 const categoria = fila.querySelector('.rep-categoria').value;
                 const grado = fila.querySelector('.rep-grado').value;
@@ -640,17 +641,53 @@
                 personalReportado.push({ categoria, grado, apellidos, nombres, novedad, ausente, observaciones });
             });
 
-            const indiceExistente = reportesAlmacenados.findIndex(r => r.oficina === oficina && r.fecha === fecha);
-            const reporteData = { oficina, fecha, personal: personalReportado, fechaEnvio: new Date().toISOString() };
-            
-            if (indiceExistente >= 0) {
-                reportesAlmacenados[indiceExistente] = reporteData;
-            } else {
-                reportesAlmacenados.push(reporteData);
-            }
+            // 2. Preparar el paquete de datos
+            const reporteData = { 
+                oficina: oficina, 
+                fecha: fecha, 
+                personal: personalReportado 
+            };
 
-            mostrarToast(`Reporte de ${oficina} enviado y guardado`, 'success');
-            actualizarDashboard();
+            // Mostrar estado de carga al usuario
+            const btnEnviar = document.getElementById('btn-enviar-reporte');
+            const textoOriginalBtn = btnEnviar.innerHTML;
+            btnEnviar.innerHTML = '<i class="ph ph-spinner animate-spin text-xl"></i> Enviando...';
+            btnEnviar.disabled = true;
+
+            // 3. ENVIAR A GOOGLE SHEETS (Aquí pegas tu URL Secreta)
+            const URL_SECRETA_GOOGLE = "https://script.google.com/macros/s/AKfycbx6GhjFwOnMuiLIuBvTRLAsQyf4du4Mpu-MKhXdwB4v8dSQiKAWEat7QLS6cGMGavqLng/exec";
+
+            fetch(URL_SECRETA_GOOGLE, {
+                method: 'POST',
+                body: JSON.stringify(reporteData),
+                headers: {
+                    'Content-Type': 'text/plain;charset=utf-8',
+                }
+            })
+            .then(respuesta => respuesta.text())
+            .then(resultado => {
+                // Si sale bien
+                mostrarToast(`Reporte de ${oficina} enviado a la base de datos`, 'success');
+                
+                // (Opcional) Guardamos también localmente para que funcione tu Dashboard
+                const indiceExistente = reportesAlmacenados.findIndex(r => r.oficina === oficina && r.fecha === fecha);
+                if (indiceExistente >= 0) {
+                    reportesAlmacenados[indiceExistente] = reporteData;
+                } else {
+                    reportesAlmacenados.push(reporteData);
+                }
+                actualizarDashboard();
+            })
+            .catch(error => {
+                // Si hay error
+                console.error("Error:", error);
+                mostrarToast('Hubo un error al enviar el reporte a Google', 'error');
+            })
+            .finally(() => {
+                // Restaurar el botón
+                btnEnviar.innerHTML = textoOriginalBtn;
+                btnEnviar.disabled = false;
+            });
         }
 
         // --- 3. DASHBOARD SUPERIOR ---
