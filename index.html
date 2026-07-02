@@ -10,6 +10,9 @@
     <!-- Librería Oficial de Login de Google -->
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     
+    <!-- Librería para Exportar a Excel (SheetJS) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    
     <script>
         tailwind.config = {
             theme: {
@@ -33,24 +36,44 @@
         }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        /* Animaciones para el Login Dinámico */
+        .bg-animated {
+            background: linear-gradient(-45deg, #1e3a8a, #3b82f6, #0f172a, #10b981);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+        }
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .floating {
+            animation: floating 3s ease-in-out infinite;
+        }
+        @keyframes floating {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
     </style>
 </head>
-<body class="bg-gray-100 text-gray-800 font-sans overflow-hidden">
+<body class="bg-gray-100 text-gray-800 font-sans overflow-x-hidden flex flex-col h-screen">
 
     <!-- ==========================================
-         PANTALLA DE LOGIN OFICIAL (GOOGLE)
+         PANTALLA DE LOGIN OFICIAL (GOOGLE) - DINÁMICA
          ========================================== -->
-    <div id="view-login" class="fixed inset-0 bg-blue-900 flex flex-col items-center justify-center z-50">
-        <div class="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
+    <div id="view-login" class="fixed inset-0 bg-animated flex flex-col items-center justify-center z-50">
+        <div class="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] pointer-events-none"></div>
         
-        <div class="bg-white p-10 rounded-2xl shadow-2xl max-w-md w-full text-center relative z-10 mx-4">
-            <div class="bg-blue-100 w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner">
-                <i class="ph-fill ph-shield-check text-6xl text-primary"></i>
+        <div class="bg-white/95 backdrop-blur-sm p-8 sm:p-10 rounded-3xl shadow-2xl max-w-md w-full text-center relative z-10 mx-4 border border-white/20">
+            <div class="bg-blue-100 w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg floating border-4 border-white">
+                <i class="ph-fill ph-shield-check text-5xl text-primary"></i>
             </div>
             <h1 class="text-3xl font-extrabold text-dark mb-2 tracking-tight">CHECK-IN DEVAL</h1>
-            <p class="text-gray-500 text-sm mb-8">Sistema de Control de Asistencia y Novedades Diarias</p>
+            <p class="text-gray-500 text-sm mb-8 font-medium">Sistema de Control de Asistencia y Novedades Diarias</p>
             
-            <div id="view-login-button-area" class="flex justify-center w-full">
+            <div id="view-login-button-area" class="flex justify-center w-full transform transition hover:scale-105">
                 <!-- Configurador del botón de Google con tu LLAVE REAL -->
                 <div id="g_id_onload"
                      data-client_id="648106062409-sc647ht5o79f5i2p9hl62hfj28gca001.apps.googleusercontent.com"
@@ -64,7 +87,7 @@
                 <div class="g_id_signin"
                      data-type="standard"
                      data-shape="rectangular"
-                     data-theme="outline"
+                     data-theme="filled_blue"
                      data-text="signin_with"
                      data-size="large"
                      data-logo_alignment="left"
@@ -73,90 +96,92 @@
             </div>
             
             <div id="login-spinner" class="hidden mt-6">
-                <i class="ph ph-spinner animate-spin text-3xl text-primary"></i>
-                <p class="text-sm text-gray-500 mt-2">Sincronizando con la nube...</p>
+                <i class="ph ph-spinner animate-spin text-4xl text-primary"></i>
+                <p class="text-sm text-gray-500 mt-3 font-semibold animate-pulse">Sincronizando base de datos...</p>
             </div>
         </div>
         
-        <div class="absolute bottom-6 text-blue-200 text-xs text-center w-full z-10">
-            &copy; 2026 DEVAL - Todos los derechos reservados.
+        <div class="absolute bottom-6 text-white/80 text-xs text-center w-full z-10 px-4 font-medium tracking-wide">
+            &copy; 2026 DEVAL - Políticas de Copyright <br> <span class="font-bold text-accent">Powered by GUTIC DEVAL</span>
         </div>
     </div>
 
     <!-- ==========================================
          APLICACIÓN PRINCIPAL
          ========================================== -->
-    <div id="app-layout" class="hidden flex flex-col h-screen w-full">
+    <div id="app-layout" class="hidden flex-col h-screen w-full">
         <!-- Navegación Superior -->
         <nav class="bg-primary text-white shadow-md z-10 shrink-0">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex items-center justify-between h-16 overflow-x-auto no-scrollbar">
-                    <div class="flex items-center gap-3 shrink-0 mr-4">
-                        <i class="ph-fill ph-shield-check text-3xl text-accent"></i>
-                        <span class="font-bold text-xl tracking-wide">CHECK-IN DEVAL</span>
+            <div class="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between h-16">
+                    <div class="flex items-center gap-2 shrink-0 mr-2 sm:mr-4">
+                        <i class="ph-fill ph-shield-check text-2xl sm:text-3xl text-accent"></i>
+                        <span class="font-bold text-lg sm:text-xl tracking-wide">DEVAL</span>
                     </div>
-                    <div class="flex space-x-2 sm:space-x-4 shrink-0">
-                        <button onclick="switchTab('config')" id="tab-config" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-blue-700 transition-colors flex items-center gap-2">
-                            <i class="ph ph-gear text-lg"></i> Configuración
+                    <!-- Contenedor scrollable para móviles -->
+                    <div class="flex space-x-1 sm:space-x-4 overflow-x-auto no-scrollbar flex-1 justify-end items-center">
+                        <button onclick="switchTab('config')" id="tab-config" class="px-2 sm:px-3 py-2 rounded-md text-xs sm:text-sm font-medium hover:bg-blue-700 transition-colors flex items-center gap-1 sm:gap-2 whitespace-nowrap">
+                            <i class="ph ph-gear text-lg"></i> <span class="hidden sm:inline">Configuración</span>
                         </button>
-                        <button onclick="switchTab('jefe')" id="tab-jefe" class="px-3 py-2 rounded-md text-sm font-medium bg-blue-800 hover:bg-blue-700 transition-colors flex items-center gap-2">
-                            <i class="ph ph-user-list text-lg"></i> Reporte Diario
+                        <button onclick="switchTab('jefe')" id="tab-jefe" class="px-2 sm:px-3 py-2 rounded-md text-xs sm:text-sm font-medium bg-blue-800 hover:bg-blue-700 transition-colors flex items-center gap-1 sm:gap-2 whitespace-nowrap">
+                            <i class="ph ph-user-list text-lg"></i> <span class="hidden sm:inline">Reporte Diario</span>
                         </button>
-                        <button onclick="switchTab('superior')" id="tab-superior" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-blue-700 transition-colors flex items-center gap-2">
-                            <i class="ph ph-chart-bar text-lg"></i> Dashboard
+                        <button onclick="switchTab('superior')" id="tab-superior" class="px-2 sm:px-3 py-2 rounded-md text-xs sm:text-sm font-medium hover:bg-blue-700 transition-colors flex items-center gap-1 sm:gap-2 whitespace-nowrap">
+                            <i class="ph ph-chart-bar text-lg"></i> <span class="hidden sm:inline">Dashboard</span>
                         </button>
-                        <button onclick="cerrarSesion()" class="ml-4 text-red-300 hover:text-white transition-colors" title="Cerrar Sesión">
-                            <i class="ph ph-sign-out text-2xl"></i>
+                        <button onclick="cerrarSesion()" class="ml-2 sm:ml-4 text-red-300 hover:text-white transition-colors p-2" title="Cerrar Sesión">
+                            <i class="ph ph-sign-out text-xl sm:text-2xl"></i>
                         </button>
                     </div>
                 </div>
             </div>
         </nav>
 
-        <main class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 no-scrollbar bg-gray-100">
+        <main class="flex-1 overflow-y-auto p-2 sm:p-6 lg:p-8 bg-gray-100">
             
             <!-- VISTA 0: CONFIGURACIÓN -->
             <div id="view-config" class="max-w-5xl mx-auto fade-in hidden">
-                <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden mb-8">
-                    <div class="bg-gray-50 px-6 py-4 border-b border-gray-200">
-                        <h2 class="text-xl font-bold text-dark flex items-center gap-2">
-                            <i class="ph ph-buildings text-secondary text-2xl"></i> Gestión de Oficinas DEVAL
+                <!-- Crear Oficina -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden mb-6">
+                    <div class="bg-gray-50 px-4 sm:px-6 py-4 border-b border-gray-200">
+                        <h2 class="text-lg sm:text-xl font-bold text-dark flex items-center gap-2">
+                            <i class="ph ph-buildings text-secondary text-2xl"></i> Gestión de Oficinas
                         </h2>
-                        <p class="text-sm text-gray-500 mt-1">Crea nuevas oficinas o dependencias en el sistema.</p>
                     </div>
-                    <div class="p-6">
-                        <div class="flex items-end gap-4">
-                            <div class="flex-1">
-                                <label class="block text-sm font-semibold text-gray-700 mb-2">Nombre de la nueva oficina</label>
-                                <input type="text" id="input-nueva-oficina" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-secondary outline-none uppercase" placeholder="Ej. OFICINA DE TALENTO HUMANO">
+                    <div class="p-4 sm:p-6">
+                        <div class="flex flex-col sm:flex-row items-start sm:items-end gap-4">
+                            <div class="flex-1 w-full">
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Nueva oficina</label>
+                                <input type="text" id="input-nueva-oficina" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-secondary outline-none uppercase" placeholder="EJ. OFICINA TALENTO HUMANO">
                             </div>
-                            <button onclick="agregarNuevaOficina()" class="bg-primary hover:bg-blue-800 text-white font-bold py-3 px-6 rounded-lg transition-colors flex items-center gap-2 h-[50px]">
-                                <i class="ph ph-plus-circle"></i> Crear Oficina
+                            <button onclick="agregarNuevaOficina()" class="w-full sm:w-auto bg-primary hover:bg-blue-800 text-white font-bold py-3 px-6 rounded-lg transition-colors flex justify-center items-center gap-2 h-[50px] shrink-0">
+                                <i class="ph ph-plus-circle"></i> Crear
                             </button>
                         </div>
                     </div>
                 </div>
 
-                <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-                    <div class="bg-gray-50 px-6 py-4 border-b border-gray-200">
-                        <h2 class="text-xl font-bold text-dark flex items-center gap-2">
-                            <i class="ph ph-users text-secondary text-2xl"></i> Asignación de Personal Base
+                <!-- Personal Base -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden mb-6">
+                    <div class="bg-gray-50 px-4 sm:px-6 py-4 border-b border-gray-200">
+                        <h2 class="text-lg sm:text-xl font-bold text-dark flex items-center gap-2">
+                            <i class="ph ph-users text-secondary text-2xl"></i> Asignación de Personal
                         </h2>
-                        <p class="text-sm text-gray-500 mt-1">Selecciona una oficina y asigna los funcionarios que laboran en ella permanentemente.</p>
                     </div>
-                    <div class="p-6">
+                    <div class="p-4 sm:p-6">
                         <div class="mb-6">
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">Seleccionar Oficina para configurar</label>
-                            <select id="select-oficina-config" onchange="cargarPersonalConfig()" class="w-full md:w-1/2 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-secondary outline-none">
-                                <option value="" disabled selected>Seleccione una oficina primero...</option>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Seleccionar Oficina</label>
+                            <select id="select-oficina-config" onchange="cargarPersonalConfig()" class="w-full sm:w-1/2 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-secondary outline-none">
+                                <option value="" disabled selected>Seleccione...</option>
                             </select>
                         </div>
 
                         <div id="panel-personal-config" class="hidden">
-                            <div class="bg-blue-50 border border-blue-100 rounded-lg p-4 mb-6 flex flex-col md:flex-row gap-4 items-end">
-                                <div class="w-full md:w-1/5">
+                            <!-- Formulario Ingreso -->
+                            <div class="bg-blue-50/50 border border-blue-100 rounded-lg p-4 mb-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 items-end">
+                                <div>
                                     <label class="block text-xs font-semibold text-gray-600 mb-1">Categoría</label>
-                                    <select id="config-categoria" onchange="actualizarGradosConfig()" class="w-full p-2 border border-gray-300 rounded focus:ring-1 focus:ring-secondary outline-none bg-white text-xs font-bold">
+                                    <select id="config-categoria" onchange="actualizarGradosConfig()" class="w-full p-2 border border-gray-300 rounded focus:ring-1 focus:ring-secondary outline-none bg-white text-sm font-bold">
                                         <option value="OF">OF</option>
                                         <option value="SUB/MNE">SUB/MNE</option>
                                         <option value="PATR">PATR</option>
@@ -164,33 +189,35 @@
                                         <option value="NU">NU</option>
                                     </select>
                                 </div>
-                                <div class="w-full md:w-1/5">
+                                <div>
                                     <label class="block text-xs font-semibold text-gray-600 mb-1">Grado</label>
-                                    <select id="config-grado" class="w-full p-2 border border-gray-300 rounded focus:ring-1 focus:ring-secondary outline-none bg-white text-xs font-bold">
-                                    </select>
+                                    <select id="config-grado" class="w-full p-2 border border-gray-300 rounded focus:ring-1 focus:ring-secondary outline-none bg-white text-sm font-bold"></select>
                                 </div>
-                                <div class="w-full md:flex-1">
+                                <div class="lg:col-span-1">
                                     <label class="block text-xs font-semibold text-gray-600 mb-1">Apellidos</label>
-                                    <input type="text" id="config-apellidos" class="w-full p-2 border border-gray-300 rounded focus:ring-1 focus:ring-secondary outline-none uppercase" placeholder="Ej. PÉREZ GÓMEZ">
+                                    <input type="text" id="config-apellidos" class="w-full p-2 border border-gray-300 rounded focus:ring-1 focus:ring-secondary outline-none uppercase text-sm">
                                 </div>
-                                <div class="w-full md:flex-1">
+                                <div class="lg:col-span-1">
                                     <label class="block text-xs font-semibold text-gray-600 mb-1">Nombres</label>
-                                    <input type="text" id="config-nombres" class="w-full p-2 border border-gray-300 rounded focus:ring-1 focus:ring-secondary outline-none capitalize" placeholder="Ej. Juan Carlos">
+                                    <input type="text" id="config-nombres" class="w-full p-2 border border-gray-300 rounded focus:ring-1 focus:ring-secondary outline-none capitalize text-sm">
                                 </div>
-                                <button onclick="agregarPersonaAOficina()" class="bg-accent hover:bg-emerald-600 text-white font-bold py-2 px-4 rounded w-full md:w-auto h-[42px] flex items-center justify-center gap-1 shrink-0">
-                                    <i class="ph ph-user-plus"></i> Añadir
-                                </button>
+                                <div class="lg:col-span-1 mt-2 sm:mt-0">
+                                    <button onclick="agregarPersonaAOficina()" class="bg-accent hover:bg-emerald-600 text-white font-bold py-2 px-4 rounded w-full h-[38px] flex items-center justify-center gap-1">
+                                        <i class="ph ph-user-plus text-lg"></i> Añadir
+                                    </button>
+                                </div>
                             </div>
 
-                            <div class="overflow-x-auto border border-gray-200 rounded-lg">
-                                <table class="w-full text-left border-collapse">
+                            <!-- Tabla Responsive -->
+                            <div class="overflow-x-auto border border-gray-200 rounded-lg shadow-sm">
+                                <table class="w-full text-left border-collapse min-w-[600px]">
                                     <thead class="bg-gray-100 text-gray-600 text-xs uppercase tracking-wider">
                                         <tr>
-                                            <th class="p-3 font-semibold w-[15%]">Categoría</th>
-                                            <th class="p-3 font-semibold w-[15%]">Grado</th>
-                                            <th class="p-3 font-semibold w-[30%]">Apellidos</th>
-                                            <th class="p-3 font-semibold w-[30%]">Nombres</th>
-                                            <th class="p-3 font-semibold w-12 text-center">Acción</th>
+                                            <th class="p-3 font-semibold">Categoría</th>
+                                            <th class="p-3 font-semibold">Grado</th>
+                                            <th class="p-3 font-semibold">Apellidos</th>
+                                            <th class="p-3 font-semibold">Nombres</th>
+                                            <th class="p-3 font-semibold text-center">Acción</th>
                                         </tr>
                                     </thead>
                                     <tbody id="tbody-config-personal" class="divide-y divide-gray-200 text-sm">
@@ -204,43 +231,42 @@
 
             <!-- VISTA 1: PORTAL DE JEFES DE OFICINA -->
             <div id="view-jefe" class="max-w-5xl mx-auto fade-in block">
-                <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-                    <div class="bg-gray-50 px-6 py-4 border-b border-gray-200 flex justify-between items-center flex-wrap gap-2">
-                        <h2 class="text-xl font-bold text-dark flex items-center gap-2">
-                            <i class="ph ph-clipboard-text text-secondary text-2xl"></i> Reporte Diario de Novedades
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden mb-6">
+                    <div class="bg-gray-50 px-4 sm:px-6 py-4 border-b border-gray-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                        <h2 class="text-lg sm:text-xl font-bold text-dark flex items-center gap-2">
+                            <i class="ph ph-clipboard-text text-secondary text-2xl"></i> Reporte Diario
                         </h2>
-                        <span id="current-date-display" class="text-sm font-medium text-gray-500 bg-gray-200 px-3 py-1 rounded-full"></span>
+                        <span id="current-date-display" class="text-xs sm:text-sm font-medium text-gray-500 bg-gray-200 px-3 py-1 rounded-full whitespace-nowrap"></span>
                     </div>
 
-                    <div class="p-6">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <div class="p-4 sm:p-6">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-6">
                             <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-2">Seleccione su Oficina</label>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Seleccione Oficina</label>
                                 <select id="select-oficina-reporte" onchange="cargarPersonalParaReporte()" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-secondary outline-none transition-all">
-                                    <option value="" disabled selected>Seleccione su oficina...</option>
+                                    <option value="" disabled selected>Seleccione...</option>
                                 </select>
                             </div>
                             <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-2">Fecha del Reporte</label>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Fecha</label>
                                 <input type="date" id="input-fecha" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-secondary outline-none text-gray-700">
                             </div>
                         </div>
 
-                        <div id="mensaje-sin-personal" class="hidden bg-yellow-50 text-yellow-700 p-4 rounded-lg border border-yellow-200 mb-4 flex items-center gap-3">
-                            <i class="ph-fill ph-warning-circle text-2xl"></i>
-                            <p>Esta oficina no tiene personal asignado. Ve a la pestaña de <b>Configuración</b> para agregar el personal base.</p>
+                        <div id="mensaje-sin-personal" class="hidden bg-yellow-50 text-yellow-700 p-4 rounded-lg border border-yellow-200 mb-4 flex items-center gap-3 text-sm">
+                            <i class="ph-fill ph-warning-circle text-2xl shrink-0"></i>
+                            <p>Esta oficina no tiene personal asignado. Configure la base primero.</p>
                         </div>
 
-                        <!-- Tabla de Personal Nominal (Con Campo Observaciones) -->
-                        <div id="contenedor-tabla-reporte" class="hidden overflow-x-auto border border-gray-200 rounded-lg mb-4">
-                            <table class="w-full text-left border-collapse" id="tabla-personal">
-                                <thead class="bg-gray-50 text-gray-600 text-sm uppercase tracking-wider">
+                        <!-- Tabla Responsive -->
+                        <div id="contenedor-tabla-reporte" class="hidden overflow-x-auto border border-gray-200 rounded-lg mb-4 shadow-sm">
+                            <table class="w-full text-left border-collapse min-w-[700px]" id="tabla-personal">
+                                <thead class="bg-gray-50 text-gray-600 text-xs uppercase tracking-wider">
                                     <tr>
-                                        <th class="p-3 font-semibold w-[10%]">Cat.</th>
-                                        <th class="p-3 font-semibold w-[10%]">Grado</th>
-                                        <th class="p-3 font-semibold w-[25%]">Apellidos y Nombres</th>
-                                        <th class="p-3 font-semibold w-[25%]">Situación / Novedad</th>
-                                        <th class="p-3 font-semibold w-[30%]">Observaciones</th>
+                                        <th class="p-3 font-semibold">Grado</th>
+                                        <th class="p-3 font-semibold">Apellidos y Nombres</th>
+                                        <th class="p-3 font-semibold">Situación / Novedad</th>
+                                        <th class="p-3 font-semibold w-1/3">Observaciones</th>
                                     </tr>
                                 </thead>
                                 <tbody id="tbody-personal-reporte" class="divide-y divide-gray-200">
@@ -249,8 +275,8 @@
                         </div>
 
                         <div class="flex justify-end items-center mt-6">
-                            <button id="btn-enviar-reporte" onclick="enviarReporte()" class="hidden bg-accent hover:bg-emerald-600 text-white font-bold py-3 px-8 rounded-lg shadow-md transition-transform transform hover:-translate-y-0.5 flex items-center gap-2">
-                                <i class="ph ph-paper-plane-tilt text-xl"></i> Guardar y Enviar Reporte
+                            <button id="btn-enviar-reporte" onclick="enviarReporte()" class="hidden w-full sm:w-auto bg-accent hover:bg-emerald-600 text-white font-bold py-3 px-8 rounded-lg shadow-md transition-transform transform hover:-translate-y-0.5 flex items-center justify-center gap-2">
+                                <i class="ph ph-paper-plane-tilt text-xl"></i> Enviar Reporte
                             </button>
                         </div>
                     </div>
@@ -260,70 +286,75 @@
             <!-- VISTA 2: DASHBOARD DEL JEFE SUPERIOR -->
             <div id="view-superior" class="max-w-7xl mx-auto fade-in hidden">
                 
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-6 gap-4">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-6 gap-4">
                     <div>
-                        <h1 class="text-2xl font-bold text-dark">Panel de Control General DEVAL</h1>
-                        <p class="text-gray-500">Vista en tiempo real del personal disponible y novedades.</p>
+                        <h1 class="text-xl sm:text-2xl font-bold text-dark">Panel de Control DEVAL</h1>
+                        <p class="text-sm text-gray-500">Vista en tiempo real de disponibilidad y novedades.</p>
                     </div>
-                    <div class="bg-white px-4 py-2 rounded-lg shadow-sm border border-gray-200 flex items-center gap-3 w-full sm:w-auto">
-                        <label class="text-sm font-semibold text-gray-600 whitespace-nowrap">Filtrar fecha:</label>
-                        <input type="date" id="filtro-fecha-dashboard" class="border-none outline-none text-gray-800 font-medium cursor-pointer w-full" onchange="actualizarDashboard()">
+                    <div class="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+                        <div class="bg-white px-4 py-2 rounded-lg shadow-sm border border-gray-200 flex items-center justify-between gap-3 w-full sm:w-auto">
+                            <label class="text-xs sm:text-sm font-semibold text-gray-600 whitespace-nowrap">Filtrar fecha:</label>
+                            <input type="date" id="filtro-fecha-dashboard" class="border-none outline-none text-gray-800 font-medium cursor-pointer text-sm" onchange="actualizarDashboard()">
+                        </div>
+                        <!-- NUEVO BOTÓN: DESCARGAR EXCEL -->
+                        <button onclick="descargarExcel()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg shadow-sm font-bold flex items-center justify-center gap-2 transition-colors w-full sm:w-auto text-sm">
+                            <i class="ph ph-file-xls text-xl"></i> Excel
+                        </button>
                     </div>
                 </div>
 
-                <!-- Tarjetas de Resumen Modificadas -->
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-                    
-                    <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100 flex items-center gap-4 border-l-4 border-l-primary">
-                        <div class="bg-blue-100 p-3 rounded-full text-primary"><i class="ph ph-buildings text-2xl"></i></div>
+                <!-- Tarjetas -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                    <div class="bg-white p-4 sm:p-5 rounded-xl shadow-sm border border-gray-100 flex items-center gap-3 border-l-4 border-l-primary">
+                        <div class="bg-blue-100 p-2 sm:p-3 rounded-full text-primary shrink-0"><i class="ph ph-buildings text-xl sm:text-2xl"></i></div>
                         <div>
-                            <p class="text-[11px] text-gray-500 font-bold uppercase">Fuerza Efectiva (Asignada)</p>
-                            <h3 class="text-xl font-bold text-gray-800" id="dash-fuerza-efectiva">0 - 0 - 0 - 0 - 0</h3>
-                            <p class="text-[10px] text-gray-400 mt-1 font-mono">OF - SUB - PT - AUX - NU</p>
+                            <p class="text-[10px] sm:text-[11px] text-gray-500 font-bold uppercase">Fuerza Efectiva</p>
+                            <h3 class="text-lg sm:text-xl font-bold text-gray-800" id="dash-fuerza-efectiva">0-0-0-0-0</h3>
+                            <p class="text-[9px] sm:text-[10px] text-gray-400 mt-1 font-mono">OF-SUB-PT-AUX-NU</p>
                         </div>
                     </div>
                     
-                    <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100 flex items-center gap-4 border-l-4 border-l-blue-400">
-                        <div class="bg-blue-50 p-3 rounded-full text-blue-500"><i class="ph ph-list-numbers text-2xl"></i></div>
+                    <div class="bg-white p-4 sm:p-5 rounded-xl shadow-sm border border-gray-100 flex items-center gap-3 border-l-4 border-l-blue-400">
+                        <div class="bg-blue-50 p-2 sm:p-3 rounded-full text-blue-500 shrink-0"><i class="ph ph-list-numbers text-xl sm:text-2xl"></i></div>
                         <div>
-                            <p class="text-[11px] text-gray-500 font-bold uppercase">Fuerza Disponible (Desgl.)</p>
-                            <h3 class="text-xl font-bold text-gray-800" id="dash-fuerza-disponible">0 - 0 - 0 - 0 - 0</h3>
-                            <p class="text-[10px] text-gray-400 mt-1 font-mono text-blue-500 font-semibold">Sin Novedad (Laborando)</p>
+                            <p class="text-[10px] sm:text-[11px] text-gray-500 font-bold uppercase">F. Disponible (Desgl.)</p>
+                            <h3 class="text-lg sm:text-xl font-bold text-gray-800" id="dash-fuerza-disponible">0-0-0-0-0</h3>
+                            <p class="text-[9px] sm:text-[10px] text-gray-400 mt-1 font-mono text-blue-500">En formación</p>
                         </div>
                     </div>
                     
-                    <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100 flex items-center gap-4 border-l-4 border-l-accent">
-                        <div class="bg-green-100 p-3 rounded-full text-accent"><i class="ph-fill ph-users-three text-2xl"></i></div>
+                    <div class="bg-white p-4 sm:p-5 rounded-xl shadow-sm border border-gray-100 flex items-center gap-3 border-l-4 border-l-accent">
+                        <div class="bg-green-100 p-2 sm:p-3 rounded-full text-accent shrink-0"><i class="ph-fill ph-users-three text-xl sm:text-2xl"></i></div>
                         <div>
-                            <p class="text-[11px] text-gray-500 font-bold uppercase">Total Disponibles</p>
-                            <h3 class="text-xl font-bold text-gray-800" id="dash-total-disponible">0</h3>
-                            <p class="text-[10px] text-gray-400 mt-1">Sin importar categoría</p>
+                            <p class="text-[10px] sm:text-[11px] text-gray-500 font-bold uppercase">Total Disponibles</p>
+                            <h3 class="text-lg sm:text-xl font-bold text-gray-800" id="dash-total-disponible">0</h3>
+                            <p class="text-[9px] sm:text-[10px] text-gray-400 mt-1">Sin importar categoría</p>
                         </div>
                     </div>
                     
-                    <div onclick="abrirModalNovedades('TODAS')" class="bg-white p-5 rounded-xl shadow-sm border border-gray-100 flex items-center gap-4 border-l-4 border-l-red-500 cursor-pointer hover:bg-red-50 transition-colors group">
-                        <div class="bg-red-100 p-3 rounded-full text-red-500 group-hover:scale-110 transition-transform"><i class="ph-fill ph-warning-circle text-2xl"></i></div>
+                    <div onclick="abrirModalNovedades('TODAS')" class="bg-white p-4 sm:p-5 rounded-xl shadow-sm border border-gray-100 flex items-center gap-3 border-l-4 border-l-red-500 cursor-pointer hover:bg-red-50 transition-colors group">
+                        <div class="bg-red-100 p-2 sm:p-3 rounded-full text-red-500 shrink-0 group-hover:scale-110 transition-transform"><i class="ph-fill ph-warning-circle text-xl sm:text-2xl"></i></div>
                         <div>
-                            <p class="text-[11px] text-gray-500 font-bold uppercase">Total Novedades</p>
-                            <h3 class="text-xl font-bold text-gray-800" id="dash-total-novedades">0</h3>
-                            <p class="text-[10px] text-red-400 mt-1 font-semibold flex items-center gap-1">Ver Detalle <i class="ph ph-arrow-right"></i></p>
+                            <p class="text-[10px] sm:text-[11px] text-gray-500 font-bold uppercase">Total Novedades</p>
+                            <h3 class="text-lg sm:text-xl font-bold text-gray-800" id="dash-total-novedades">0</h3>
+                            <p class="text-[9px] sm:text-[10px] text-red-400 mt-1 font-semibold flex items-center gap-1">Ver Detalle <i class="ph ph-arrow-right"></i></p>
                         </div>
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
                     <div class="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-                        <div class="bg-gray-50 px-6 py-4 border-b border-gray-200">
-                            <h3 class="font-bold text-gray-800">Estado de Reportes por Oficina</h3>
+                        <div class="bg-gray-50 px-4 sm:px-6 py-4 border-b border-gray-200">
+                            <h3 class="font-bold text-gray-800 text-sm sm:text-base">Estado de Reportes por Oficina</h3>
                         </div>
                         <div class="overflow-x-auto">
                             <table class="w-full text-left border-collapse min-w-[500px]">
                                 <thead class="bg-white border-b text-gray-500 text-xs uppercase tracking-wider">
                                     <tr>
-                                        <th class="px-6 py-3 font-semibold">Oficina</th>
-                                        <th class="px-6 py-3 font-semibold text-center">Estado</th>
-                                        <th class="px-6 py-3 font-semibold text-center text-blue-600">Disponibles (OF-SUB-PT-AUX-NU)</th>
-                                        <th class="px-6 py-3 font-semibold text-center">Novedades</th>
+                                        <th class="px-4 py-3 font-semibold">Oficina</th>
+                                        <th class="px-4 py-3 font-semibold text-center">Estado</th>
+                                        <th class="px-4 py-3 font-semibold text-center text-blue-600">Disponibles</th>
+                                        <th class="px-4 py-3 font-semibold text-center">Novedades</th>
                                     </tr>
                                 </thead>
                                 <tbody id="tbody-estado-oficinas" class="divide-y divide-gray-100 text-sm">
@@ -333,16 +364,20 @@
                     </div>
 
                     <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden flex flex-col">
-                        <div class="bg-gray-50 px-6 py-4 border-b border-gray-200">
-                            <h3 class="font-bold text-gray-800">Consolidado Novedades</h3>
-                            <p class="text-[10px] text-gray-500">Clic en una novedad para ver el personal</p>
+                        <div class="bg-gray-50 px-4 sm:px-6 py-4 border-b border-gray-200">
+                            <h3 class="font-bold text-gray-800 text-sm sm:text-base">Consolidado Novedades</h3>
+                            <p class="text-[10px] text-gray-500">Clic en novedad para detalle</p>
                         </div>
-                        <div class="p-6 flex-1">
-                            <ul id="lista-novedades" class="space-y-4">
+                        <div class="p-4 sm:p-6 flex-1 max-h-[400px] overflow-y-auto">
+                            <ul id="lista-novedades" class="space-y-3">
                             </ul>
                         </div>
                     </div>
                 </div>
+            </div>
+            
+            <div class="text-center text-xs text-gray-400 pb-4">
+                &copy; 2026 DEVAL - Políticas de Copyright. <br class="sm:hidden"><span class="font-bold">Powered by GUTIC DEVAL</span>
             </div>
         </main>
     </div>
@@ -351,14 +386,14 @@
          MODAL EMERGENTE: DETALLE DE NOVEDADES
          ========================================== -->
     <div id="modal-novedades" class="fixed inset-0 bg-gray-900 bg-opacity-60 z-50 hidden flex items-center justify-center backdrop-blur-sm p-4">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-5xl overflow-hidden fade-in flex flex-col max-h-full">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-5xl overflow-hidden fade-in flex flex-col max-h-[90vh]">
             
-            <div class="bg-gray-50 px-6 py-4 border-b border-gray-200 flex justify-between items-center shrink-0">
+            <div class="bg-gray-50 px-4 sm:px-6 py-4 border-b border-gray-200 flex justify-between items-center shrink-0">
                 <div class="flex items-center gap-3">
-                    <div class="bg-red-100 text-red-500 p-2 rounded-lg"><i class="ph-fill ph-users-three text-xl"></i></div>
+                    <div class="bg-red-100 text-red-500 p-2 rounded-lg shrink-0"><i class="ph-fill ph-users-three text-xl"></i></div>
                     <div>
-                        <h3 class="font-bold text-lg text-gray-800" id="modal-titulo">Personal con Novedad</h3>
-                        <p class="text-xs text-gray-500 font-mono" id="modal-subtitulo-fecha"></p>
+                        <h3 class="font-bold text-base sm:text-lg text-gray-800" id="modal-titulo">Personal con Novedad</h3>
+                        <p class="text-[10px] sm:text-xs text-gray-500 font-mono" id="modal-subtitulo-fecha"></p>
                     </div>
                 </div>
                 <button onclick="cerrarModalNovedades()" class="text-gray-400 hover:text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-full p-2 transition-colors">
@@ -367,14 +402,14 @@
             </div>
             
             <div class="p-0 overflow-y-auto flex-1">
-                <table class="w-full text-left border-collapse text-sm">
-                    <thead class="bg-white sticky top-0 border-b border-gray-200 shadow-sm">
-                        <tr class="text-gray-500 uppercase tracking-wider text-xs">
-                            <th class="px-6 py-3 font-semibold w-[15%]">Oficina</th>
-                            <th class="px-6 py-3 font-semibold w-[10%]">Grado</th>
-                            <th class="px-6 py-3 font-semibold w-[25%]">Apellidos y Nombres</th>
-                            <th class="px-6 py-3 font-semibold w-[20%]">Tipo Novedad</th>
-                            <th class="px-6 py-3 font-semibold w-[30%]">Observaciones</th>
+                <table class="w-full text-left border-collapse text-xs sm:text-sm min-w-[600px]">
+                    <thead class="bg-white sticky top-0 border-b border-gray-200 shadow-sm z-10">
+                        <tr class="text-gray-500 uppercase tracking-wider">
+                            <th class="px-4 py-3 font-semibold">Oficina</th>
+                            <th class="px-4 py-3 font-semibold">Grado</th>
+                            <th class="px-4 py-3 font-semibold">Apellidos y Nombres</th>
+                            <th class="px-4 py-3 font-semibold">Novedad</th>
+                            <th class="px-4 py-3 font-semibold">Observaciones</th>
                         </tr>
                     </thead>
                     <tbody id="tbody-modal-novedades" class="divide-y divide-gray-100">
@@ -382,8 +417,8 @@
                 </table>
             </div>
             
-            <div class="bg-gray-50 px-6 py-3 border-t border-gray-200 text-right shrink-0">
-                <button onclick="cerrarModalNovedades()" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-2 px-6 rounded-lg transition-colors">
+            <div class="bg-gray-50 px-4 sm:px-6 py-3 border-t border-gray-200 text-right shrink-0">
+                <button onclick="cerrarModalNovedades()" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-2 px-6 rounded-lg transition-colors text-sm">
                     Cerrar
                 </button>
             </div>
@@ -391,9 +426,9 @@
     </div>
 
     <!-- UI Modal/Toast -->
-    <div id="toast" class="fixed bottom-5 right-5 bg-gray-800 text-white px-6 py-3 rounded-lg shadow-lg transform transition-all duration-300 translate-y-20 opacity-0 flex items-center gap-3 z-[60]">
-        <i id="toast-icon" class="text-2xl"></i>
-        <span id="toast-message" class="font-medium"></span>
+    <div id="toast" class="fixed bottom-5 right-5 text-white px-4 sm:px-6 py-3 rounded-lg shadow-lg transform transition-all duration-500 translate-y-20 opacity-0 flex items-center gap-3 z-[60] text-sm font-medium">
+        <i id="toast-icon" class="text-xl sm:text-2xl"></i>
+        <span id="toast-message"></span>
     </div>
 
     <script>
@@ -412,9 +447,11 @@
             'NU': ['NU']
         };
 
+        // Reglas ajustadas: "0" es Stand by (reseteo diario). "En formación" reemplaza "Sin Novedad". "En servicio" ahora suma a novedades (aisla: true)
         const opcionesNovedad = [
-            { val: 'Laborando', text: '✅ Sin Novedad (Laborando)', aisla: false },
-            { val: 'En servicio', text: '✅ En servicio', aisla: false },
+            { val: '0', text: '⏳ Stand by', aisla: false },
+            { val: 'En formacion', text: '✅ En formación', aisla: false },
+            { val: 'En servicio', text: '🚓 En servicio', aisla: true }, 
             { val: 'Vacaciones', text: '🏖️ Vacaciones', aisla: true },
             { val: 'Permiso', text: '📄 Permiso', aisla: true },
             { val: 'Cita Médica', text: '🏥 Cita Médica', aisla: true },
@@ -487,10 +524,12 @@
                             const strFecha = typeof fecha === 'string' && fecha.includes('T') ? fecha.split('T')[0] : fecha;
                             let reporteExistente = reportesAlmacenados.find(r => r.oficina === oficina && r.fecha === strFecha);
                             
+                            // Determinar si es ausente basado en las reglas actuales
+                            const optDef = opcionesNovedad.find(o => o.val === novedad);
+                            const ausente = optDef ? optDef.aisla : false;
+
                             const personaReporte = { 
-                                categoria, grado, apellidos, nombres, novedad, 
-                                ausente: !['Laborando', 'En servicio'].includes(novedad), 
-                                observaciones 
+                                categoria, grado, apellidos, nombres, novedad, ausente, observaciones 
                             };
 
                             if (reporteExistente) {
@@ -507,6 +546,7 @@
                 
                 document.getElementById('view-login').classList.add('hidden');
                 document.getElementById('app-layout').classList.remove('hidden');
+                document.getElementById('app-layout').classList.add('flex');
                 switchTab('jefe'); 
                 mostrarToast('Datos sincronizados', 'success');
             })
@@ -515,6 +555,7 @@
                 mostrarToast('Error de conexión. Modo local activo.', 'error');
                 document.getElementById('view-login').classList.add('hidden');
                 document.getElementById('app-layout').classList.remove('hidden');
+                document.getElementById('app-layout').classList.add('flex');
                 switchTab('jefe');
             })
             .finally(() => {
@@ -524,9 +565,6 @@
         }
 
         function cerrarSesion() {
-            document.getElementById('app-layout').classList.add('hidden');
-            document.getElementById('login-spinner').classList.add('hidden');
-            document.getElementById('view-login').classList.remove('hidden');
             window.location.reload();
         }
 
@@ -535,7 +573,7 @@
             const selectConfig = document.getElementById('select-oficina-config');
             const selectReporte = document.getElementById('select-oficina-reporte');
             
-            let optionsHTML = `<option value="" disabled selected>Seleccione una oficina...</option>`;
+            let optionsHTML = `<option value="" disabled selected>Seleccione...</option>`;
             listaOficinas.forEach(of => {
                 optionsHTML += `<option value="${of}">${of}</option>`;
             });
@@ -555,12 +593,12 @@
             const nombreOficina = input.value.trim().toUpperCase();
 
             if (!nombreOficina) {
-                mostrarToast('Escriba el nombre de la oficina', 'error');
+                mostrarToast('Escriba el nombre', 'error');
                 return;
             }
 
             if (listaOficinas.includes(nombreOficina)) {
-                mostrarToast('Esta oficina ya existe', 'error');
+                mostrarToast('La oficina ya existe', 'error');
                 return;
             }
 
@@ -568,8 +606,11 @@
             personalBase[nombreOficina] = [];
 
             actualizarDropdownsOficinas();
+            document.getElementById('select-oficina-config').value = nombreOficina;
+            cargarPersonalConfig();
+
             input.value = '';
-            mostrarToast('Oficina creada localmente', 'success');
+            mostrarToast('Oficina creada', 'success');
         }
 
         function actualizarGradosConfig() {
@@ -595,19 +636,20 @@
 
             const personas = personalBase[of] || [];
             if (personas.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-gray-400 italic">No hay personal asignado en esta oficina.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-gray-400 italic">No hay personal asignado.</td></tr>`;
                 return;
             }
 
             personas.forEach((p, idx) => {
                 tbody.innerHTML += `
                     <tr class="hover:bg-gray-50">
-                        <td class="p-3 font-bold text-gray-600">${p.categoria}</td>
-                        <td class="p-3 font-semibold text-primary">${p.grado}</td>
-                        <td class="p-3 uppercase">${p.apellidos}</td>
-                        <td class="p-3">${p.nombres}</td>
-                        <td class="p-3 text-center">
-                            <button onclick="eliminarPersonaDeOficina('${of}', ${idx})" class="text-red-500 hover:text-red-700 p-1"><i class="ph ph-trash text-lg"></i></button>
+                        <td class="p-3 font-bold text-gray-600 whitespace-nowrap">${p.categoria}</td>
+                        <td class="p-3 font-semibold text-primary whitespace-nowrap">${p.grado}</td>
+                        <td class="p-3 uppercase whitespace-nowrap">${p.apellidos}</td>
+                        <td class="p-3 whitespace-nowrap">${p.nombres}</td>
+                        <td class="p-3 text-center whitespace-nowrap">
+                            <button onclick="editarPersonaDeOficina('${of}', ${idx})" class="text-blue-500 hover:text-blue-700 p-1 mr-2" title="Editar"><i class="ph ph-pencil-simple text-lg"></i></button>
+                            <button onclick="eliminarPersonaDeOficina('${of}', ${idx})" class="text-red-500 hover:text-red-700 p-1" title="Eliminar"><i class="ph ph-trash text-lg"></i></button>
                         </td>
                     </tr>
                 `;
@@ -639,11 +681,26 @@
             document.getElementById('config-nombres').value = '';
             
             cargarPersonalConfig();
-            mostrarToast('Funcionario añadido', 'success');
+            mostrarToast('Funcionario guardado', 'success');
+        }
+
+        // Función para Editar Personal
+        function editarPersonaDeOficina(oficina, idx) {
+            const persona = personalBase[oficina][idx];
+            document.getElementById('config-categoria').value = persona.categoria;
+            actualizarGradosConfig();
+            document.getElementById('config-grado').value = persona.grado;
+            document.getElementById('config-apellidos').value = persona.apellidos;
+            document.getElementById('config-nombres').value = persona.nombres;
+            
+            // Retirar de la lista para que al añadir se guarde el actualizado
+            personalBase[oficina].splice(idx, 1);
+            cargarPersonalConfig();
+            mostrarToast('Datos listos para editar. Presione Añadir al terminar.', 'info');
         }
 
         function eliminarPersonaDeOficina(oficina, idx) {
-            if (confirm('¿Está seguro de eliminar a este funcionario de la base nominal?')) {
+            if (confirm('¿Eliminar funcionario de la base nominal?')) {
                 personalBase[oficina].splice(idx, 1);
                 cargarPersonalConfig();
                 mostrarToast('Funcionario eliminado', 'success');
@@ -676,14 +733,14 @@
 
             const reporteExistente = reportesAlmacenados.find(r => r.oficina === of && r.fecha === fecha);
 
-            personalNominal.forEach((p, idx) => {
-                let novedadActual = 'Laborando';
+            personalNominal.forEach((p) => {
+                let novedadActual = '0'; // Stand by por defecto si es un día nuevo
                 let obsActual = '';
 
                 if (reporteExistente) {
                     const buscado = reporteExistente.personal.find(pers => pers.apellidos === p.apellidos && pers.nombres === p.nombres);
                     if (buscado) {
-                        novedadActual = buscado.novedad || 'Laborando';
+                        novedadActual = buscado.novedad || '0';
                         obsActual = buscado.observaciones || '';
                     }
                 }
@@ -694,20 +751,35 @@
                 });
 
                 tbody.innerHTML += `
-                    <tr class="hover:bg-gray-50" data-cat="${p.categoria}" data-grado="${p.grado}" data-apellidos="${p.apellidos}" data-nombres="${p.nombres}">
-                        <td class="p-3 font-bold text-gray-500 text-xs">${p.categoria}</td>
-                        <td class="p-3 font-semibold text-primary text-xs">${p.grado}</td>
-                        <td class="p-3 font-medium text-gray-800 text-sm uppercase">${p.apellidos} ${p.nombres}</td>
-                        <td class="p-2">
-                            <select class="w-full p-2 border border-gray-300 rounded text-xs font-semibold focus:ring-1 focus:ring-secondary outline-none select-novedad-fila bg-white">
+                    <tr class="hover:bg-gray-50 border-b border-gray-100" data-cat="${p.categoria}" data-grado="${p.grado}" data-apellidos="${p.apellidos}" data-nombres="${p.nombres}">
+                        <td class="p-2 sm:p-3 font-semibold text-primary text-xs sm:text-sm whitespace-nowrap">
+                            <span class="block text-[10px] text-gray-400 leading-none">${p.categoria}</span>
+                            ${p.grado}
+                        </td>
+                        <td class="p-2 sm:p-3 font-medium text-gray-800 text-xs sm:text-sm uppercase min-w-[150px]">${p.apellidos} ${p.nombres}</td>
+                        <td class="p-2 min-w-[140px]">
+                            <select class="w-full p-2 border ${novedadActual === '0' ? 'border-orange-300 bg-orange-50' : 'border-gray-300 bg-white'} rounded text-xs font-semibold focus:ring-1 focus:ring-secondary outline-none select-novedad-fila transition-colors">
                                 ${opcionesHTML}
                             </select>
                         </td>
                         <td class="p-2">
-                            <input type="text" value="${obsActual}" class="w-full p-2 border border-gray-300 rounded text-xs focus:ring-1 focus:ring-secondary outline-none input-obs-fila" placeholder="Detalle la novedad aquí...">
+                            <input type="text" value="${obsActual}" class="w-full p-2 border border-gray-300 rounded text-xs focus:ring-1 focus:ring-secondary outline-none input-obs-fila" placeholder="Nota (opcional)">
                         </td>
                     </tr>
                 `;
+            });
+            
+            // Colores dinámicos al cambiar el select
+            document.querySelectorAll('.select-novedad-fila').forEach(sel => {
+                sel.addEventListener('change', function() {
+                    if(this.value === '0') {
+                        this.classList.add('border-orange-300', 'bg-orange-50');
+                        this.classList.remove('border-gray-300', 'bg-white');
+                    } else {
+                        this.classList.remove('border-orange-300', 'bg-orange-50');
+                        this.classList.add('border-gray-300', 'bg-white');
+                    }
+                });
             });
         }
 
@@ -722,28 +794,28 @@
             }
 
             document.getElementById('btn-enviar-reporte').disabled = true;
-            mostrarToast('Enviando reporte a la nube...', 'info');
+            mostrarToast('Guardando en nube...', 'info');
 
             let personalReportado = [];
             filas.forEach(f => {
                 const novedad = f.querySelector('.select-novedad-fila').value;
                 const observaciones = f.querySelector('.input-obs-fila').value.trim();
+                
+                const optDef = opcionesNovedad.find(o => o.val === novedad);
+                const ausente = optDef ? optDef.aisla : false;
+
                 personalReportado.push({
                     categoria: f.getAttribute('data-cat'),
                     grado: f.getAttribute('data-grado'),
                     apellidos: f.getAttribute('data-apellidos'),
                     nombres: f.getAttribute('data-nombres'),
                     novedad: novedad,
-                    ausente: !['Laborando', 'En servicio'].includes(novedad),
+                    ausente: ausente,
                     observaciones: observaciones
                 });
             });
 
-            const datosAEnviar = {
-                fecha: fecha,
-                oficina: of,
-                personal: personalReportado
-            };
+            const datosAEnviar = { fecha: fecha, oficina: of, personal: personalReportado };
 
             fetch(URL_SECRETA_GOOGLE, {
                 method: 'POST',
@@ -759,12 +831,12 @@
                     reportesAlmacenados.push(datosAEnviar);
                 }
                 
-                mostrarToast('Reporte enviado y guardado con éxito', 'success');
+                mostrarToast('Reporte guardado con éxito', 'success');
                 actualizarDashboard();
             })
             .catch(err => {
                 console.error(err);
-                mostrarToast('Error de conexión al enviar.', 'error');
+                mostrarToast('Error de conexión', 'error');
             })
             .finally(() => {
                 document.getElementById('btn-enviar-reporte').disabled = false;
@@ -784,7 +856,7 @@
             });
 
             document.getElementById('dash-fuerza-efectiva').textContent = 
-                `${fuerzaNominal['OF']} - ${fuerzaNominal['SUB/MNE']} - ${fuerzaNominal['PATR']} - ${fuerzaNominal['AUX']} - ${fuerzaNominal['NU']}`;
+                `${fuerzaNominal['OF']}-${fuerzaNominal['SUB/MNE']}-${fuerzaNominal['PATR']}-${fuerzaNominal['AUX']}-${fuerzaNominal['NU']}`;
 
             let disponiblesDesglose = { OF:0, 'SUB/MNE':0, PATR:0, AUX:0, NU:0 };
             let totalDisponibles = 0;
@@ -795,6 +867,9 @@
                 const rep = reportesAlmacenados.find(r => r.oficina === of && r.fecha === fechaFiltro);
                 if (rep) {
                     rep.personal.forEach(p => {
+                        // El personal con estado '0' (Stand by) no suma ni como disponible ni como novedad para obligar al reporte.
+                        if (p.novedad === '0') return; 
+                        
                         if (!p.ausente) {
                             if (disponiblesDesglose[p.categoria] !== undefined) disponiblesDesglose[p.categoria]++;
                             totalDisponibles++;
@@ -807,7 +882,7 @@
             });
 
             document.getElementById('dash-fuerza-disponible').textContent = 
-                `${disponiblesDesglose['OF']} - ${disponiblesDesglose['SUB/MNE']} - ${disponiblesDesglose['PATR']} - ${disponiblesDesglose['AUX']} - ${disponiblesDesglose['NU']}`;
+                `${disponiblesDesglose['OF']}-${disponiblesDesglose['SUB/MNE']}-${disponiblesDesglose['PATR']}-${disponiblesDesglose['AUX']}-${disponiblesDesglose['NU']}`;
             document.getElementById('dash-total-disponible').textContent = totalDisponibles;
             document.getElementById('dash-total-novedades').textContent = totalNovedades;
 
@@ -816,31 +891,41 @@
 
             listaOficinas.forEach(of => {
                 const rep = reportesAlmacenados.find(r => r.oficina === of && r.fecha === fechaFiltro);
+                
                 let estadoHTML = `<span class="bg-red-100 text-red-700 text-xs px-2 py-1 rounded-full font-bold">❌ Sin Reporte</span>`;
-                let dispHTML = `<span class="text-gray-400 italic">--</span>`;
-                let novHTML = `<span class="text-gray-400 italic">--</span>`;
+                let dispHTML = `<span class="text-gray-400 italic text-xs">--</span>`;
+                let novHTML = `<span class="text-gray-400 italic text-xs">--</span>`;
 
                 if (rep) {
-                    estadoHTML = `<span class="bg-emerald-100 text-emerald-700 text-xs px-2 py-1 rounded-full font-bold">✅ Reportado</span>`;
+                    // Verificar si aún hay personal en Stand by
+                    const personalStandBy = rep.personal.filter(p => p.novedad === '0').length;
+                    
+                    if (personalStandBy > 0) {
+                        estadoHTML = `<span class="bg-orange-100 text-orange-700 text-[10px] px-2 py-1 rounded-full font-bold">⚠️ Pendiente</span>`;
+                    } else {
+                        estadoHTML = `<span class="bg-emerald-100 text-emerald-700 text-[10px] px-2 py-1 rounded-full font-bold">✅ Reportado</span>`;
+                    }
                     
                     let d = { OF:0, 'SUB/MNE':0, PATR:0, AUX:0, NU:0 };
                     let n = 0;
                     rep.personal.forEach(p => {
-                        if (!p.ausente) d[p.categoria]++; else n++;
+                        if (p.novedad !== '0') {
+                            if (!p.ausente) d[p.categoria]++; else n++;
+                        }
                     });
 
-                    dispHTML = `<span class="font-mono font-bold text-blue-600">${d['OF']}-${d['SUB/MNE']}-${d['PATR']}-${d['AUX']}-${d['NU']}</span>`;
+                    dispHTML = `<span class="font-mono font-bold text-blue-600 text-xs sm:text-sm">${d['OF']}-${d['SUB/MNE']}-${d['PATR']}-${d['AUX']}-${d['NU']}</span>`;
                     novHTML = n > 0 
-                        ? `<button onclick="abrirModalNovedades('${of}')" class="bg-red-50 hover:bg-red-100 text-red-600 font-bold px-3 py-1 rounded border border-red-200 transition-colors text-xs flex items-center gap-1 mx-auto">${n} Novedades <i class="ph ph-eye"></i></button>`
+                        ? `<button onclick="abrirModalNovedades('${of}')" class="bg-red-50 hover:bg-red-100 text-red-600 font-bold px-2 py-1 rounded border border-red-200 transition-colors text-xs flex items-center gap-1 mx-auto">${n} Nov. <i class="ph ph-eye"></i></button>`
                         : `<span class="text-emerald-500 font-bold text-xs">Sin Novedad</span>`;
                 }
 
                 tbodyEst.innerHTML += `
-                    <tr class="hover:bg-gray-50">
-                        <td class="px-6 py-4 font-semibold text-gray-800">${of}</td>
-                        <td class="px-6 py-4 text-center">${estadoHTML}</td>
-                        <td class="px-6 py-4 text-center">${dispHTML}</td>
-                        <td class="px-6 py-4 text-center">${novHTML}</td>
+                    <tr class="hover:bg-gray-50 border-b border-gray-100">
+                        <td class="px-2 sm:px-4 py-3 font-semibold text-gray-800 text-xs sm:text-sm whitespace-nowrap">${of}</td>
+                        <td class="px-2 sm:px-4 py-3 text-center whitespace-nowrap">${estadoHTML}</td>
+                        <td class="px-2 sm:px-4 py-3 text-center whitespace-nowrap">${dispHTML}</td>
+                        <td class="px-2 sm:px-4 py-3 text-center whitespace-nowrap">${novHTML}</td>
                     </tr>
                 `;
             });
@@ -849,19 +934,74 @@
             listaNov.innerHTML = '';
             
             if (Object.keys(novedadesPorTipo).length === 0) {
-                listaNov.innerHTML = `<div class="text-center text-gray-400 italic py-8">No hay novedades registradas hoy.</div>`;
+                listaNov.innerHTML = `<div class="text-center text-gray-400 italic py-6 text-sm">No hay novedades registradas.</div>`;
                 return;
             }
 
             for (const [tipo, cant] of Object.entries(novedadesPorTipo)) {
                 listaNov.innerHTML += `
                     <li onclick="abrirModalNovedades('TODAS')" class="flex items-center justify-between p-3 bg-gray-50 hover:bg-red-50 border border-gray-200 rounded-xl cursor-pointer transition-colors group">
-                        <span class="font-medium text-gray-700 group-hover:text-red-700">${tipo}</span>
-                        <span class="bg-red-500 text-white font-bold text-xs px-3 py-1 rounded-full">${cant}</span>
+                        <span class="font-medium text-gray-700 text-xs sm:text-sm group-hover:text-red-700">${tipo}</span>
+                        <span class="bg-red-500 text-white font-bold text-xs px-2 py-1 rounded-full">${cant}</span>
                     </li>
                 `;
             }
         }
+
+        // --- Exportar a Excel (SheetJS) ---
+        function descargarExcel() {
+            const fecha = document.getElementById('filtro-fecha-dashboard').value;
+            if (!fecha) {
+                mostrarToast('Seleccione una fecha válida.', 'error');
+                return;
+            }
+
+            let datosParaExcel = [];
+
+            listaOficinas.forEach(of => {
+                const rep = reportesAlmacenados.find(r => r.oficina === of && r.fecha === fecha);
+                if(rep) {
+                    rep.personal.forEach(p => {
+                        datosParaExcel.push({
+                            "Fecha": fecha,
+                            "Oficina": of,
+                            "Categoría": p.categoria,
+                            "Grado": p.grado,
+                            "Apellidos": p.apellidos,
+                            "Nombres": p.nombres,
+                            "Situación": p.novedad === '0' ? 'Pendiente' : p.novedad,
+                            "Observaciones": p.observaciones || ''
+                        });
+                    });
+                } else {
+                     datosParaExcel.push({
+                        "Fecha": fecha,
+                        "Oficina": of,
+                        "Categoría": "-",
+                        "Grado": "-",
+                        "Apellidos": "-",
+                        "Nombres": "SIN REPORTE",
+                        "Situación": "-",
+                        "Observaciones": "-"
+                    });
+                }
+            });
+
+            if(datosParaExcel.length === 0) {
+                mostrarToast('No hay datos configurados para exportar', 'error');
+                return;
+            }
+
+            // Crear el libro y la hoja
+            const hoja = XLSX.utils.json_to_sheet(datosParaExcel);
+            const libro = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(libro, hoja, "Reporte_DEVAL");
+            
+            // Forzar descarga del archivo
+            XLSX.writeFile(libro, `Reporte_DEVAL_${fecha}.xlsx`);
+            mostrarToast('Descargando archivo Excel...', 'success');
+        }
+
 
         function abrirModalNovedades(filtroOficina) {
             const fecha = document.getElementById('filtro-fecha-dashboard').value;
@@ -869,15 +1009,10 @@
             const subtitulo = document.getElementById('modal-subtitulo-fecha');
             const tbody = document.getElementById('tbody-modal-novedades');
 
-            subtitulo.textContent = `Fecha de consulta: ${fecha}`;
+            subtitulo.textContent = `Fecha: ${fecha}`;
             tbody.innerHTML = '';
 
-            if (filtroOficina === 'TODAS') {
-                titulo.textContent = "Consolidado General de Novedades";
-            } else {
-                titulo.textContent = `Novedades en: ${filtroOficina}`;
-            }
-
+            titulo.textContent = filtroOficina === 'TODAS' ? "Consolidado de Novedades" : `Novedades en: ${filtroOficina}`;
             let filasInsertadas = 0;
 
             listaOficinas.forEach(of => {
@@ -886,15 +1021,15 @@
                 const rep = reportesAlmacenados.find(r => r.oficina === of && r.fecha === fecha);
                 if (rep) {
                     rep.personal.forEach(p => {
-                        if (p.ausente) {
+                        if (p.ausente && p.novedad !== '0') {
                             filasInsertadas++;
                             tbody.innerHTML += `
-                                <tr class="hover:bg-red-50/50 transition-colors">
-                                    <td class="px-6 py-3 font-bold text-gray-500 text-xs uppercase">${of}</td>
-                                    <td class="px-6 py-3 font-semibold text-primary text-xs">${p.grado}</td>
-                                    <td class="px-6 py-3 font-medium uppercase text-gray-800">${p.apellidos} ${p.nombres}</td>
-                                    <td class="px-6 py-3"><span class="bg-red-100 text-red-700 font-bold text-xs px-2 py-1 rounded-md border border-red-200">${p.novedad}</span></td>
-                                    <td class="px-6 py-3 text-gray-600 text-xs italic">${p.observaciones || 'Sin observaciones descriptivas'}</td>
+                                <tr class="hover:bg-red-50/50 transition-colors border-b border-gray-100">
+                                    <td class="px-3 sm:px-4 py-3 font-bold text-gray-500 text-[10px] sm:text-xs uppercase whitespace-nowrap">${of}</td>
+                                    <td class="px-3 sm:px-4 py-3 font-semibold text-primary text-[10px] sm:text-xs whitespace-nowrap">${p.grado}</td>
+                                    <td class="px-3 sm:px-4 py-3 font-medium uppercase text-gray-800 whitespace-nowrap">${p.apellidos} ${p.nombres}</td>
+                                    <td class="px-3 sm:px-4 py-3 whitespace-nowrap"><span class="bg-red-100 text-red-700 font-bold text-[10px] sm:text-xs px-2 py-1 rounded-md border border-red-200">${p.novedad}</span></td>
+                                    <td class="px-3 sm:px-4 py-3 text-gray-600 text-xs italic min-w-[150px]">${p.observaciones || 'Sin detalles'}</td>
                                 </tr>
                             `;
                         }
@@ -903,7 +1038,7 @@
             });
 
             if (filasInsertadas === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-gray-400 italic">No se encontraron novedades bajo este criterio.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-gray-400 italic text-sm">No se encontraron novedades bajo este criterio.</td></tr>`;
             }
 
             document.getElementById('modal-novedades').classList.remove('hidden');
@@ -930,26 +1065,37 @@
             if (tabId === 'jefe') cargarPersonalParaReporte();
         }
 
+        // Sistema de Toasts corregido (sin solapamiento y desaparece a los 4 seg)
+        let toastTimeout;
         function mostrarToast(mensaje, tipo = 'info') {
             const toast = document.getElementById('toast');
             const icon = document.getElementById('toast-icon');
             const msg = document.getElementById('toast-message');
 
-            msg.textContent = mensaje;
-            toast.className = "fixed bottom-5 right-5 text-white px-6 py-3 rounded-lg shadow-lg transform transition-all duration-300 z-[60] flex items-center gap-3 opacity-100 translate-y-0 ";
+            // Resetear animaciones previas
+            clearTimeout(toastTimeout);
+            toast.classList.remove('bg-emerald-600', 'bg-red-600', 'bg-blue-600');
 
+            msg.textContent = mensaje;
+            
             if (tipo === 'success') {
                 toast.classList.add('bg-emerald-600');
-                icon.className = "ph-fill ph-check-circle";
+                icon.className = "ph-fill ph-check-circle text-xl sm:text-2xl";
             } else if (tipo === 'error') {
                 toast.classList.add('bg-red-600');
-                icon.className = "ph-fill ph-x-circle";
+                icon.className = "ph-fill ph-x-circle text-xl sm:text-2xl";
             } else if (tipo === 'info') {
                 toast.classList.add('bg-blue-600');
-                icon.className = "ph-fill ph-info";
+                icon.className = "ph-fill ph-info text-xl sm:text-2xl";
             }
 
-            setTimeout(() => {
+            // Mostrar el toast
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+
+            // Ocultar a los 4 segundos
+            toastTimeout = setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
                 toast.classList.add('translate-y-20', 'opacity-0');
             }, 4000);
         }
