@@ -447,7 +447,7 @@
 
     <script>
         // --- BASE DE DATOS LOCAL Y URL GOOGLE ---
-        const URL_SECRETA_GOOGLE = "https://script.google.com/macros/s/AKfycbwBaU5PWbGXnC-1cOTm6-uiNVUtnV7J4_2GQtEnL6frIqe8dsYWtdWe1pReMS6dDNi2Vg/exec";
+        const URL_SECRETA_GOOGLE = "https://script.google.com/macros/s/AKfycbzv6N9iaWuh3r9qLG53ZL9BD2AiLDRKfckC1e9TGkQyA5OCB4wb1fcBhM3m2Drq3bMeug/exec";
         
         let listaOficinas = []; 
         let personalBase = {};
@@ -461,9 +461,9 @@
             'NU': ['NU']
         };
 
-        // Stand by es novedad automática. "En formacion" es la ÚNICA disponibilidad. El resto es novedad.
+        // El estado '0' (Stand by) sirve internamente para marcar pendencia, pero NO es una novedad.
         const opcionesNovedad = [
-            { val: '0', text: '⏳ Stand by (Sin Reportar)', aisla: true },
+            { val: '0', text: '⏳ Stand by (Sin Reportar)', aisla: false },
             { val: 'En formacion', text: '✅ En formación', aisla: false },
             { val: 'En servicio', text: '🚓 En servicio', aisla: true }, 
             { val: 'Vacaciones', text: '🏖️ Vacaciones', aisla: true },
@@ -546,7 +546,13 @@
                             };
 
                             if (reporteExistente) {
-                                reporteExistente.personal.push(personaReporte);
+                                // SOLUCIÓN DUPLICIDAD
+                                const personaIndex = reporteExistente.personal.findIndex(p => p.apellidos === apellidos && p.nombres === nombres);
+                                if (personaIndex !== -1) {
+                                    reporteExistente.personal[personaIndex] = personaReporte; 
+                                } else {
+                                    reporteExistente.personal.push(personaReporte);
+                                }
                             } else {
                                 reportesAlmacenados.push({ oficina: oficina, fecha: strFecha, personal: [personaReporte] });
                             }
@@ -935,16 +941,21 @@
 
                 let personalAContar = [];
                 let estadoHTML = '';
+                let esPendiente = false;
 
                 if (rep) {
                     personalAContar = rep.personal;
                     const tieneStandBy = rep.personal.some(p => p.novedad === '0');
-                    estadoHTML = tieneStandBy 
-                        ? `<span class="bg-orange-100 text-orange-700 text-[10px] px-2 py-1 rounded-full font-bold">⚠️ Pendiente</span>` 
-                        : `<span class="bg-emerald-100 text-emerald-700 text-[10px] px-2 py-1 rounded-full font-bold">✅ Reportado</span>`;
+                    if(tieneStandBy) {
+                        estadoHTML = `<span class="bg-orange-100 text-orange-700 text-[10px] px-2 py-1 rounded-full font-bold">⚠️ Pendiente</span>`;
+                        esPendiente = true;
+                    } else {
+                        estadoHTML = `<span class="bg-emerald-100 text-emerald-700 text-[10px] px-2 py-1 rounded-full font-bold">✅ Reportado</span>`;
+                    }
                 } else {
-                    // Si NO hay reporte guardado para esta fecha, TODOS están en Stand by (0) automáticamente.
+                    // Si NO hay reporte guardado para esta fecha, están "En espera"
                     estadoHTML = `<span class="bg-gray-200 text-gray-700 text-[10px] px-2 py-1 rounded-full font-bold">⏳ En espera</span>`;
+                    esPendiente = true;
                     personalAContar = personalNominal.map(p => ({
                         categoria: p.categoria,
                         grado: p.grado,
@@ -960,7 +971,7 @@
                 let novOficina = 0;
 
                 personalAContar.forEach(p => {
-                    // REGLA: Disponible ÚNICA y EXCLUSIVAMENTE si es "En formacion". Resto = Novedad.
+                    // REGLA: Disponible ÚNICA y EXCLUSIVAMENTE si es "En formacion". 
                     if (p.novedad === 'En formacion') {
                         totales.disponible++;
                         dispOficina[p.categoria] = (dispOficina[p.categoria] || 0) + 1;
@@ -969,19 +980,28 @@
                         totales.patr_disp += (p.categoria === 'PATR' ? 1 : 0);
                         totales.aux_disp += (p.categoria === 'AUX' ? 1 : 0);
                         totales.nu_disp += (p.categoria === 'NU' ? 1 : 0);
-                    } else {
+                    } else if (p.novedad !== '0') {
+                        // SI NO ES CERO: Suma como novedad real.
                         totales.ausentes++;
                         novOficina++;
-                        let labelNovedad = p.novedad === '0' ? '⏳ Stand by' : p.novedad;
-                        totales.novedadesMap[labelNovedad] = (totales.novedadesMap[labelNovedad] || 0) + 1;
+                        totales.novedadesMap[p.novedad] = (totales.novedadesMap[p.novedad] || 0) + 1;
                     }
+                    // Si el estado es '0' (Stand by), NO se suma como disponible ni se suma al contador de novedades.
                 });
 
                 // Llenar tabla de oficinas
                 let dispHTML = `<span class="font-mono font-bold text-blue-600 text-xs sm:text-sm">${dispOficina['OF']}-${dispOficina['SUB/MNE']}-${dispOficina['PATR']}-${dispOficina['AUX']}-${dispOficina['NU']}</span>`;
-                let novHTML = novOficina > 0 
-                    ? `<button onclick="abrirModalNovedades('${of}')" class="bg-red-50 hover:bg-red-100 text-red-600 font-bold px-2 py-1 rounded border border-red-200 transition-colors text-xs flex items-center gap-1 mx-auto">${novOficina} Nov. <i class="ph ph-eye"></i></button>`
-                    : `<span class="text-emerald-500 font-bold text-xs">Sin Novedad</span>`;
+                
+                let novHTML = '';
+                if (novOficina > 0) {
+                    novHTML = `<button onclick="abrirModalNovedades('${of}')" class="bg-red-50 hover:bg-red-100 text-red-600 font-bold px-2 py-1 rounded border border-red-200 transition-colors text-xs flex items-center gap-1 mx-auto">${novOficina} Nov. <i class="ph ph-eye"></i></button>`;
+                } else {
+                    if (esPendiente) {
+                        novHTML = `<span class="text-gray-400 italic text-xs">0 Nov.</span>`; // Si no ha reportado, solo muestra un texto neutro
+                    } else {
+                        novHTML = `<span class="text-emerald-500 font-bold text-xs">Sin Novedad</span>`;
+                    }
+                }
 
                 tbodyEst.innerHTML += `
                     <tr class="hover:bg-gray-50 border-b border-gray-100">
@@ -993,13 +1013,13 @@
                 `;
             });
 
-            // Actualizar Tarjetas
+            // Actualizar Tarjetas (Novedades ahora no incluye '0')
             document.getElementById('dash-fuerza-disponible').textContent = 
                 `${totales.of_disp}-${totales.sub_disp}-${totales.patr_disp}-${totales.aux_disp}-${totales.nu_disp}`;
             document.getElementById('dash-total-disponible').textContent = totales.disponible;
             document.getElementById('dash-total-novedades').textContent = totales.ausentes;
 
-            // Llenar lista de Novedades Consolidadas
+            // Llenar lista de Novedades Consolidadas (Sin 'Stand by')
             const listaNov = document.getElementById('lista-novedades');
             listaNov.innerHTML = '';
             
@@ -1017,7 +1037,6 @@
                 else if(tipo.includes('Estudio')) { icon = 'ph-books'; color = 'bg-purple-100 text-purple-600'; }
                 else if(tipo.includes('Ley Maria')) { icon = 'ph-baby'; color = 'bg-pink-100 text-pink-600'; }
                 else if(tipo.includes('Luto')) { icon = 'ph-flower-tulip'; color = 'bg-gray-800 text-white'; }
-                else if(tipo.includes('Stand by')) { icon = 'ph-hourglass-high'; color = 'bg-orange-100 text-orange-600'; }
                 else if(tipo.includes('servicio')) { icon = 'ph-police-car'; color = 'bg-indigo-100 text-indigo-600'; }
 
                 listaNov.innerHTML += `
@@ -1105,38 +1124,25 @@
                 if (filtroOficina !== 'TODAS' && filtroOficina !== of) return;
 
                 const rep = reportesAlmacenados.find(r => r.oficina === of && r.fecha === fecha);
-                const personalNominal = personalBase[of] || [];
 
                 if (rep) {
                     rep.personal.forEach(p => {
-                        // REGLA: Si NO está 'En formacion', entonces es una novedad que debe salir aquí
-                        if (p.novedad !== 'En formacion') {
+                        // REGLA: Excluimos a los Disponibles ('En formacion') y a los Pendientes ('0')
+                        if (p.novedad !== 'En formacion' && p.novedad !== '0') {
                             filasInsertadas++;
-                            let displayNovedad = p.novedad === '0' ? '⏳ Stand by' : p.novedad;
                             tbody.innerHTML += `
                                 <tr class="hover:bg-red-50/50 transition-colors border-b border-gray-100">
                                     <td class="px-3 sm:px-4 py-3 font-bold text-gray-500 text-[10px] sm:text-xs uppercase whitespace-nowrap">${of}</td>
                                     <td class="px-3 sm:px-4 py-3 font-semibold text-primary text-[10px] sm:text-xs whitespace-nowrap"><span class="text-gray-400 font-bold block leading-none text-[9px]">${p.categoria}</span>${p.grado} ${p.apellidos} ${p.nombres}</td>
-                                    <td class="px-3 sm:px-4 py-3 whitespace-nowrap"><span class="bg-red-100 text-red-700 font-bold text-[10px] sm:text-xs px-2 py-1 rounded-md border border-red-200">${displayNovedad}</span></td>
+                                    <td class="px-3 sm:px-4 py-3 whitespace-nowrap"><span class="bg-red-100 text-red-700 font-bold text-[10px] sm:text-xs px-2 py-1 rounded-md border border-red-200">${p.novedad}</span></td>
                                     <td class="px-3 sm:px-4 py-3 text-gray-600 text-xs italic min-w-[150px]">${p.observaciones || 'Sin detalles'}</td>
                                 </tr>
                             `;
                         }
                     });
-                } else {
-                    // No hay reporte. Todos van directos a Stand by (Novedades)
-                    personalNominal.forEach(p => {
-                        filasInsertadas++;
-                        tbody.innerHTML += `
-                            <tr class="hover:bg-red-50/50 transition-colors border-b border-gray-100">
-                                <td class="px-3 sm:px-4 py-3 font-bold text-gray-500 text-[10px] sm:text-xs uppercase whitespace-nowrap">${of}</td>
-                                <td class="px-3 sm:px-4 py-3 font-semibold text-primary text-[10px] sm:text-xs whitespace-nowrap"><span class="text-gray-400 font-bold block leading-none text-[9px]">${p.categoria}</span>${p.grado} ${p.apellidos} ${p.nombres}</td>
-                                <td class="px-3 sm:px-4 py-3 whitespace-nowrap"><span class="bg-red-100 text-red-700 font-bold text-[10px] sm:text-xs px-2 py-1 rounded-md border border-red-200">⏳ Stand by</span></td>
-                                <td class="px-3 sm:px-4 py-3 text-gray-600 text-xs italic min-w-[150px]">Sin reporte enviado</td>
-                            </tr>
-                        `;
-                    });
                 }
+                // Si la oficina no tiene reporte, todos están en "0" (Stand by). 
+                // Por lo tanto, no se insertará ninguna fila como novedad.
             });
 
             if (filasInsertadas === 0) {
