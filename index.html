@@ -140,89 +140,101 @@
         <main class="flex-1 overflow-y-auto p-2 sm:p-6 lg:p-8 bg-gray-100">
             
             <!-- VISTA 0: CONFIGURACIÓN -->
-            <div id="view-config" class="max-w-5xl mx-auto fade-in hidden">
-                <!-- Crear Oficina -->
-                <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden mb-6">
-                    <div class="bg-gray-50 px-4 sm:px-6 py-4 border-b border-gray-200">
-                        <h2 class="text-lg sm:text-xl font-bold text-dark flex items-center gap-2">
-                            <i class="ph ph-buildings text-secondary text-2xl"></i> Gestión de Oficinas
-                        </h2>
-                    </div>
-                    <div class="p-4 sm:p-6">
-                        <div class="flex flex-col sm:flex-row items-start sm:items-end gap-4">
-                            <div class="flex-1 w-full">
+            <div id="view-config" class="max-w-6xl mx-auto fade-in hidden">
+                
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+                    <!-- Crear y Gestionar Oficinas -->
+                    <div class="lg:col-span-1 bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden flex flex-col">
+                        <div class="bg-gray-50 px-4 sm:px-6 py-4 border-b border-gray-200">
+                            <h2 class="text-lg sm:text-xl font-bold text-dark flex items-center gap-2">
+                                <i class="ph ph-buildings text-secondary text-2xl"></i> Gestión Oficinas
+                            </h2>
+                        </div>
+                        <div class="p-4 sm:p-6 flex-1 flex flex-col">
+                            <div class="mb-4">
                                 <label class="block text-sm font-semibold text-gray-700 mb-2">Nueva oficina</label>
-                                <input type="text" id="input-nueva-oficina" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-secondary outline-none uppercase" placeholder="EJ. OFICINA TALENTO HUMANO">
-                            </div>
-                            <button onclick="agregarNuevaOficina()" class="w-full sm:w-auto bg-primary hover:bg-blue-800 text-white font-bold py-3 px-6 rounded-lg transition-colors flex justify-center items-center gap-2 h-[50px] shrink-0">
-                                <i class="ph ph-plus-circle"></i> Crear
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Personal Base -->
-                <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden mb-6">
-                    <div class="bg-gray-50 px-4 sm:px-6 py-4 border-b border-gray-200">
-                        <h2 class="text-lg sm:text-xl font-bold text-dark flex items-center gap-2">
-                            <i class="ph ph-users text-secondary text-2xl"></i> Asignación de Personal
-                        </h2>
-                    </div>
-                    <div class="p-4 sm:p-6">
-                        <div class="mb-6">
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">Seleccionar Oficina</label>
-                            <select id="select-oficina-config" onchange="cargarPersonalConfig()" class="w-full sm:w-1/2 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-secondary outline-none">
-                                <option value="" disabled selected>Seleccione...</option>
-                            </select>
-                        </div>
-
-                        <div id="panel-personal-config" class="hidden">
-                            <!-- Formulario Ingreso -->
-                            <div class="bg-blue-50/50 border border-blue-100 rounded-lg p-4 mb-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 items-end">
-                                <div>
-                                    <label class="block text-xs font-semibold text-gray-600 mb-1">Categoría</label>
-                                    <select id="config-categoria" onchange="actualizarGradosConfig()" class="w-full p-2 border border-gray-300 rounded focus:ring-1 focus:ring-secondary outline-none bg-white text-sm font-bold">
-                                        <option value="OF">OF</option>
-                                        <option value="SUB/MNE">SUB/MNE</option>
-                                        <option value="PATR">PATR</option>
-                                        <option value="AUX">AUX</option>
-                                        <option value="NU">NU</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label class="block text-xs font-semibold text-gray-600 mb-1">Grado</label>
-                                    <select id="config-grado" class="w-full p-2 border border-gray-300 rounded focus:ring-1 focus:ring-secondary outline-none bg-white text-sm font-bold"></select>
-                                </div>
-                                <div class="lg:col-span-1">
-                                    <label class="block text-xs font-semibold text-gray-600 mb-1">Apellidos</label>
-                                    <input type="text" id="config-apellidos" class="w-full p-2 border border-gray-300 rounded focus:ring-1 focus:ring-secondary outline-none uppercase text-sm">
-                                </div>
-                                <div class="lg:col-span-1">
-                                    <label class="block text-xs font-semibold text-gray-600 mb-1">Nombres</label>
-                                    <input type="text" id="config-nombres" class="w-full p-2 border border-gray-300 rounded focus:ring-1 focus:ring-secondary outline-none capitalize text-sm">
-                                </div>
-                                <div class="lg:col-span-1 mt-2 sm:mt-0">
-                                    <button onclick="agregarPersonaAOficina()" class="bg-accent hover:bg-emerald-600 text-white font-bold py-2 px-4 rounded w-full h-[38px] flex items-center justify-center gap-1">
-                                        <i class="ph ph-user-plus text-lg"></i> Añadir
+                                <div class="flex gap-2">
+                                    <input type="text" id="input-nueva-oficina" class="w-full p-2 sm:p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-secondary outline-none uppercase text-sm" placeholder="EJ. COMANDANCIA">
+                                    <button onclick="agregarNuevaOficina()" class="bg-primary hover:bg-blue-800 text-white font-bold px-4 rounded-lg transition-colors flex justify-center items-center gap-1 shrink-0">
+                                        <i class="ph ph-plus-circle"></i>
                                     </button>
                                 </div>
                             </div>
-
-                            <!-- Tabla Responsive -->
-                            <div class="overflow-x-auto border border-gray-200 rounded-lg shadow-sm">
-                                <table class="w-full text-left border-collapse min-w-[600px]">
-                                    <thead class="bg-gray-100 text-gray-600 text-xs uppercase tracking-wider">
-                                        <tr>
-                                            <th class="p-3 font-semibold">Categoría</th>
-                                            <th class="p-3 font-semibold">Grado</th>
-                                            <th class="p-3 font-semibold">Apellidos</th>
-                                            <th class="p-3 font-semibold">Nombres</th>
-                                            <th class="p-3 font-semibold text-center">Acción</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="tbody-config-personal" class="divide-y divide-gray-200 text-sm">
+                            
+                            <hr class="my-4">
+                            
+                            <h3 class="text-sm font-semibold text-gray-600 mb-2">Oficinas Existentes</h3>
+                            <div class="overflow-y-auto flex-1 max-h-[300px] border border-gray-200 rounded-lg">
+                                <table class="w-full text-left border-collapse">
+                                    <tbody id="tbody-lista-oficinas" class="divide-y divide-gray-200 text-sm">
+                                        <!-- Oficinas generadas aquí -->
                                     </tbody>
                                 </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Personal Base -->
+                    <div class="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                        <div class="bg-gray-50 px-4 sm:px-6 py-4 border-b border-gray-200">
+                            <h2 class="text-lg sm:text-xl font-bold text-dark flex items-center gap-2">
+                                <i class="ph ph-users text-secondary text-2xl"></i> Asignación de Personal
+                            </h2>
+                        </div>
+                        <div class="p-4 sm:p-6">
+                            <div class="mb-6">
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Seleccionar Oficina</label>
+                                <select id="select-oficina-config" onchange="cargarPersonalConfig()" class="w-full sm:w-1/2 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-secondary outline-none">
+                                    <option value="" disabled selected>Seleccione...</option>
+                                </select>
+                            </div>
+
+                            <div id="panel-personal-config" class="hidden">
+                                <!-- Formulario Ingreso -->
+                                <div class="bg-blue-50/50 border border-blue-100 rounded-lg p-4 mb-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 items-end">
+                                    <div>
+                                        <label class="block text-xs font-semibold text-gray-600 mb-1">Categoría</label>
+                                        <select id="config-categoria" onchange="actualizarGradosConfig()" class="w-full p-2 border border-gray-300 rounded focus:ring-1 focus:ring-secondary outline-none bg-white text-sm font-bold">
+                                            <option value="OF">OF</option>
+                                            <option value="SUB/MNE">SUB/MNE</option>
+                                            <option value="PATR">PATR</option>
+                                            <option value="AUX">AUX</option>
+                                            <option value="NU">NU</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-semibold text-gray-600 mb-1">Grado</label>
+                                        <select id="config-grado" class="w-full p-2 border border-gray-300 rounded focus:ring-1 focus:ring-secondary outline-none bg-white text-sm font-bold"></select>
+                                    </div>
+                                    <div class="lg:col-span-1">
+                                        <label class="block text-xs font-semibold text-gray-600 mb-1">Apellidos</label>
+                                        <input type="text" id="config-apellidos" class="w-full p-2 border border-gray-300 rounded focus:ring-1 focus:ring-secondary outline-none uppercase text-sm">
+                                    </div>
+                                    <div class="lg:col-span-1">
+                                        <label class="block text-xs font-semibold text-gray-600 mb-1">Nombres</label>
+                                        <input type="text" id="config-nombres" class="w-full p-2 border border-gray-300 rounded focus:ring-1 focus:ring-secondary outline-none capitalize text-sm">
+                                    </div>
+                                    <div class="lg:col-span-1 mt-2 sm:mt-0">
+                                        <button onclick="agregarPersonaAOficina()" class="bg-accent hover:bg-emerald-600 text-white font-bold py-2 px-4 rounded w-full h-[38px] flex items-center justify-center gap-1">
+                                            <i class="ph ph-user-plus text-lg"></i> Añadir
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Tabla Responsive Personal -->
+                                <div class="overflow-x-auto border border-gray-200 rounded-lg shadow-sm">
+                                    <table class="w-full text-left border-collapse min-w-[500px]">
+                                        <thead class="bg-gray-100 text-gray-600 text-xs uppercase tracking-wider">
+                                            <tr>
+                                                <th class="p-3 font-semibold">Categoría/Grado</th>
+                                                <th class="p-3 font-semibold">Apellidos y Nombres</th>
+                                                <th class="p-3 font-semibold text-center w-24">Acción</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="tbody-config-personal" class="divide-y divide-gray-200 text-sm">
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -263,10 +275,9 @@
                             <table class="w-full text-left border-collapse min-w-[700px]" id="tabla-personal">
                                 <thead class="bg-gray-50 text-gray-600 text-xs uppercase tracking-wider">
                                     <tr>
-                                        <th class="p-3 font-semibold">Grado</th>
-                                        <th class="p-3 font-semibold">Apellidos y Nombres</th>
-                                        <th class="p-3 font-semibold">Situación / Novedad</th>
-                                        <th class="p-3 font-semibold w-1/3">Observaciones</th>
+                                        <th class="p-3 font-semibold w-1/4">Grado y Nombres</th>
+                                        <th class="p-3 font-semibold w-1/3">Situación / Novedad</th>
+                                        <th class="p-3 font-semibold">Observaciones</th>
                                     </tr>
                                 </thead>
                                 <tbody id="tbody-personal-reporte" class="divide-y divide-gray-200">
@@ -305,6 +316,7 @@
 
                 <!-- Tarjetas -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                    <!-- Tarjeta 1: Fuerza Efectiva -->
                     <div class="bg-white p-4 sm:p-5 rounded-xl shadow-sm border border-gray-100 flex items-center gap-3 border-l-4 border-l-primary">
                         <div class="bg-blue-100 p-2 sm:p-3 rounded-full text-primary shrink-0"><i class="ph ph-buildings text-xl sm:text-2xl"></i></div>
                         <div>
@@ -314,15 +326,17 @@
                         </div>
                     </div>
                     
+                    <!-- Tarjeta 2: Fuerza Disponible Desglose (Solo en formacion) -->
                     <div class="bg-white p-4 sm:p-5 rounded-xl shadow-sm border border-gray-100 flex items-center gap-3 border-l-4 border-l-blue-400">
                         <div class="bg-blue-50 p-2 sm:p-3 rounded-full text-blue-500 shrink-0"><i class="ph ph-list-numbers text-xl sm:text-2xl"></i></div>
                         <div>
-                            <p class="text-[10px] sm:text-[11px] text-gray-500 font-bold uppercase">F. Disponible (Desgl.)</p>
+                            <p class="text-[10px] sm:text-[11px] text-gray-500 font-bold uppercase">Disponibles (Desgl.)</p>
                             <h3 class="text-lg sm:text-xl font-bold text-gray-800" id="dash-fuerza-disponible">0-0-0-0-0</h3>
-                            <p class="text-[9px] sm:text-[10px] text-gray-400 mt-1 font-mono text-blue-500">En formación</p>
+                            <p class="text-[9px] sm:text-[10px] text-blue-500 mt-1 font-bold">Solo 'En Formación'</p>
                         </div>
                     </div>
                     
+                    <!-- Tarjeta 3: Total Disponible (Solo en formacion) -->
                     <div class="bg-white p-4 sm:p-5 rounded-xl shadow-sm border border-gray-100 flex items-center gap-3 border-l-4 border-l-accent">
                         <div class="bg-green-100 p-2 sm:p-3 rounded-full text-accent shrink-0"><i class="ph-fill ph-users-three text-xl sm:text-2xl"></i></div>
                         <div>
@@ -332,6 +346,7 @@
                         </div>
                     </div>
                     
+                    <!-- Tarjeta 4: Total Novedades -->
                     <div onclick="abrirModalNovedades('TODAS')" class="bg-white p-4 sm:p-5 rounded-xl shadow-sm border border-gray-100 flex items-center gap-3 border-l-4 border-l-red-500 cursor-pointer hover:bg-red-50 transition-colors group">
                         <div class="bg-red-100 p-2 sm:p-3 rounded-full text-red-500 shrink-0 group-hover:scale-110 transition-transform"><i class="ph-fill ph-warning-circle text-xl sm:text-2xl"></i></div>
                         <div>
@@ -406,8 +421,7 @@
                     <thead class="bg-white sticky top-0 border-b border-gray-200 shadow-sm z-10">
                         <tr class="text-gray-500 uppercase tracking-wider">
                             <th class="px-4 py-3 font-semibold">Oficina</th>
-                            <th class="px-4 py-3 font-semibold">Grado</th>
-                            <th class="px-4 py-3 font-semibold">Apellidos y Nombres</th>
+                            <th class="px-4 py-3 font-semibold">Grado y Nombre</th>
                             <th class="px-4 py-3 font-semibold">Novedad</th>
                             <th class="px-4 py-3 font-semibold">Observaciones</th>
                         </tr>
@@ -447,9 +461,9 @@
             'NU': ['NU']
         };
 
-        // Reglas ajustadas: "0" es Stand by (reseteo diario). "En formación" reemplaza "Sin Novedad". "En servicio" ahora suma a novedades (aisla: true)
+        // Stand by es novedad automática. "En formacion" es la ÚNICA disponibilidad. El resto es novedad.
         const opcionesNovedad = [
-            { val: '0', text: '⏳ Stand by', aisla: false },
+            { val: '0', text: '⏳ Stand by (Sin Reportar)', aisla: true },
             { val: 'En formacion', text: '✅ En formación', aisla: false },
             { val: 'En servicio', text: '🚓 En servicio', aisla: true }, 
             { val: 'Vacaciones', text: '🏖️ Vacaciones', aisla: true },
@@ -524,9 +538,8 @@
                             const strFecha = typeof fecha === 'string' && fecha.includes('T') ? fecha.split('T')[0] : fecha;
                             let reporteExistente = reportesAlmacenados.find(r => r.oficina === oficina && r.fecha === strFecha);
                             
-                            // Determinar si es ausente basado en las reglas actuales
-                            const optDef = opcionesNovedad.find(o => o.val === novedad);
-                            const ausente = optDef ? optDef.aisla : false;
+                            // Regla de oro: Disponible SOLO 'En formacion', lo demas aisla (Novedad)
+                            const ausente = novedad !== 'En formacion'; 
 
                             const personaReporte = { 
                                 categoria, grado, apellidos, nombres, novedad, ausente, observaciones 
@@ -568,14 +581,26 @@
             window.location.reload();
         }
 
-        // --- 1. CONFIGURACIÓN ---
+        // --- 1. CONFIGURACIÓN DE OFICINAS ---
         function actualizarDropdownsOficinas() {
             const selectConfig = document.getElementById('select-oficina-config');
             const selectReporte = document.getElementById('select-oficina-reporte');
+            const tbodyOficinas = document.getElementById('tbody-lista-oficinas');
             
             let optionsHTML = `<option value="" disabled selected>Seleccione...</option>`;
-            listaOficinas.forEach(of => {
+            let tablaOficinasHTML = ``;
+
+            listaOficinas.forEach((of) => {
                 optionsHTML += `<option value="${of}">${of}</option>`;
+                tablaOficinasHTML += `
+                    <tr class="hover:bg-gray-50 border-b border-gray-100">
+                        <td class="p-3 font-semibold text-gray-800 uppercase">${of}</td>
+                        <td class="p-3 text-center whitespace-nowrap">
+                            <button onclick="editarOficina('${of}')" class="text-blue-500 hover:text-blue-700 p-1 mr-2" title="Editar"><i class="ph ph-pencil-simple text-lg"></i></button>
+                            <button onclick="eliminarOficina('${of}')" class="text-red-500 hover:text-red-700 p-1" title="Eliminar"><i class="ph ph-trash text-lg"></i></button>
+                        </td>
+                    </tr>
+                `;
             });
 
             const valConfig = selectConfig.value;
@@ -583,6 +608,7 @@
 
             selectConfig.innerHTML = optionsHTML;
             selectReporte.innerHTML = optionsHTML;
+            if(tbodyOficinas) tbodyOficinas.innerHTML = tablaOficinasHTML;
 
             if (listaOficinas.includes(valConfig)) selectConfig.value = valConfig;
             if (listaOficinas.includes(valReporte)) selectReporte.value = valReporte;
@@ -596,7 +622,6 @@
                 mostrarToast('Escriba el nombre', 'error');
                 return;
             }
-
             if (listaOficinas.includes(nombreOficina)) {
                 mostrarToast('La oficina ya existe', 'error');
                 return;
@@ -611,6 +636,44 @@
 
             input.value = '';
             mostrarToast('Oficina creada', 'success');
+        }
+
+        function editarOficina(oficinaVieja) {
+            let nuevoNombre = prompt("Ingrese el nuevo nombre para la oficina:", oficinaVieja);
+            if (nuevoNombre && nuevoNombre.trim() !== '') {
+                nuevoNombre = nuevoNombre.trim().toUpperCase();
+                if (nuevoNombre === oficinaVieja) return;
+                if (listaOficinas.includes(nuevoNombre)) {
+                    mostrarToast('Ya existe una oficina con ese nombre', 'error');
+                    return;
+                }
+
+                // Actualizar listas
+                const index = listaOficinas.indexOf(oficinaVieja);
+                listaOficinas[index] = nuevoNombre;
+                personalBase[nuevoNombre] = personalBase[oficinaVieja];
+                delete personalBase[oficinaVieja];
+
+                // Actualizar reportes locales para no perder la info
+                reportesAlmacenados.forEach(r => {
+                    if(r.oficina === oficinaVieja) r.oficina = nuevoNombre;
+                });
+
+                actualizarDropdownsOficinas();
+                document.getElementById('select-oficina-config').value = nuevoNombre;
+                cargarPersonalConfig();
+                mostrarToast('Nombre actualizado', 'success');
+            }
+        }
+
+        function eliminarOficina(oficina) {
+            if(confirm(`¿Está seguro de eliminar la oficina "${oficina}" y todo su personal base?`)) {
+                listaOficinas = listaOficinas.filter(o => o !== oficina);
+                delete personalBase[oficina];
+                actualizarDropdownsOficinas();
+                cargarPersonalConfig();
+                mostrarToast('Oficina eliminada', 'success');
+            }
         }
 
         function actualizarGradosConfig() {
@@ -642,11 +705,9 @@
 
             personas.forEach((p, idx) => {
                 tbody.innerHTML += `
-                    <tr class="hover:bg-gray-50">
-                        <td class="p-3 font-bold text-gray-600 whitespace-nowrap">${p.categoria}</td>
-                        <td class="p-3 font-semibold text-primary whitespace-nowrap">${p.grado}</td>
-                        <td class="p-3 uppercase whitespace-nowrap">${p.apellidos}</td>
-                        <td class="p-3 whitespace-nowrap">${p.nombres}</td>
+                    <tr class="hover:bg-gray-50 border-b border-gray-50">
+                        <td class="p-3 font-semibold text-primary whitespace-nowrap"><span class="text-[10px] text-gray-500 font-bold block leading-none">${p.categoria}</span>${p.grado}</td>
+                        <td class="p-3 uppercase whitespace-nowrap">${p.apellidos} ${p.nombres}</td>
                         <td class="p-3 text-center whitespace-nowrap">
                             <button onclick="editarPersonaDeOficina('${of}', ${idx})" class="text-blue-500 hover:text-blue-700 p-1 mr-2" title="Editar"><i class="ph ph-pencil-simple text-lg"></i></button>
                             <button onclick="eliminarPersonaDeOficina('${of}', ${idx})" class="text-red-500 hover:text-red-700 p-1" title="Eliminar"><i class="ph ph-trash text-lg"></i></button>
@@ -684,7 +745,6 @@
             mostrarToast('Funcionario guardado', 'success');
         }
 
-        // Función para Editar Personal
         function editarPersonaDeOficina(oficina, idx) {
             const persona = personalBase[oficina][idx];
             document.getElementById('config-categoria').value = persona.categoria;
@@ -693,10 +753,9 @@
             document.getElementById('config-apellidos').value = persona.apellidos;
             document.getElementById('config-nombres').value = persona.nombres;
             
-            // Retirar de la lista para que al añadir se guarde el actualizado
             personalBase[oficina].splice(idx, 1);
             cargarPersonalConfig();
-            mostrarToast('Datos listos para editar. Presione Añadir al terminar.', 'info');
+            mostrarToast('Modifique los datos y presione Añadir.', 'info');
         }
 
         function eliminarPersonaDeOficina(oficina, idx) {
@@ -734,7 +793,8 @@
             const reporteExistente = reportesAlmacenados.find(r => r.oficina === of && r.fecha === fecha);
 
             personalNominal.forEach((p) => {
-                let novedadActual = '0'; // Stand by por defecto si es un día nuevo
+                // Al cargar la lista en un día nuevo, automáticamente todos asumen estado "0" (Stand by).
+                let novedadActual = '0'; 
                 let obsActual = '';
 
                 if (reporteExistente) {
@@ -769,7 +829,6 @@
                 `;
             });
             
-            // Colores dinámicos al cambiar el select
             document.querySelectorAll('.select-novedad-fila').forEach(sel => {
                 sel.addEventListener('change', function() {
                     if(this.value === '0') {
@@ -801,8 +860,8 @@
                 const novedad = f.querySelector('.select-novedad-fila').value;
                 const observaciones = f.querySelector('.input-obs-fila').value.trim();
                 
-                const optDef = opcionesNovedad.find(o => o.val === novedad);
-                const ausente = optDef ? optDef.aisla : false;
+                // Regla Estricta: Disponible SOLAMENTE es "En formacion". Todo lo demás cuenta como novedad/ausente.
+                const ausente = novedad !== 'En formacion';
 
                 personalReportado.push({
                     categoria: f.getAttribute('data-cat'),
@@ -843,11 +902,12 @@
             });
         }
 
-        // --- 3. DASHBOARD Y ANALÍTICA ---
+        // --- 3. DASHBOARD Y ANALÍTICA (ACTUALIZADO A NUEVAS REGLAS DE CONTABILIDAD) ---
         function actualizarDashboard() {
             const fechaFiltro = document.getElementById('filtro-fecha-dashboard').value;
             if (!fechaFiltro) return;
 
+            // 1. FUERZA EFECTIVA: Cuenta TODO el personal creado base en la configuración
             let fuerzaNominal = { OF:0, 'SUB/MNE':0, PATR:0, AUX:0, NU:0 };
             listaOficinas.forEach(of => {
                 (personalBase[of] || []).forEach(p => {
@@ -858,71 +918,74 @@
             document.getElementById('dash-fuerza-efectiva').textContent = 
                 `${fuerzaNominal['OF']}-${fuerzaNominal['SUB/MNE']}-${fuerzaNominal['PATR']}-${fuerzaNominal['AUX']}-${fuerzaNominal['NU']}`;
 
-            let disponiblesDesglose = { OF:0, 'SUB/MNE':0, PATR:0, AUX:0, NU:0 };
-            let totalDisponibles = 0;
-            let totalNovedades = 0;
-            let novedadesPorTipo = {};
-
-            listaOficinas.forEach(of => {
-                const rep = reportesAlmacenados.find(r => r.oficina === of && r.fecha === fechaFiltro);
-                if (rep) {
-                    rep.personal.forEach(p => {
-                        // El personal con estado '0' (Stand by) no suma ni como disponible ni como novedad para obligar al reporte.
-                        if (p.novedad === '0') return; 
-                        
-                        if (!p.ausente) {
-                            if (disponiblesDesglose[p.categoria] !== undefined) disponiblesDesglose[p.categoria]++;
-                            totalDisponibles++;
-                        } else {
-                            totalNovedades++;
-                            novedadesPorTipo[p.novedad] = (novedadesPorTipo[p.novedad] || 0) + 1;
-                        }
-                    });
-                }
-            });
-
-            document.getElementById('dash-fuerza-disponible').textContent = 
-                `${disponiblesDesglose['OF']}-${disponiblesDesglose['SUB/MNE']}-${disponiblesDesglose['PATR']}-${disponiblesDesglose['AUX']}-${disponiblesDesglose['NU']}`;
-            document.getElementById('dash-total-disponible').textContent = totalDisponibles;
-            document.getElementById('dash-total-novedades').textContent = totalNovedades;
+            // 2. DISPONIBLES Y NOVEDADES
+            let totales = {
+                disponible: 0,
+                ausentes: 0,
+                of_disp: 0, sub_disp: 0, patr_disp: 0, aux_disp: 0, nu_disp: 0,
+                novedadesMap: {}
+            };
 
             const tbodyEst = document.getElementById('tbody-estado-oficinas');
             tbodyEst.innerHTML = '';
 
             listaOficinas.forEach(of => {
                 const rep = reportesAlmacenados.find(r => r.oficina === of && r.fecha === fechaFiltro);
-                
-                let estadoHTML = `<span class="bg-red-100 text-red-700 text-xs px-2 py-1 rounded-full font-bold">❌ Sin Reporte</span>`;
-                let dispHTML = `<span class="text-gray-400 italic text-xs">--</span>`;
-                let novHTML = `<span class="text-gray-400 italic text-xs">--</span>`;
+                const personalNominal = personalBase[of] || [];
+
+                let personalAContar = [];
+                let estadoHTML = '';
 
                 if (rep) {
-                    // Verificar si aún hay personal en Stand by
-                    const personalStandBy = rep.personal.filter(p => p.novedad === '0').length;
-                    
-                    if (personalStandBy > 0) {
-                        estadoHTML = `<span class="bg-orange-100 text-orange-700 text-[10px] px-2 py-1 rounded-full font-bold">⚠️ Pendiente</span>`;
-                    } else {
-                        estadoHTML = `<span class="bg-emerald-100 text-emerald-700 text-[10px] px-2 py-1 rounded-full font-bold">✅ Reportado</span>`;
-                    }
-                    
-                    let d = { OF:0, 'SUB/MNE':0, PATR:0, AUX:0, NU:0 };
-                    let n = 0;
-                    rep.personal.forEach(p => {
-                        if (p.novedad !== '0') {
-                            if (!p.ausente) d[p.categoria]++; else n++;
-                        }
-                    });
-
-                    dispHTML = `<span class="font-mono font-bold text-blue-600 text-xs sm:text-sm">${d['OF']}-${d['SUB/MNE']}-${d['PATR']}-${d['AUX']}-${d['NU']}</span>`;
-                    novHTML = n > 0 
-                        ? `<button onclick="abrirModalNovedades('${of}')" class="bg-red-50 hover:bg-red-100 text-red-600 font-bold px-2 py-1 rounded border border-red-200 transition-colors text-xs flex items-center gap-1 mx-auto">${n} Nov. <i class="ph ph-eye"></i></button>`
-                        : `<span class="text-emerald-500 font-bold text-xs">Sin Novedad</span>`;
+                    personalAContar = rep.personal;
+                    const tieneStandBy = rep.personal.some(p => p.novedad === '0');
+                    estadoHTML = tieneStandBy 
+                        ? `<span class="bg-orange-100 text-orange-700 text-[10px] px-2 py-1 rounded-full font-bold">⚠️ Pendiente</span>` 
+                        : `<span class="bg-emerald-100 text-emerald-700 text-[10px] px-2 py-1 rounded-full font-bold">✅ Reportado</span>`;
+                } else {
+                    // Si NO hay reporte guardado para esta fecha, TODOS están en Stand by (0) automáticamente.
+                    estadoHTML = `<span class="bg-gray-200 text-gray-700 text-[10px] px-2 py-1 rounded-full font-bold">⏳ En espera</span>`;
+                    personalAContar = personalNominal.map(p => ({
+                        categoria: p.categoria,
+                        grado: p.grado,
+                        apellidos: p.apellidos,
+                        nombres: p.nombres,
+                        novedad: '0', 
+                        ausente: true, 
+                        observaciones: 'Sin reporte enviado'
+                    }));
                 }
+
+                let dispOficina = { OF:0, 'SUB/MNE':0, PATR:0, AUX:0, NU:0 };
+                let novOficina = 0;
+
+                personalAContar.forEach(p => {
+                    // REGLA: Disponible ÚNICA y EXCLUSIVAMENTE si es "En formacion". Resto = Novedad.
+                    if (p.novedad === 'En formacion') {
+                        totales.disponible++;
+                        dispOficina[p.categoria] = (dispOficina[p.categoria] || 0) + 1;
+                        totales.of_disp += (p.categoria === 'OF' ? 1 : 0);
+                        totales.sub_disp += (p.categoria === 'SUB/MNE' ? 1 : 0);
+                        totales.patr_disp += (p.categoria === 'PATR' ? 1 : 0);
+                        totales.aux_disp += (p.categoria === 'AUX' ? 1 : 0);
+                        totales.nu_disp += (p.categoria === 'NU' ? 1 : 0);
+                    } else {
+                        totales.ausentes++;
+                        novOficina++;
+                        let labelNovedad = p.novedad === '0' ? '⏳ Stand by' : p.novedad;
+                        totales.novedadesMap[labelNovedad] = (totales.novedadesMap[labelNovedad] || 0) + 1;
+                    }
+                });
+
+                // Llenar tabla de oficinas
+                let dispHTML = `<span class="font-mono font-bold text-blue-600 text-xs sm:text-sm">${dispOficina['OF']}-${dispOficina['SUB/MNE']}-${dispOficina['PATR']}-${dispOficina['AUX']}-${dispOficina['NU']}</span>`;
+                let novHTML = novOficina > 0 
+                    ? `<button onclick="abrirModalNovedades('${of}')" class="bg-red-50 hover:bg-red-100 text-red-600 font-bold px-2 py-1 rounded border border-red-200 transition-colors text-xs flex items-center gap-1 mx-auto">${novOficina} Nov. <i class="ph ph-eye"></i></button>`
+                    : `<span class="text-emerald-500 font-bold text-xs">Sin Novedad</span>`;
 
                 tbodyEst.innerHTML += `
                     <tr class="hover:bg-gray-50 border-b border-gray-100">
-                        <td class="px-2 sm:px-4 py-3 font-semibold text-gray-800 text-xs sm:text-sm whitespace-nowrap">${of}</td>
+                        <td class="px-2 sm:px-4 py-3 font-semibold text-gray-800 text-[10px] sm:text-xs uppercase whitespace-nowrap">${of}</td>
                         <td class="px-2 sm:px-4 py-3 text-center whitespace-nowrap">${estadoHTML}</td>
                         <td class="px-2 sm:px-4 py-3 text-center whitespace-nowrap">${dispHTML}</td>
                         <td class="px-2 sm:px-4 py-3 text-center whitespace-nowrap">${novHTML}</td>
@@ -930,18 +993,39 @@
                 `;
             });
 
+            // Actualizar Tarjetas
+            document.getElementById('dash-fuerza-disponible').textContent = 
+                `${totales.of_disp}-${totales.sub_disp}-${totales.patr_disp}-${totales.aux_disp}-${totales.nu_disp}`;
+            document.getElementById('dash-total-disponible').textContent = totales.disponible;
+            document.getElementById('dash-total-novedades').textContent = totales.ausentes;
+
+            // Llenar lista de Novedades Consolidadas
             const listaNov = document.getElementById('lista-novedades');
             listaNov.innerHTML = '';
             
-            if (Object.keys(novedadesPorTipo).length === 0) {
+            if (Object.keys(totales.novedadesMap).length === 0) {
                 listaNov.innerHTML = `<div class="text-center text-gray-400 italic py-6 text-sm">No hay novedades registradas.</div>`;
                 return;
             }
 
-            for (const [tipo, cant] of Object.entries(novedadesPorTipo)) {
+            for (const [tipo, cant] of Object.entries(totales.novedadesMap)) {
+                let icon = 'ph-info'; let color = 'bg-gray-100 text-gray-600';
+                
+                if(tipo.includes('Vacaciones')) { icon = 'ph-airplane-tilt'; color = 'bg-blue-100 text-blue-600'; }
+                else if(tipo.includes('Médica') || tipo.includes('Excusa')) { icon = 'ph-first-aid'; color = 'bg-red-100 text-red-600'; }
+                else if(tipo.includes('Permiso')) { icon = 'ph-file-text'; color = 'bg-yellow-100 text-yellow-700'; }
+                else if(tipo.includes('Estudio')) { icon = 'ph-books'; color = 'bg-purple-100 text-purple-600'; }
+                else if(tipo.includes('Ley Maria')) { icon = 'ph-baby'; color = 'bg-pink-100 text-pink-600'; }
+                else if(tipo.includes('Luto')) { icon = 'ph-flower-tulip'; color = 'bg-gray-800 text-white'; }
+                else if(tipo.includes('Stand by')) { icon = 'ph-hourglass-high'; color = 'bg-orange-100 text-orange-600'; }
+                else if(tipo.includes('servicio')) { icon = 'ph-police-car'; color = 'bg-indigo-100 text-indigo-600'; }
+
                 listaNov.innerHTML += `
                     <li onclick="abrirModalNovedades('TODAS')" class="flex items-center justify-between p-3 bg-gray-50 hover:bg-red-50 border border-gray-200 rounded-xl cursor-pointer transition-colors group">
-                        <span class="font-medium text-gray-700 text-xs sm:text-sm group-hover:text-red-700">${tipo}</span>
+                        <div class="flex items-center gap-3">
+                            <div class="${color} p-2 rounded-lg group-hover:scale-110 transition-transform"><i class="ph-fill ${icon} text-lg"></i></div>
+                            <span class="font-medium text-gray-700 text-xs sm:text-sm group-hover:text-red-700">${tipo}</span>
+                        </div>
                         <span class="bg-red-500 text-white font-bold text-xs px-2 py-1 rounded-full">${cant}</span>
                     </li>
                 `;
@@ -960,6 +1044,8 @@
 
             listaOficinas.forEach(of => {
                 const rep = reportesAlmacenados.find(r => r.oficina === of && r.fecha === fecha);
+                const personalNominal = personalBase[of] || [];
+
                 if(rep) {
                     rep.personal.forEach(p => {
                         datosParaExcel.push({
@@ -969,20 +1055,22 @@
                             "Grado": p.grado,
                             "Apellidos": p.apellidos,
                             "Nombres": p.nombres,
-                            "Situación": p.novedad === '0' ? 'Pendiente' : p.novedad,
+                            "Situación": p.novedad === '0' ? 'Stand by' : p.novedad,
                             "Observaciones": p.observaciones || ''
                         });
                     });
                 } else {
-                     datosParaExcel.push({
-                        "Fecha": fecha,
-                        "Oficina": of,
-                        "Categoría": "-",
-                        "Grado": "-",
-                        "Apellidos": "-",
-                        "Nombres": "SIN REPORTE",
-                        "Situación": "-",
-                        "Observaciones": "-"
+                     personalNominal.forEach(p => {
+                        datosParaExcel.push({
+                            "Fecha": fecha,
+                            "Oficina": of,
+                            "Categoría": p.categoria,
+                            "Grado": p.grado,
+                            "Apellidos": p.apellidos,
+                            "Nombres": p.nombres,
+                            "Situación": "Stand by",
+                            "Observaciones": "Sin reporte"
+                        });
                     });
                 }
             });
@@ -992,12 +1080,10 @@
                 return;
             }
 
-            // Crear el libro y la hoja
             const hoja = XLSX.utils.json_to_sheet(datosParaExcel);
             const libro = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(libro, hoja, "Reporte_DEVAL");
             
-            // Forzar descarga del archivo
             XLSX.writeFile(libro, `Reporte_DEVAL_${fecha}.xlsx`);
             mostrarToast('Descargando archivo Excel...', 'success');
         }
@@ -1019,26 +1105,42 @@
                 if (filtroOficina !== 'TODAS' && filtroOficina !== of) return;
 
                 const rep = reportesAlmacenados.find(r => r.oficina === of && r.fecha === fecha);
+                const personalNominal = personalBase[of] || [];
+
                 if (rep) {
                     rep.personal.forEach(p => {
-                        if (p.ausente && p.novedad !== '0') {
+                        // REGLA: Si NO está 'En formacion', entonces es una novedad que debe salir aquí
+                        if (p.novedad !== 'En formacion') {
                             filasInsertadas++;
+                            let displayNovedad = p.novedad === '0' ? '⏳ Stand by' : p.novedad;
                             tbody.innerHTML += `
                                 <tr class="hover:bg-red-50/50 transition-colors border-b border-gray-100">
                                     <td class="px-3 sm:px-4 py-3 font-bold text-gray-500 text-[10px] sm:text-xs uppercase whitespace-nowrap">${of}</td>
-                                    <td class="px-3 sm:px-4 py-3 font-semibold text-primary text-[10px] sm:text-xs whitespace-nowrap">${p.grado}</td>
-                                    <td class="px-3 sm:px-4 py-3 font-medium uppercase text-gray-800 whitespace-nowrap">${p.apellidos} ${p.nombres}</td>
-                                    <td class="px-3 sm:px-4 py-3 whitespace-nowrap"><span class="bg-red-100 text-red-700 font-bold text-[10px] sm:text-xs px-2 py-1 rounded-md border border-red-200">${p.novedad}</span></td>
+                                    <td class="px-3 sm:px-4 py-3 font-semibold text-primary text-[10px] sm:text-xs whitespace-nowrap"><span class="text-gray-400 font-bold block leading-none text-[9px]">${p.categoria}</span>${p.grado} ${p.apellidos} ${p.nombres}</td>
+                                    <td class="px-3 sm:px-4 py-3 whitespace-nowrap"><span class="bg-red-100 text-red-700 font-bold text-[10px] sm:text-xs px-2 py-1 rounded-md border border-red-200">${displayNovedad}</span></td>
                                     <td class="px-3 sm:px-4 py-3 text-gray-600 text-xs italic min-w-[150px]">${p.observaciones || 'Sin detalles'}</td>
                                 </tr>
                             `;
                         }
                     });
+                } else {
+                    // No hay reporte. Todos van directos a Stand by (Novedades)
+                    personalNominal.forEach(p => {
+                        filasInsertadas++;
+                        tbody.innerHTML += `
+                            <tr class="hover:bg-red-50/50 transition-colors border-b border-gray-100">
+                                <td class="px-3 sm:px-4 py-3 font-bold text-gray-500 text-[10px] sm:text-xs uppercase whitespace-nowrap">${of}</td>
+                                <td class="px-3 sm:px-4 py-3 font-semibold text-primary text-[10px] sm:text-xs whitespace-nowrap"><span class="text-gray-400 font-bold block leading-none text-[9px]">${p.categoria}</span>${p.grado} ${p.apellidos} ${p.nombres}</td>
+                                <td class="px-3 sm:px-4 py-3 whitespace-nowrap"><span class="bg-red-100 text-red-700 font-bold text-[10px] sm:text-xs px-2 py-1 rounded-md border border-red-200">⏳ Stand by</span></td>
+                                <td class="px-3 sm:px-4 py-3 text-gray-600 text-xs italic min-w-[150px]">Sin reporte enviado</td>
+                            </tr>
+                        `;
+                    });
                 }
             });
 
             if (filasInsertadas === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-gray-400 italic text-sm">No se encontraron novedades bajo este criterio.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="4" class="p-8 text-center text-gray-400 italic text-sm">No se encontraron novedades bajo este criterio.</td></tr>`;
             }
 
             document.getElementById('modal-novedades').classList.remove('hidden');
@@ -1065,14 +1167,12 @@
             if (tabId === 'jefe') cargarPersonalParaReporte();
         }
 
-        // Sistema de Toasts corregido (sin solapamiento y desaparece a los 4 seg)
         let toastTimeout;
         function mostrarToast(mensaje, tipo = 'info') {
             const toast = document.getElementById('toast');
             const icon = document.getElementById('toast-icon');
             const msg = document.getElementById('toast-message');
 
-            // Resetear animaciones previas
             clearTimeout(toastTimeout);
             toast.classList.remove('bg-emerald-600', 'bg-red-600', 'bg-blue-600');
 
@@ -1089,11 +1189,9 @@
                 icon.className = "ph-fill ph-info text-xl sm:text-2xl";
             }
 
-            // Mostrar el toast
             toast.classList.remove('translate-y-20', 'opacity-0');
             toast.classList.add('translate-y-0', 'opacity-100');
 
-            // Ocultar a los 4 segundos
             toastTimeout = setTimeout(() => {
                 toast.classList.remove('translate-y-0', 'opacity-100');
                 toast.classList.add('translate-y-20', 'opacity-0');
