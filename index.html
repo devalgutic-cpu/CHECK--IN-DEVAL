@@ -294,7 +294,6 @@
                             <button onclick="descargarDatosSheets()" class="w-10 h-10 bg-blue-100 hover:bg-blue-200 text-blue-600 rounded-full shadow-sm flex items-center justify-center transition-colors" title="Actualizar Datos">
                                 <i class="ph ph-arrows-clockwise text-xl animate-spin-hover"></i>
                             </button>
-                            
                             <button onclick="descargarExcel()" class="w-10 h-10 bg-green-600 hover:bg-green-700 text-white rounded-full shadow-md flex items-center justify-center transition-transform hover:scale-105" title="Descargar Base (Excel)">
                                 <i class="ph ph-file-xls text-xl"></i>
                             </button>
@@ -319,15 +318,16 @@
                         </div>
                     </div>
                     
-                    <div class="bg-white p-3 sm:p-5 rounded-xl shadow-sm border border-gray-100 flex flex-col sm:flex-row items-start sm:items-center gap-3 border-b-4 sm:border-b-0 sm:border-l-4 border-accent">
-                        <div class="bg-green-100 p-2 sm:p-3 rounded-full text-accent shrink-0"><i class="ph-fill ph-users-three text-xl sm:text-2xl"></i></div>
+                    <div onclick="abrirModalDetalle('TODAS', 'DISPONIBLES')" class="bg-white p-3 sm:p-5 rounded-xl shadow-sm border border-gray-100 flex flex-col sm:flex-row items-start sm:items-center gap-3 border-b-4 sm:border-b-0 sm:border-l-4 border-accent cursor-pointer hover:bg-green-50 transition-colors group">
+                        <div class="bg-green-100 p-2 sm:p-3 rounded-full text-accent shrink-0 group-hover:scale-110 transition-transform"><i class="ph-fill ph-users-three text-xl sm:text-2xl"></i></div>
                         <div>
                             <p class="text-[10px] sm:text-[11px] text-gray-500 font-bold uppercase">T. Disponibles</p>
                             <h3 class="text-lg sm:text-xl font-bold text-gray-800" id="dash-total-disponible">0</h3>
+                            <p class="text-[9px] text-green-500 mt-1 font-semibold flex items-center gap-1">Detalle <i class="ph ph-arrow-right"></i></p>
                         </div>
                     </div>
                     
-                    <div onclick="abrirModalNovedades('TODAS')" class="bg-white p-3 sm:p-5 rounded-xl shadow-sm border border-gray-100 flex flex-col sm:flex-row items-start sm:items-center gap-3 border-b-4 sm:border-b-0 sm:border-l-4 border-red-500 cursor-pointer hover:bg-red-50 transition-colors group">
+                    <div onclick="abrirModalDetalle('TODAS', 'NOVEDADES')" class="bg-white p-3 sm:p-5 rounded-xl shadow-sm border border-gray-100 flex flex-col sm:flex-row items-start sm:items-center gap-3 border-b-4 sm:border-b-0 sm:border-l-4 border-red-500 cursor-pointer hover:bg-red-50 transition-colors group">
                         <div class="bg-red-100 p-2 sm:p-3 rounded-full text-red-500 shrink-0 group-hover:scale-110 transition-transform"><i class="ph-fill ph-warning-circle text-xl sm:text-2xl"></i></div>
                         <div>
                             <p class="text-[10px] sm:text-[11px] text-gray-500 font-bold uppercase">T. Novedades</p>
@@ -358,13 +358,15 @@
                             <h3 class="font-bold text-gray-800 text-sm sm:text-base">Estado de Reportes por Oficina</h3>
                         </div>
                         <div class="overflow-x-auto">
-                            <table class="w-full text-left border-collapse min-w-[500px]">
+                            <table class="w-full text-left border-collapse min-w-[700px]">
                                 <thead class="bg-white border-b text-gray-500 text-xs uppercase tracking-wider">
                                     <tr>
-                                        <th class="px-4 py-3 font-semibold">Oficina</th>
-                                        <th class="px-4 py-3 font-semibold text-center">Estado de Envío</th>
-                                        <th class="px-4 py-3 font-semibold text-center text-blue-600">Disponibles</th>
-                                        <th class="px-4 py-3 font-semibold text-center">Novedades</th>
+                                        <th class="px-3 py-3 font-semibold">Oficina</th>
+                                        <th class="px-2 py-3 font-semibold text-center">Estado</th>
+                                        <th class="px-2 py-3 font-semibold text-center text-blue-600">Disponibles</th>
+                                        <th class="px-2 py-3 font-semibold text-center text-blue-600">Detalle Disp.</th>
+                                        <th class="px-2 py-3 font-semibold text-center text-red-600">Novedades</th>
+                                        <th class="px-2 py-3 font-semibold text-center text-red-600">Detalle Nov.</th>
                                     </tr>
                                 </thead>
                                 <tbody id="tbody-estado-oficinas" class="divide-y divide-gray-100 text-sm">
@@ -397,13 +399,15 @@
             
             <div class="bg-gray-50 px-4 sm:px-6 py-3 border-b border-gray-200 flex justify-between items-center shrink-0">
                 <div class="flex items-center gap-3">
-                    <div class="bg-red-100 text-red-500 p-2 rounded-lg shrink-0"><i class="ph-fill ph-users-three text-xl"></i></div>
+                    <div id="modal-icono-contenedor" class="bg-red-100 text-red-500 p-2 rounded-lg shrink-0">
+                        <i id="modal-icono" class="ph-fill ph-users-three text-xl"></i>
+                    </div>
                     <div>
-                        <h3 class="font-bold text-base sm:text-lg text-gray-800" id="modal-titulo">Personal con Novedad</h3>
-                        <p class="text-[10px] sm:text-xs text-blue-600 font-bold font-mono bg-blue-50 px-2 py-0.5 rounded mt-0.5 inline-block" id="modal-desglose-grados">OF:0 - SUB:0 - PT:0 - AUX:0 - NU:0</p>
+                        <h3 class="font-bold text-base sm:text-lg text-gray-800" id="modal-titulo">Personal</h3>
+                        <p class="text-[10px] sm:text-xs text-gray-600 font-bold font-mono bg-white border border-gray-200 px-2 py-0.5 rounded mt-0.5 inline-block shadow-sm" id="modal-desglose-grados">OF:0 - SUB:0 - PT:0 - AUX:0 - NU:0</p>
                     </div>
                 </div>
-                <button onclick="cerrarModalNovedades()" class="text-gray-400 hover:text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-full p-2 transition-colors">
+                <button onclick="cerrarModalDetalle()" class="text-gray-400 hover:text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-full p-2 transition-colors">
                     <i class="ph ph-x text-lg"></i>
                 </button>
             </div>
@@ -414,7 +418,7 @@
                         <tr class="text-gray-500 uppercase tracking-wider">
                             <th class="px-4 py-3 font-semibold">Oficina</th>
                             <th class="px-4 py-3 font-semibold">Grado y Nombre</th>
-                            <th class="px-4 py-3 font-semibold">Novedad</th>
+                            <th class="px-4 py-3 font-semibold">Situación</th>
                             <th class="px-4 py-3 font-semibold">Observaciones</th>
                         </tr>
                     </thead>
@@ -424,7 +428,7 @@
             </div>
             
             <div class="bg-gray-50 px-4 sm:px-6 py-3 border-t border-gray-200 text-right shrink-0">
-                <button onclick="cerrarModalNovedades()" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-2 px-6 rounded-lg transition-colors text-sm">
+                <button onclick="cerrarModalDetalle()" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-2 px-6 rounded-lg transition-colors text-sm">
                     Cerrar
                 </button>
             </div>
@@ -556,7 +560,6 @@
                 document.getElementById('app-layout').classList.remove('hidden');
                 document.getElementById('app-layout').classList.add('flex');
                 
-                // Actualiza dashboard si ya estábamos dentro
                 if (!document.getElementById('view-superior').classList.contains('hidden')) {
                     actualizarDashboard();
                 } else if (!document.getElementById('view-jefe').classList.contains('hidden')) {
@@ -671,7 +674,6 @@
             }
         }
 
-        // MEJORA 9: Bloqueo de seguridad para eliminar oficinas
         function eliminarOficina(oficina) {
             let pwd = prompt("ACCESO RESTRINGIDO\nEsta acción eliminará la oficina y todo su personal base.\nIngrese la clave de Administrador:");
             if (pwd !== "GUTIC26") {
@@ -853,6 +855,7 @@
             });
         }
 
+        // MEJORA 1: Bloqueo inteligente del reporte si hay personas en "Stand by"
         function enviarReporte() {
             const of = document.getElementById('select-oficina-reporte').value;
             const fecha = document.getElementById('input-fecha').value;
@@ -863,23 +866,40 @@
                 return;
             }
 
-            document.getElementById('btn-enviar-reporte').disabled = true;
-            mostrarToast('Enviando reporte a la base central...', 'info');
-
+            let personalPendiente = [];
             let personalReportado = [];
+
             filas.forEach(f => {
                 const novedad = f.querySelector('.select-novedad-fila').value;
                 const observaciones = f.querySelector('.input-obs-fila').value.trim();
+                const cate = f.getAttribute('data-cat');
+                const grado = f.getAttribute('data-grado');
+                const apellidos = f.getAttribute('data-apellidos');
+                const nombres = f.getAttribute('data-nombres');
+
+                if (novedad === 'Stand by') {
+                    personalPendiente.push(`${grado} ${apellidos} ${nombres}`);
+                }
 
                 personalReportado.push({
-                    categoria: f.getAttribute('data-cat'),
-                    grado: f.getAttribute('data-grado'),
-                    apellidos: f.getAttribute('data-apellidos'),
-                    nombres: f.getAttribute('data-nombres'),
+                    categoria: cate,
+                    grado: grado,
+                    apellidos: apellidos,
+                    nombres: nombres,
                     novedad: novedad,
                     observaciones: observaciones
                 });
             });
+
+            // Validación estricta
+            if (personalPendiente.length > 0) {
+                alert("ALERTA: Reporte Incompleto\n\nNo puede enviar el reporte porque tiene funcionarios en 'Stand by'. Debe actualizar la situación de:\n\n- " + personalPendiente.join("\n- ") + "\n\nPor favor, asigne el estado real a todos antes de enviar.");
+                mostrarToast('Complete el estado de todo el personal', 'error');
+                return;
+            }
+
+            document.getElementById('btn-enviar-reporte').disabled = true;
+            mostrarToast('Enviando reporte a la base central...', 'info');
 
             const datosAEnviar = { fecha: fecha, oficina: of, personal: personalReportado };
 
@@ -939,14 +959,17 @@
             const tbodyEst = document.getElementById('tbody-estado-oficinas');
             tbodyEst.innerHTML = '';
 
-            listaOficinas.forEach(of => {
+            // MEJORA 4: Orden Alfabético Dinámico de las Oficinas para el Dashboard
+            const oficinasOrdenadas = [...listaOficinas].sort((a, b) => a.localeCompare(b, 'es', {sensitivity: 'base'}));
+
+            oficinasOrdenadas.forEach(of => {
                 const rep = reportesAlmacenados.find(r => r.oficina === of && r.fecha === fechaFiltro);
                 const personalNominal = personalBase[of] || [];
 
                 let personalAContar = [];
                 let estadoHTML = '';
                 
-                // MEJORA 4: Corrección de lógica de reporte.
+                // MEJORA 4: Si existe reporte, automáticamente es Reportado
                 if (rep) {
                     personalAContar = rep.personal;
                     estadoHTML = `<span class="bg-emerald-100 text-emerald-700 text-[10px] px-2 py-1 rounded-full font-bold">✅ Reportado</span>`;
@@ -963,11 +986,14 @@
                 }
 
                 let dispOficina = { OF:0, 'SUB/MNE':0, PATR:0, AUX:0, NU:0 };
+                let novOficinaCateg = { OF:0, 'SUB/MNE':0, PATR:0, AUX:0, NU:0 };
+                let totDispOficina = 0;
                 let novOficina = 0;
 
                 personalAContar.forEach(p => {
                     if (p.novedad === 'En formacion') {
                         totales.disponible++;
+                        totDispOficina++;
                         dispOficina[p.categoria] = (dispOficina[p.categoria] || 0) + 1;
                         totales.of_disp += (p.categoria === 'OF' ? 1 : 0);
                         totales.sub_disp += (p.categoria === 'SUB/MNE' ? 1 : 0);
@@ -977,30 +1003,41 @@
                     } else if (p.novedad !== 'Stand by') {
                         totales.ausentes++;
                         novOficina++;
+                        novOficinaCateg[p.categoria] = (novOficinaCateg[p.categoria] || 0) + 1;
                         totales.novedadesMap[p.novedad] = (totales.novedadesMap[p.novedad] || 0) + 1;
                     }
                 });
 
-                let dispHTML = `<span class="font-mono font-bold text-blue-600 text-xs sm:text-sm">${dispOficina['OF']}-${dispOficina['SUB/MNE']}-${dispOficina['PATR']}-${dispOficina['AUX']}-${dispOficina['NU']}</span>`;
+                // MEJORA 3: Nuevas columnas dinámicas
+                let dispNumHTML = `<span class="font-mono font-bold text-blue-600 text-[10px] sm:text-xs whitespace-nowrap">${dispOficina['OF']}-${dispOficina['SUB/MNE']}-${dispOficina['PATR']}-${dispOficina['AUX']}-${dispOficina['NU']}</span>`;
+                let novNumHTML = `<span class="font-mono font-bold text-red-600 text-[10px] sm:text-xs whitespace-nowrap">${novOficinaCateg['OF']}-${novOficinaCateg['SUB/MNE']}-${novOficinaCateg['PATR']}-${novOficinaCateg['AUX']}-${novOficinaCateg['NU']}</span>`;
                 
-                let novHTML = '';
+                let btnDispHTML = '';
+                if (totDispOficina > 0) {
+                    btnDispHTML = `<button onclick="abrirModalDetalle('${of}', 'DISPONIBLES')" class="bg-blue-50 hover:bg-blue-100 text-blue-600 font-bold px-2 py-1 rounded border border-blue-200 transition-colors text-[10px] sm:text-xs flex items-center gap-1 mx-auto">${totDispOficina} Disp. <i class="ph ph-eye"></i></button>`;
+                } else {
+                    btnDispHTML = `<span class="text-gray-400 italic text-[10px] sm:text-xs">--</span>`;
+                }
+
+                let btnNovHTML = '';
                 if (novOficina > 0) {
-                    // Si hacemos click aquí en el ojito, abrimos el modal filtrando por la oficina y sin filtro de novedad.
-                    novHTML = `<button onclick="abrirModalNovedades('${of}', null)" class="bg-red-50 hover:bg-red-100 text-red-600 font-bold px-2 py-1 rounded border border-red-200 transition-colors text-xs flex items-center gap-1 mx-auto">${novOficina} Nov. <i class="ph ph-eye"></i></button>`;
+                    btnNovHTML = `<button onclick="abrirModalDetalle('${of}', 'NOVEDADES')" class="bg-red-50 hover:bg-red-100 text-red-600 font-bold px-2 py-1 rounded border border-red-200 transition-colors text-[10px] sm:text-xs flex items-center gap-1 mx-auto">${novOficina} Nov. <i class="ph ph-eye"></i></button>`;
                 } else {
                     if (!rep) {
-                        novHTML = `<span class="text-gray-400 italic text-xs">--</span>`;
+                        btnNovHTML = `<span class="text-gray-400 italic text-[10px] sm:text-xs">--</span>`;
                     } else {
-                        novHTML = `<span class="text-emerald-500 font-bold text-xs">Sin Novedad</span>`;
+                        btnNovHTML = `<span class="text-emerald-500 font-bold text-[10px] sm:text-xs">Sin Novedad</span>`;
                     }
                 }
 
                 tbodyEst.innerHTML += `
                     <tr class="hover:bg-gray-50 border-b border-gray-100">
-                        <td class="px-2 sm:px-4 py-3 font-semibold text-gray-800 text-[10px] sm:text-xs uppercase whitespace-nowrap">${of}</td>
-                        <td class="px-2 sm:px-4 py-3 text-center whitespace-nowrap">${estadoHTML}</td>
-                        <td class="px-2 sm:px-4 py-3 text-center whitespace-nowrap">${dispHTML}</td>
-                        <td class="px-2 sm:px-4 py-3 text-center whitespace-nowrap">${novHTML}</td>
+                        <td class="px-2 sm:px-3 py-3 font-semibold text-gray-800 text-[10px] sm:text-xs uppercase whitespace-nowrap">${of}</td>
+                        <td class="px-2 sm:px-3 py-3 text-center whitespace-nowrap">${estadoHTML}</td>
+                        <td class="px-1 sm:px-2 py-3 text-center whitespace-nowrap">${dispNumHTML}</td>
+                        <td class="px-1 sm:px-2 py-3 text-center whitespace-nowrap">${btnDispHTML}</td>
+                        <td class="px-1 sm:px-2 py-3 text-center whitespace-nowrap">${novNumHTML}</td>
+                        <td class="px-1 sm:px-2 py-3 text-center whitespace-nowrap">${btnNovHTML}</td>
                     </tr>
                 `;
             });
@@ -1010,7 +1047,6 @@
             document.getElementById('dash-total-disponible').textContent = totales.disponible;
             document.getElementById('dash-total-novedades').textContent = totales.ausentes;
 
-            // MEJORA 10: AI Value Add -> Índice de Capacidad Operativa
             let pctOperatividad = totalNominalBase > 0 ? Math.round((totales.disponible / totalNominalBase) * 100) : 0;
             let barra = document.getElementById('dash-bar-operatividad');
             let textoValor = document.getElementById('dash-indice-operatividad');
@@ -1019,7 +1055,6 @@
             textoValor.textContent = pctOperatividad + '%';
             barra.style.width = pctOperatividad + '%';
             
-            // Diagnóstico visual (Colores Semáforo)
             if (pctOperatividad >= 80) {
                 barra.className = 'bg-emerald-500 h-1.5 rounded-full transition-all duration-1000';
                 textoValor.className = 'text-lg sm:text-xl font-black text-emerald-600';
@@ -1037,7 +1072,6 @@
                 textoDiagnostico.className = 'text-[9px] sm:text-[10px] mt-1 font-bold text-red-500';
             }
 
-            // Llenar lista de Novedades Consolidadas
             const listaNov = document.getElementById('lista-novedades');
             listaNov.innerHTML = '';
             
@@ -1057,9 +1091,8 @@
                 else if(tipo.includes('Luto')) { icon = 'ph-flower-tulip'; color = 'bg-gray-800 text-white'; }
                 else if(tipo.includes('servicio')) { icon = 'ph-police-car'; color = 'bg-indigo-100 text-indigo-600'; }
 
-                // MEJORA 5: Pasamos el filtro inteligente "tipo" para abrir solo esa novedad.
                 listaNov.innerHTML += `
-                    <li onclick="abrirModalNovedades('TODAS', '${tipo}')" class="flex items-center justify-between p-3 bg-gray-50 hover:bg-red-50 border border-gray-200 rounded-xl cursor-pointer transition-colors group shadow-sm">
+                    <li onclick="abrirModalDetalle('TODAS', '${tipo}')" class="flex items-center justify-between p-3 bg-gray-50 hover:bg-red-50 border border-gray-200 rounded-xl cursor-pointer transition-colors group shadow-sm">
                         <div class="flex items-center gap-3">
                             <div class="${color} p-2 rounded-lg group-hover:scale-110 transition-transform"><i class="ph-fill ${icon} text-lg"></i></div>
                             <span class="font-medium text-gray-700 text-xs sm:text-sm group-hover:text-red-700">${tipo}</span>
@@ -1123,24 +1156,35 @@
             mostrarToast('Descargando archivo Excel...', 'success');
         }
 
-        // MEJORA 5 y 6: Modal Inteligente con Filtros y Discriminador de Grados
-        function abrirModalNovedades(filtroOficina, filtroNovedad) {
+        // MEJORA 2 y 5: Modal Generalizado (Soporta Novedades, Disponibles y Filtros Específicos)
+        function abrirModalDetalle(filtroOficina, modoFiltro) {
             const fecha = document.getElementById('filtro-fecha-dashboard').value;
             const titulo = document.getElementById('modal-titulo');
             const desglose = document.getElementById('modal-desglose-grados');
             const tbody = document.getElementById('tbody-modal-novedades');
+            
+            const contenedorIco = document.getElementById('modal-icono-contenedor');
+            const icono = document.getElementById('modal-icono');
 
             tbody.innerHTML = '';
 
-            // Dinamizar Título según clics
-            if (filtroNovedad) {
-                titulo.textContent = `Detalle: ${filtroNovedad}`;
-            } else {
+            // Dinamizar Visuales según el Modo
+            if (modoFiltro === 'DISPONIBLES') {
+                titulo.textContent = filtroOficina === 'TODAS' ? "Personal Disponible (Total)" : `Disponibles en: ${filtroOficina}`;
+                contenedorIco.className = "bg-blue-100 text-blue-600 p-2 rounded-lg shrink-0";
+                icono.className = "ph-fill ph-check-circle text-xl";
+            } else if (modoFiltro === 'NOVEDADES') {
                 titulo.textContent = filtroOficina === 'TODAS' ? "Consolidado de Novedades" : `Novedades en: ${filtroOficina}`;
+                contenedorIco.className = "bg-red-100 text-red-500 p-2 rounded-lg shrink-0";
+                icono.className = "ph-fill ph-users-three text-xl";
+            } else {
+                // Es un filtro específico (ej. Vacaciones)
+                titulo.textContent = `Detalle: ${modoFiltro}`;
+                contenedorIco.className = "bg-red-100 text-red-500 p-2 rounded-lg shrink-0";
+                icono.className = "ph-fill ph-warning-circle text-xl";
             }
 
             let filasInsertadas = 0;
-            // Contadores para el discriminador
             let breakdown = { OF:0, 'SUB/MNE':0, PATR:0, AUX:0, NU:0 };
 
             listaOficinas.forEach(of => {
@@ -1150,24 +1194,28 @@
 
                 if (rep) {
                     rep.personal.forEach(p => {
-                        // REGLA BASE: Excluimos Disponibles y Pendientes
-                        if (p.novedad !== 'En formacion' && p.novedad !== 'Stand by') {
-                            
-                            // MEJORA 5: Si el jefe dio clic a una novedad específica, saltamos las demás
-                            if (filtroNovedad && p.novedad !== filtroNovedad) {
-                                return;
-                            }
+                        let incluir = false;
 
+                        if (modoFiltro === 'DISPONIBLES') {
+                            if (p.novedad === 'En formacion') incluir = true;
+                        } else if (modoFiltro === 'NOVEDADES') {
+                            if (p.novedad !== 'En formacion' && p.novedad !== 'Stand by') incluir = true;
+                        } else {
+                            if (p.novedad === modoFiltro) incluir = true;
+                        }
+
+                        if (incluir) {
                             filasInsertadas++;
-                            
-                            // MEJORA 6: Llenar el contador discriminador
                             if (breakdown[p.categoria] !== undefined) breakdown[p.categoria]++;
+                            
+                            // Si es disponible lo pinto azul, si es novedad rojo.
+                            const colorBadge = (modoFiltro === 'DISPONIBLES') ? 'bg-blue-100 text-blue-700 border-blue-200' : 'bg-red-100 text-red-700 border-red-200';
 
                             tbody.innerHTML += `
-                                <tr class="hover:bg-red-50/50 transition-colors border-b border-gray-100">
+                                <tr class="hover:bg-gray-50 transition-colors border-b border-gray-100">
                                     <td class="px-3 sm:px-4 py-3 font-bold text-gray-500 text-[10px] sm:text-xs uppercase whitespace-nowrap">${of}</td>
                                     <td class="px-3 sm:px-4 py-3 font-semibold text-primary text-[10px] sm:text-xs whitespace-nowrap"><span class="text-gray-400 font-bold block leading-none text-[9px]">${p.categoria}</span>${p.grado} ${p.apellidos} ${p.nombres}</td>
-                                    <td class="px-3 sm:px-4 py-3 whitespace-nowrap"><span class="bg-red-100 text-red-700 font-bold text-[10px] sm:text-xs px-2 py-1 rounded-md border border-red-200 shadow-sm">${p.novedad}</span></td>
+                                    <td class="px-3 sm:px-4 py-3 whitespace-nowrap"><span class="${colorBadge} font-bold text-[10px] sm:text-xs px-2 py-1 rounded-md border shadow-sm">${p.novedad}</span></td>
                                     <td class="px-3 sm:px-4 py-3 text-gray-600 text-xs italic min-w-[150px]">${p.observaciones || 'Sin detalles'}</td>
                                 </tr>
                             `;
@@ -1176,18 +1224,17 @@
                 }
             });
 
-            // Actualizar etiqueta del desglose de grados
             desglose.textContent = `OF:${breakdown['OF']} - SUB:${breakdown['SUB/MNE']} - PT:${breakdown['PATR']} - AUX:${breakdown['AUX']} - NU:${breakdown['NU']}`;
 
             if (filasInsertadas === 0) {
-                tbody.innerHTML = `<tr><td colspan="4" class="p-8 text-center text-gray-400 italic text-sm">No hay personal reportado con esta novedad.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="4" class="p-8 text-center text-gray-400 italic text-sm">No hay personal para mostrar con este filtro.</td></tr>`;
                 desglose.textContent = "Sin datos";
             }
 
             document.getElementById('modal-novedades').classList.remove('hidden');
         }
 
-        function cerrarModalNovedades() {
+        function cerrarModalDetalle() {
             document.getElementById('modal-novedades').classList.add('hidden');
         }
 
