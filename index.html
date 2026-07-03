@@ -56,6 +56,9 @@
             50% { transform: translateY(-10px); }
             100% { transform: translateY(0px); }
         }
+        .animate-spin-hover:hover {
+            animation: spin 1s linear infinite;
+        }
     </style>
 </head>
 <body class="bg-gray-100 text-gray-800 font-sans overflow-x-hidden flex flex-col h-screen">
@@ -124,7 +127,7 @@
                             <i class="ph ph-gear text-lg"></i> <span class="hidden sm:inline">Configuración</span>
                         </button>
                         <button onclick="switchTab('jefe')" id="tab-jefe" class="px-2 sm:px-3 py-2 rounded-md text-xs sm:text-sm font-medium bg-blue-800 hover:bg-blue-700 transition-colors flex items-center gap-1 sm:gap-2 whitespace-nowrap">
-                            <i class="ph ph-user-list text-lg"></i> <span class="hidden sm:inline">Reporte Diario</span>
+                            <i class="ph ph-user-list text-lg"></i> <span class="hidden sm:inline">Reporte</span>
                         </button>
                         <button onclick="switchTab('superior')" id="tab-superior" class="px-2 sm:px-3 py-2 rounded-md text-xs sm:text-sm font-medium hover:bg-blue-700 transition-colors flex items-center gap-1 sm:gap-2 whitespace-nowrap">
                             <i class="ph ph-chart-bar text-lg"></i> <span class="hidden sm:inline">Dashboard</span>
@@ -139,7 +142,9 @@
 
         <main class="flex-1 overflow-y-auto p-2 sm:p-6 lg:p-8 bg-gray-100">
             
-            <!-- VISTA 0: CONFIGURACIÓN -->
+            <!-- ==========================================
+                 VISTA 0: CONFIGURACIÓN
+                 ========================================== -->
             <div id="view-config" class="max-w-6xl mx-auto fade-in hidden">
                 
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
@@ -211,10 +216,11 @@
                                     </div>
                                     <div class="lg:col-span-1">
                                         <label class="block text-xs font-semibold text-gray-600 mb-1">Nombres</label>
-                                        <input type="text" id="config-nombres" class="w-full p-2 border border-gray-300 rounded focus:ring-1 focus:ring-secondary outline-none capitalize text-sm">
+                                        <!-- MEJORA 1: Mayúsculas automáticas en nombres -->
+                                        <input type="text" id="config-nombres" class="w-full p-2 border border-gray-300 rounded focus:ring-1 focus:ring-secondary outline-none uppercase text-sm">
                                     </div>
                                     <div class="lg:col-span-1 mt-2 sm:mt-0">
-                                        <button onclick="agregarPersonaAOficina()" class="bg-accent hover:bg-emerald-600 text-white font-bold py-2 px-4 rounded w-full h-[38px] flex items-center justify-center gap-1">
+                                        <button onclick="agregarPersonaAOficina()" class="bg-accent hover:bg-emerald-600 text-white font-bold py-2 px-4 rounded w-full h-[38px] flex items-center justify-center gap-1 shadow-sm transition">
                                             <i class="ph ph-user-plus text-lg"></i> Añadir
                                         </button>
                                     </div>
@@ -240,7 +246,9 @@
                 </div>
             </div>
 
-            <!-- VISTA 1: PORTAL DE JEFES DE OFICINA -->
+            <!-- ==========================================
+                 VISTA 1: PORTAL DE JEFES DE OFICINA
+                 ========================================== -->
             <div id="view-jefe" class="max-w-5xl mx-auto fade-in block">
                 <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden mb-6">
                     <div class="bg-gray-50 px-4 sm:px-6 py-4 border-b border-gray-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
@@ -259,8 +267,9 @@
                                 </select>
                             </div>
                             <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-2">Fecha</label>
-                                <input type="date" id="input-fecha" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-secondary outline-none text-gray-700">
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Fecha (Referencia)</label>
+                                <!-- MEJORA 2: Fecha bloqueada para edición -->
+                                <input type="date" id="input-fecha" class="w-full p-3 border border-gray-200 bg-gray-50 rounded-lg focus:outline-none text-gray-500 cursor-not-allowed font-medium" readonly>
                             </div>
                         </div>
 
@@ -293,72 +302,97 @@
                 </div>
             </div>
 
-            <!-- VISTA 2: DASHBOARD DEL JEFE SUPERIOR -->
-            <div id="view-superior" class="max-w-7xl mx-auto fade-in hidden">
+            <!-- ==========================================
+                 VISTA 2: DASHBOARD DEL JEFE SUPERIOR
+                 ========================================== -->
+            <div id="view-superior" class="max-w-[1400px] mx-auto fade-in hidden">
                 
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-6 gap-4">
                     <div>
                         <h1 class="text-xl sm:text-2xl font-bold text-dark">Panel de Control DEVAL</h1>
                         <p class="text-sm text-gray-500">Vista en tiempo real de disponibilidad y novedades.</p>
                     </div>
-                    <div class="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
-                        <div class="bg-white px-4 py-2 rounded-lg shadow-sm border border-gray-200 flex items-center justify-between gap-3 w-full sm:w-auto">
-                            <label class="text-xs sm:text-sm font-semibold text-gray-600 whitespace-nowrap">Filtrar fecha:</label>
-                            <input type="date" id="filtro-fecha-dashboard" class="border-none outline-none text-gray-800 font-medium cursor-pointer text-sm" onchange="actualizarDashboard()">
+                    <div class="flex flex-col sm:flex-row gap-3 w-full md:w-auto items-center">
+                        <!-- MEJORA 8: Fecha solo como referencia, no modificable -->
+                        <div class="bg-white px-4 py-2 rounded-full shadow-sm border border-gray-200 flex items-center gap-2 w-full sm:w-auto">
+                            <span class="text-xs font-bold text-gray-400 uppercase">Hoy:</span>
+                            <input type="date" id="filtro-fecha-dashboard" class="border-none outline-none text-gray-800 font-bold bg-transparent text-sm cursor-default" readonly>
                         </div>
-                        <!-- NUEVO BOTÓN: DESCARGAR EXCEL -->
-                        <button onclick="descargarExcel()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg shadow-sm font-bold flex items-center justify-center gap-2 transition-colors w-full sm:w-auto text-sm">
-                            <i class="ph ph-file-xls text-xl"></i> Excel
-                        </button>
+                        
+                        <div class="flex gap-2">
+                            <!-- MEJORA 7: Botón de Refresh -->
+                            <button onclick="descargarDatosSheets()" class="w-10 h-10 bg-blue-100 hover:bg-blue-200 text-blue-600 rounded-full shadow-sm flex items-center justify-center transition-colors" title="Actualizar Datos">
+                                <i class="ph ph-arrows-clockwise text-xl animate-spin-hover"></i>
+                            </button>
+                            
+                            <!-- MEJORA 3: Botón de Descarga Excel minimalista -->
+                            <button onclick="descargarExcel()" class="w-10 h-10 bg-green-600 hover:bg-green-700 text-white rounded-full shadow-md flex items-center justify-center transition-transform hover:scale-105" title="Descargar Base (Excel)">
+                                <i class="ph ph-file-xls text-xl"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Tarjetas -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                <!-- Tarjetas de Métricas -->
+                <div class="grid grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4 mb-8">
                     <!-- Tarjeta 1: Fuerza Efectiva -->
-                    <div class="bg-white p-4 sm:p-5 rounded-xl shadow-sm border border-gray-100 flex items-center gap-3 border-l-4 border-l-primary">
+                    <div class="bg-white p-3 sm:p-5 rounded-xl shadow-sm border border-gray-100 flex flex-col sm:flex-row items-start sm:items-center gap-3 border-b-4 sm:border-b-0 sm:border-l-4 border-primary">
                         <div class="bg-blue-100 p-2 sm:p-3 rounded-full text-primary shrink-0"><i class="ph ph-buildings text-xl sm:text-2xl"></i></div>
                         <div>
                             <p class="text-[10px] sm:text-[11px] text-gray-500 font-bold uppercase">Fuerza Efectiva</p>
                             <h3 class="text-lg sm:text-xl font-bold text-gray-800" id="dash-fuerza-efectiva">0-0-0-0-0</h3>
-                            <p class="text-[9px] sm:text-[10px] text-gray-400 mt-1 font-mono">OF-SUB-PT-AUX-NU</p>
                         </div>
                     </div>
                     
-                    <!-- Tarjeta 2: Fuerza Disponible Desglose (Solo en formacion) -->
-                    <div class="bg-white p-4 sm:p-5 rounded-xl shadow-sm border border-gray-100 flex items-center gap-3 border-l-4 border-l-blue-400">
+                    <!-- Tarjeta 2: Fuerza Disponible Desglose -->
+                    <div class="bg-white p-3 sm:p-5 rounded-xl shadow-sm border border-gray-100 flex flex-col sm:flex-row items-start sm:items-center gap-3 border-b-4 sm:border-b-0 sm:border-l-4 border-blue-400">
                         <div class="bg-blue-50 p-2 sm:p-3 rounded-full text-blue-500 shrink-0"><i class="ph ph-list-numbers text-xl sm:text-2xl"></i></div>
                         <div>
-                            <p class="text-[10px] sm:text-[11px] text-gray-500 font-bold uppercase">Disponibles (Desgl.)</p>
+                            <p class="text-[10px] sm:text-[11px] text-gray-500 font-bold uppercase">Disponibles (Desg)</p>
                             <h3 class="text-lg sm:text-xl font-bold text-gray-800" id="dash-fuerza-disponible">0-0-0-0-0</h3>
-                            <p class="text-[9px] sm:text-[10px] text-blue-500 mt-1 font-bold">Solo 'En Formación'</p>
                         </div>
                     </div>
                     
-                    <!-- Tarjeta 3: Total Disponible (Solo en formacion) -->
-                    <div class="bg-white p-4 sm:p-5 rounded-xl shadow-sm border border-gray-100 flex items-center gap-3 border-l-4 border-l-accent">
+                    <!-- Tarjeta 3: Total Disponible -->
+                    <div class="bg-white p-3 sm:p-5 rounded-xl shadow-sm border border-gray-100 flex flex-col sm:flex-row items-start sm:items-center gap-3 border-b-4 sm:border-b-0 sm:border-l-4 border-accent">
                         <div class="bg-green-100 p-2 sm:p-3 rounded-full text-accent shrink-0"><i class="ph-fill ph-users-three text-xl sm:text-2xl"></i></div>
                         <div>
-                            <p class="text-[10px] sm:text-[11px] text-gray-500 font-bold uppercase">Total Disponibles</p>
+                            <p class="text-[10px] sm:text-[11px] text-gray-500 font-bold uppercase">T. Disponibles</p>
                             <h3 class="text-lg sm:text-xl font-bold text-gray-800" id="dash-total-disponible">0</h3>
-                            <p class="text-[9px] sm:text-[10px] text-gray-400 mt-1">Sin importar categoría</p>
                         </div>
                     </div>
                     
                     <!-- Tarjeta 4: Total Novedades -->
-                    <div onclick="abrirModalNovedades('TODAS')" class="bg-white p-4 sm:p-5 rounded-xl shadow-sm border border-gray-100 flex items-center gap-3 border-l-4 border-l-red-500 cursor-pointer hover:bg-red-50 transition-colors group">
+                    <div onclick="abrirModalNovedades('TODAS')" class="bg-white p-3 sm:p-5 rounded-xl shadow-sm border border-gray-100 flex flex-col sm:flex-row items-start sm:items-center gap-3 border-b-4 sm:border-b-0 sm:border-l-4 border-red-500 cursor-pointer hover:bg-red-50 transition-colors group">
                         <div class="bg-red-100 p-2 sm:p-3 rounded-full text-red-500 shrink-0 group-hover:scale-110 transition-transform"><i class="ph-fill ph-warning-circle text-xl sm:text-2xl"></i></div>
                         <div>
-                            <p class="text-[10px] sm:text-[11px] text-gray-500 font-bold uppercase">Total Novedades</p>
+                            <p class="text-[10px] sm:text-[11px] text-gray-500 font-bold uppercase">T. Novedades</p>
                             <h3 class="text-lg sm:text-xl font-bold text-gray-800" id="dash-total-novedades">0</h3>
-                            <p class="text-[9px] sm:text-[10px] text-red-400 mt-1 font-semibold flex items-center gap-1">Ver Detalle <i class="ph ph-arrow-right"></i></p>
+                            <p class="text-[9px] text-red-400 mt-1 font-semibold flex items-center gap-1">Detalle <i class="ph ph-arrow-right"></i></p>
+                        </div>
+                    </div>
+
+                    <!-- MEJORA 10: TARJETA 5 - ÍNDICE DE CAPACIDAD OPERATIVA (GEMINI AI FEATURE) -->
+                    <div class="bg-white p-3 sm:p-5 rounded-xl shadow-sm border border-gray-100 flex flex-col sm:flex-row items-start sm:items-center gap-3 border-b-4 sm:border-b-0 sm:border-l-4 border-purple-500 relative overflow-hidden col-span-2 lg:col-span-1">
+                        <div class="absolute -right-3 -top-3 text-purple-50 opacity-50"><i class="ph-fill ph-target text-6xl"></i></div>
+                        <div class="bg-purple-50 p-2 sm:p-3 rounded-full text-purple-600 shrink-0 z-10"><i class="ph-fill ph-activity text-xl sm:text-2xl"></i></div>
+                        <div class="z-10 w-full">
+                            <p class="text-[10px] sm:text-[11px] text-gray-500 font-bold uppercase">Índice Operativo</p>
+                            <div class="flex items-end gap-1">
+                                <h3 class="text-lg sm:text-xl font-black text-gray-800" id="dash-indice-operatividad">0%</h3>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-1.5 mt-1 overflow-hidden">
+                                <div id="dash-bar-operatividad" class="bg-purple-500 h-1.5 rounded-full" style="width: 0%"></div>
+                            </div>
+                            <p class="text-[9px] sm:text-[10px] mt-1 font-bold" id="dash-estado-operativo">Calculando...</p>
                         </div>
                     </div>
                 </div>
 
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+                    <!-- Detalle por Oficinas -->
                     <div class="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-                        <div class="bg-gray-50 px-4 sm:px-6 py-4 border-b border-gray-200">
+                        <div class="bg-gray-50 px-4 sm:px-6 py-4 border-b border-gray-200 flex justify-between items-center">
                             <h3 class="font-bold text-gray-800 text-sm sm:text-base">Estado de Reportes por Oficina</h3>
                         </div>
                         <div class="overflow-x-auto">
@@ -366,7 +400,7 @@
                                 <thead class="bg-white border-b text-gray-500 text-xs uppercase tracking-wider">
                                     <tr>
                                         <th class="px-4 py-3 font-semibold">Oficina</th>
-                                        <th class="px-4 py-3 font-semibold text-center">Estado</th>
+                                        <th class="px-4 py-3 font-semibold text-center">Estado de Envío</th>
                                         <th class="px-4 py-3 font-semibold text-center text-blue-600">Disponibles</th>
                                         <th class="px-4 py-3 font-semibold text-center">Novedades</th>
                                     </tr>
@@ -377,10 +411,11 @@
                         </div>
                     </div>
 
+                    <!-- Consolidado de Novedades -->
                     <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden flex flex-col">
                         <div class="bg-gray-50 px-4 sm:px-6 py-4 border-b border-gray-200">
                             <h3 class="font-bold text-gray-800 text-sm sm:text-base">Consolidado Novedades</h3>
-                            <p class="text-[10px] text-gray-500">Clic en novedad para detalle</p>
+                            <p class="text-[10px] text-gray-500">Clic para ver detalle específico</p>
                         </div>
                         <div class="p-4 sm:p-6 flex-1 max-h-[400px] overflow-y-auto">
                             <ul id="lista-novedades" class="space-y-3">
@@ -390,7 +425,7 @@
                 </div>
             </div>
             
-            <div class="text-center text-xs text-gray-400 pb-4">
+            <div class="text-center text-xs text-gray-400 pb-4 mt-auto">
                 &copy; 2026 DEVAL - Políticas de Copyright. <br class="sm:hidden"><span class="font-bold">Powered by GUTIC DEVAL</span>
             </div>
         </main>
@@ -402,12 +437,13 @@
     <div id="modal-novedades" class="fixed inset-0 bg-gray-900 bg-opacity-60 z-50 hidden flex items-center justify-center backdrop-blur-sm p-4">
         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-5xl overflow-hidden fade-in flex flex-col max-h-[90vh]">
             
-            <div class="bg-gray-50 px-4 sm:px-6 py-4 border-b border-gray-200 flex justify-between items-center shrink-0">
+            <div class="bg-gray-50 px-4 sm:px-6 py-3 border-b border-gray-200 flex justify-between items-center shrink-0">
                 <div class="flex items-center gap-3">
                     <div class="bg-red-100 text-red-500 p-2 rounded-lg shrink-0"><i class="ph-fill ph-users-three text-xl"></i></div>
                     <div>
                         <h3 class="font-bold text-base sm:text-lg text-gray-800" id="modal-titulo">Personal con Novedad</h3>
-                        <p class="text-[10px] sm:text-xs text-gray-500 font-mono" id="modal-subtitulo-fecha"></p>
+                        <!-- MEJORA 6: Discriminador de grados dinámico dentro del modal -->
+                        <p class="text-[10px] sm:text-xs text-blue-600 font-bold font-mono bg-blue-50 px-2 py-0.5 rounded mt-0.5 inline-block" id="modal-desglose-grados">OF:0 - SUB:0 - PT:0 - AUX:0 - NU:0</p>
                     </div>
                 </div>
                 <button onclick="cerrarModalNovedades()" class="text-gray-400 hover:text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-full p-2 transition-colors">
@@ -460,8 +496,6 @@
             'NU': ['NU']
         };
 
-        // El estado 'Stand by' sirve internamente para marcar pendencia, pero NO es una novedad que sume.
-        // Hemos cambiado el "0" por "Stand by" de forma estricta.
         const opcionesNovedad = [
             { val: 'Stand by', text: '⏳ Stand by', aisla: false },
             { val: 'En formacion', text: '✅ En formación', aisla: false },
@@ -538,7 +572,6 @@
                             const strFecha = typeof fecha === 'string' && fecha.includes('T') ? fecha.split('T')[0] : fecha;
                             let reporteExistente = reportesAlmacenados.find(r => r.oficina === oficina && r.fecha === strFecha);
                             
-                            // Traducimos automáticamente el viejo "0" a "Stand by" por si viene así desde Google Sheets
                             let novFix = String(novedad).trim();
                             if (novFix === '0') novFix = 'Stand by';
 
@@ -566,16 +599,28 @@
                 document.getElementById('view-login').classList.add('hidden');
                 document.getElementById('app-layout').classList.remove('hidden');
                 document.getElementById('app-layout').classList.add('flex');
-                switchTab('jefe'); 
-                mostrarToast('Datos sincronizados', 'success');
+                
+                // Actualiza dashboard si ya estábamos dentro
+                if (!document.getElementById('view-superior').classList.contains('hidden')) {
+                    actualizarDashboard();
+                } else if (!document.getElementById('view-jefe').classList.contains('hidden')) {
+                    cargarPersonalParaReporte();
+                } else {
+                    switchTab('jefe'); 
+                }
+
+                mostrarToast('Datos sincronizados con la nube', 'success');
             })
             .catch(err => {
                 console.error("Error al sincronizar:", err);
                 mostrarToast('Error de conexión. Modo local activo.', 'error');
+                
                 document.getElementById('view-login').classList.add('hidden');
                 document.getElementById('app-layout').classList.remove('hidden');
                 document.getElementById('app-layout').classList.add('flex');
-                switchTab('jefe');
+                if (document.getElementById('view-superior').classList.contains('hidden') && document.getElementById('view-config').classList.contains('hidden')) {
+                     switchTab('jefe');
+                }
             })
             .finally(() => {
                 document.getElementById('login-spinner').classList.add('hidden');
@@ -602,8 +647,8 @@
                     <tr class="hover:bg-gray-50 border-b border-gray-100">
                         <td class="p-3 font-semibold text-gray-800 uppercase">${of}</td>
                         <td class="p-3 text-center whitespace-nowrap">
-                            <button onclick="editarOficina('${of}')" class="text-blue-500 hover:text-blue-700 p-1 mr-2" title="Editar"><i class="ph ph-pencil-simple text-lg"></i></button>
-                            <button onclick="eliminarOficina('${of}')" class="text-red-500 hover:text-red-700 p-1" title="Eliminar"><i class="ph ph-trash text-lg"></i></button>
+                            <button onclick="editarOficina('${of}')" class="text-blue-500 hover:text-blue-700 p-1 mr-2 transition-transform hover:scale-110" title="Editar"><i class="ph ph-pencil-simple text-lg"></i></button>
+                            <button onclick="eliminarOficina('${of}')" class="text-red-500 hover:text-red-700 p-1 transition-transform hover:scale-110" title="Eliminar"><i class="ph ph-trash text-lg"></i></button>
                         </td>
                     </tr>
                 `;
@@ -625,7 +670,7 @@
             const nombreOficina = input.value.trim().toUpperCase();
 
             if (!nombreOficina) {
-                mostrarToast('Escriba el nombre', 'error');
+                mostrarToast('Escriba el nombre de la oficina', 'error');
                 return;
             }
             if (listaOficinas.includes(nombreOficina)) {
@@ -641,7 +686,7 @@
             cargarPersonalConfig();
 
             input.value = '';
-            mostrarToast('Oficina creada', 'success');
+            mostrarToast('Oficina creada exitosamente', 'success');
         }
 
         function editarOficina(oficinaVieja) {
@@ -654,13 +699,11 @@
                     return;
                 }
 
-                // Actualizar listas
                 const index = listaOficinas.indexOf(oficinaVieja);
                 listaOficinas[index] = nuevoNombre;
                 personalBase[nuevoNombre] = personalBase[oficinaVieja];
                 delete personalBase[oficinaVieja];
 
-                // Actualizar reportes locales
                 reportesAlmacenados.forEach(r => {
                     if(r.oficina === oficinaVieja) r.oficina = nuevoNombre;
                 });
@@ -668,17 +711,24 @@
                 actualizarDropdownsOficinas();
                 document.getElementById('select-oficina-config').value = nuevoNombre;
                 cargarPersonalConfig();
-                mostrarToast('Nombre actualizado', 'success');
+                mostrarToast('Nombre de oficina actualizado', 'success');
             }
         }
 
+        // MEJORA 9: Bloqueo de seguridad para eliminar oficinas
         function eliminarOficina(oficina) {
-            if(confirm(`¿Está seguro de eliminar la oficina "${oficina}" y todo su personal base?`)) {
+            let pwd = prompt("ACCESO RESTRINGIDO\nEsta acción eliminará la oficina y todo su personal base.\nIngrese la clave de Administrador:");
+            if (pwd !== "GUTIC26") {
+                if (pwd !== null) mostrarToast("Clave incorrecta. Acción denegada.", "error");
+                return;
+            }
+
+            if(confirm(`¿Está seguro de proceder con la eliminación de "${oficina}"?`)) {
                 listaOficinas = listaOficinas.filter(o => o !== oficina);
                 delete personalBase[oficina];
                 actualizarDropdownsOficinas();
                 cargarPersonalConfig();
-                mostrarToast('Oficina eliminada', 'success');
+                mostrarToast('Oficina eliminada correctamente', 'success');
             }
         }
 
@@ -715,8 +765,8 @@
                         <td class="p-3 font-semibold text-primary whitespace-nowrap"><span class="text-[10px] text-gray-500 font-bold block leading-none">${p.categoria}</span>${p.grado}</td>
                         <td class="p-3 uppercase whitespace-nowrap">${p.apellidos} ${p.nombres}</td>
                         <td class="p-3 text-center whitespace-nowrap">
-                            <button onclick="editarPersonaDeOficina('${of}', ${idx})" class="text-blue-500 hover:text-blue-700 p-1 mr-2" title="Editar"><i class="ph ph-pencil-simple text-lg"></i></button>
-                            <button onclick="eliminarPersonaDeOficina('${of}', ${idx})" class="text-red-500 hover:text-red-700 p-1" title="Eliminar"><i class="ph ph-trash text-lg"></i></button>
+                            <button onclick="editarPersonaDeOficina('${of}', ${idx})" class="text-blue-500 hover:text-blue-700 p-1 mr-2 transition-transform hover:scale-110" title="Editar"><i class="ph ph-pencil-simple text-lg"></i></button>
+                            <button onclick="eliminarPersonaDeOficina('${of}', ${idx})" class="text-red-500 hover:text-red-700 p-1 transition-transform hover:scale-110" title="Eliminar"><i class="ph ph-trash text-lg"></i></button>
                         </td>
                     </tr>
                 `;
@@ -728,10 +778,10 @@
             const cat = document.getElementById('config-categoria').value;
             const grado = document.getElementById('config-grado').value;
             const apellidos = document.getElementById('config-apellidos').value.trim().toUpperCase();
-            const nombres = document.getElementById('config-nombres').value.trim();
+            const nombres = document.getElementById('config-nombres').value.trim().toUpperCase();
 
             if (!apellidos || !nombres) {
-                mostrarToast('Complete apellidos y nombres', 'error');
+                mostrarToast('Debe ingresar Apellidos y Nombres', 'error');
                 return;
             }
 
@@ -748,7 +798,7 @@
             document.getElementById('config-nombres').value = '';
             
             cargarPersonalConfig();
-            mostrarToast('Funcionario guardado', 'success');
+            mostrarToast('Funcionario agregado exitosamente', 'success');
         }
 
         function editarPersonaDeOficina(oficina, idx) {
@@ -761,11 +811,11 @@
             
             personalBase[oficina].splice(idx, 1);
             cargarPersonalConfig();
-            mostrarToast('Modifique los datos y presione Añadir.', 'info');
+            mostrarToast('Datos listos para editar. Modifique y presione Añadir.', 'info');
         }
 
         function eliminarPersonaDeOficina(oficina, idx) {
-            if (confirm('¿Eliminar funcionario de la base nominal?')) {
+            if (confirm('¿Eliminar funcionario de la base nominal permanentemente?')) {
                 personalBase[oficina].splice(idx, 1);
                 cargarPersonalConfig();
                 mostrarToast('Funcionario eliminado', 'success');
@@ -853,12 +903,12 @@
             const filas = document.querySelectorAll('#tbody-personal-reporte tr');
 
             if (!of || !fecha || filas.length === 0) {
-                mostrarToast('Error al generar reporte', 'error');
+                mostrarToast('Error al procesar el reporte', 'error');
                 return;
             }
 
             document.getElementById('btn-enviar-reporte').disabled = true;
-            mostrarToast('Guardando en nube...', 'info');
+            mostrarToast('Enviando reporte a la base central...', 'info');
 
             let personalReportado = [];
             filas.forEach(f => {
@@ -903,26 +953,29 @@
             });
         }
 
-        // --- 3. DASHBOARD Y ANALÍTICA (ACTUALIZADO A NUEVAS REGLAS DE CONTABILIDAD) ---
+        // --- 3. DASHBOARD Y ANALÍTICA ---
         function actualizarDashboard() {
             const fechaFiltro = document.getElementById('filtro-fecha-dashboard').value;
             if (!fechaFiltro) return;
 
-            // 1. FUERZA EFECTIVA
             let fuerzaNominal = { OF:0, 'SUB/MNE':0, PATR:0, AUX:0, NU:0 };
+            let totalNominalBase = 0;
+            
             listaOficinas.forEach(of => {
                 (personalBase[of] || []).forEach(p => {
-                    if (fuerzaNominal[p.categoria] !== undefined) fuerzaNominal[p.categoria]++;
+                    if (fuerzaNominal[p.categoria] !== undefined) {
+                        fuerzaNominal[p.categoria]++;
+                        totalNominalBase++;
+                    }
                 });
             });
 
             document.getElementById('dash-fuerza-efectiva').textContent = 
                 `${fuerzaNominal['OF']}-${fuerzaNominal['SUB/MNE']}-${fuerzaNominal['PATR']}-${fuerzaNominal['AUX']}-${fuerzaNominal['NU']}`;
 
-            // 2. DISPONIBLES Y NOVEDADES (Stand by EXCLUIDO de ambas contabilidades)
             let totales = {
                 disponible: 0,
-                ausentes: 0, // Novedades reales
+                ausentes: 0,
                 of_disp: 0, sub_disp: 0, patr_disp: 0, aux_disp: 0, nu_disp: 0,
                 novedadesMap: {}
             };
@@ -936,21 +989,15 @@
 
                 let personalAContar = [];
                 let estadoHTML = '';
-                let esPendiente = false;
-
+                
+                // MEJORA 4: Corrección de lógica de reporte.
+                // Si el reporte existe en la base, la oficina SÍ cumplió con enviar, 
+                // por tanto es un "Reportado", incluso si dejaron a alguien en Stand by por accidente o intención.
                 if (rep) {
                     personalAContar = rep.personal;
-                    const tieneStandBy = rep.personal.some(p => p.novedad === 'Stand by');
-                    if(tieneStandBy) {
-                        estadoHTML = `<span class="bg-orange-100 text-orange-700 text-[10px] px-2 py-1 rounded-full font-bold">⚠️ Pendiente</span>`;
-                        esPendiente = true;
-                    } else {
-                        estadoHTML = `<span class="bg-emerald-100 text-emerald-700 text-[10px] px-2 py-1 rounded-full font-bold">✅ Reportado</span>`;
-                    }
+                    estadoHTML = `<span class="bg-emerald-100 text-emerald-700 text-[10px] px-2 py-1 rounded-full font-bold">✅ Reportado</span>`;
                 } else {
-                    // Si NO hay reporte, asignamos Stand by.
-                    estadoHTML = `<span class="bg-gray-200 text-gray-700 text-[10px] px-2 py-1 rounded-full font-bold">⏳ En espera</span>`;
-                    esPendiente = true;
+                    estadoHTML = `<span class="bg-gray-200 text-gray-700 text-[10px] px-2 py-1 rounded-full font-bold">⏳ Pendiente</span>`;
                     personalAContar = personalNominal.map(p => ({
                         categoria: p.categoria,
                         grado: p.grado,
@@ -962,7 +1009,7 @@
                 }
 
                 let dispOficina = { OF:0, 'SUB/MNE':0, PATR:0, AUX:0, NU:0 };
-                let novOficina = 0; // Solo Novedades reales
+                let novOficina = 0;
 
                 personalAContar.forEach(p => {
                     if (p.novedad === 'En formacion') {
@@ -974,23 +1021,21 @@
                         totales.aux_disp += (p.categoria === 'AUX' ? 1 : 0);
                         totales.nu_disp += (p.categoria === 'NU' ? 1 : 0);
                     } else if (p.novedad !== 'Stand by') {
-                        // SI NO ES FORMACION Y NO ES STAND BY: Suma como novedad real.
                         totales.ausentes++;
                         novOficina++;
                         totales.novedadesMap[p.novedad] = (totales.novedadesMap[p.novedad] || 0) + 1;
                     }
-                    // Si es 'Stand by', es ignorado matemáticamente.
                 });
 
-                // HTML Oficina
                 let dispHTML = `<span class="font-mono font-bold text-blue-600 text-xs sm:text-sm">${dispOficina['OF']}-${dispOficina['SUB/MNE']}-${dispOficina['PATR']}-${dispOficina['AUX']}-${dispOficina['NU']}</span>`;
                 
                 let novHTML = '';
                 if (novOficina > 0) {
-                    novHTML = `<button onclick="abrirModalNovedades('${of}')" class="bg-red-50 hover:bg-red-100 text-red-600 font-bold px-2 py-1 rounded border border-red-200 transition-colors text-xs flex items-center gap-1 mx-auto">${novOficina} Nov. <i class="ph ph-eye"></i></button>`;
+                    // Si hacemos click aquí en el ojito, abrimos el modal filtrando por la oficina y sin filtro de novedad.
+                    novHTML = `<button onclick="abrirModalNovedades('${of}', null)" class="bg-red-50 hover:bg-red-100 text-red-600 font-bold px-2 py-1 rounded border border-red-200 transition-colors text-xs flex items-center gap-1 mx-auto">${novOficina} Nov. <i class="ph ph-eye"></i></button>`;
                 } else {
-                    if (esPendiente) {
-                        novHTML = `<span class="text-gray-400 italic text-xs">0 Nov.</span>`;
+                    if (!rep) {
+                        novHTML = `<span class="text-gray-400 italic text-xs">--</span>`;
                     } else {
                         novHTML = `<span class="text-emerald-500 font-bold text-xs">Sin Novedad</span>`;
                     }
@@ -1006,13 +1051,39 @@
                 `;
             });
 
-            // Actualizar Tarjetas (Novedades ahora NO incluye Stand by)
             document.getElementById('dash-fuerza-disponible').textContent = 
                 `${totales.of_disp}-${totales.sub_disp}-${totales.patr_disp}-${totales.aux_disp}-${totales.nu_disp}`;
             document.getElementById('dash-total-disponible').textContent = totales.disponible;
             document.getElementById('dash-total-novedades').textContent = totales.ausentes;
 
-            // Llenar lista de Novedades Consolidadas (Sin 'Stand by')
+            // MEJORA 10: AI Value Add -> Índice de Capacidad Operativa
+            let pctOperatividad = totalNominalBase > 0 ? Math.round((totales.disponible / totalNominalBase) * 100) : 0;
+            let barra = document.getElementById('dash-bar-operatividad');
+            let textoValor = document.getElementById('dash-indice-operatividad');
+            let textoDiagnostico = document.getElementById('dash-estado-operativo');
+            
+            textoValor.textContent = pctOperatividad + '%';
+            barra.style.width = pctOperatividad + '%';
+            
+            // Diagnóstico visual (Colores Semáforo)
+            if (pctOperatividad >= 80) {
+                barra.className = 'bg-emerald-500 h-1.5 rounded-full transition-all duration-1000';
+                textoValor.className = 'text-lg sm:text-xl font-black text-emerald-600';
+                textoDiagnostico.textContent = 'ESTADO ÓPTIMO';
+                textoDiagnostico.className = 'text-[9px] sm:text-[10px] mt-1 font-bold text-emerald-500';
+            } else if (pctOperatividad >= 50) {
+                barra.className = 'bg-yellow-500 h-1.5 rounded-full transition-all duration-1000';
+                textoValor.className = 'text-lg sm:text-xl font-black text-yellow-600';
+                textoDiagnostico.textContent = 'ESTADO REGULAR';
+                textoDiagnostico.className = 'text-[9px] sm:text-[10px] mt-1 font-bold text-yellow-500';
+            } else {
+                barra.className = 'bg-red-500 h-1.5 rounded-full transition-all duration-1000';
+                textoValor.className = 'text-lg sm:text-xl font-black text-red-600';
+                textoDiagnostico.textContent = 'ESTADO CRÍTICO';
+                textoDiagnostico.className = 'text-[9px] sm:text-[10px] mt-1 font-bold text-red-500';
+            }
+
+            // Llenar lista de Novedades Consolidadas
             const listaNov = document.getElementById('lista-novedades');
             listaNov.innerHTML = '';
             
@@ -1032,13 +1103,14 @@
                 else if(tipo.includes('Luto')) { icon = 'ph-flower-tulip'; color = 'bg-gray-800 text-white'; }
                 else if(tipo.includes('servicio')) { icon = 'ph-police-car'; color = 'bg-indigo-100 text-indigo-600'; }
 
+                // MEJORA 5: Pasamos el filtro inteligente "tipo" para abrir solo esa novedad.
                 listaNov.innerHTML += `
-                    <li onclick="abrirModalNovedades('TODAS')" class="flex items-center justify-between p-3 bg-gray-50 hover:bg-red-50 border border-gray-200 rounded-xl cursor-pointer transition-colors group">
+                    <li onclick="abrirModalNovedades('TODAS', '${tipo}')" class="flex items-center justify-between p-3 bg-gray-50 hover:bg-red-50 border border-gray-200 rounded-xl cursor-pointer transition-colors group shadow-sm">
                         <div class="flex items-center gap-3">
                             <div class="${color} p-2 rounded-lg group-hover:scale-110 transition-transform"><i class="ph-fill ${icon} text-lg"></i></div>
                             <span class="font-medium text-gray-700 text-xs sm:text-sm group-hover:text-red-700">${tipo}</span>
                         </div>
-                        <span class="bg-red-500 text-white font-bold text-xs px-2 py-1 rounded-full">${cant}</span>
+                        <span class="bg-red-500 text-white font-bold text-xs px-2.5 py-1 rounded-full shadow-sm">${cant}</span>
                     </li>
                 `;
             }
@@ -1047,10 +1119,7 @@
         // --- Exportar a Excel (SheetJS) ---
         function descargarExcel() {
             const fecha = document.getElementById('filtro-fecha-dashboard').value;
-            if (!fecha) {
-                mostrarToast('Seleccione una fecha válida.', 'error');
-                return;
-            }
+            if (!fecha) return;
 
             let datosParaExcel = [];
 
@@ -1067,7 +1136,7 @@
                             "Grado": p.grado,
                             "Apellidos": p.apellidos,
                             "Nombres": p.nombres,
-                            "Situación": p.novedad, // Mostrará "Stand by" directamente
+                            "Situación": p.novedad, 
                             "Observaciones": p.observaciones || ''
                         });
                     });
@@ -1088,7 +1157,7 @@
             });
 
             if(datosParaExcel.length === 0) {
-                mostrarToast('No hay datos configurados para exportar', 'error');
+                mostrarToast('No hay datos para exportar', 'error');
                 return;
             }
 
@@ -1100,18 +1169,25 @@
             mostrarToast('Descargando archivo Excel...', 'success');
         }
 
-
-        function abrirModalNovedades(filtroOficina) {
+        // MEJORA 5 y 6: Modal Inteligente con Filtros y Discriminador de Grados
+        function abrirModalNovedades(filtroOficina, filtroNovedad) {
             const fecha = document.getElementById('filtro-fecha-dashboard').value;
             const titulo = document.getElementById('modal-titulo');
-            const subtitulo = document.getElementById('modal-subtitulo-fecha');
+            const desglose = document.getElementById('modal-desglose-grados');
             const tbody = document.getElementById('tbody-modal-novedades');
 
-            subtitulo.textContent = `Fecha: ${fecha}`;
             tbody.innerHTML = '';
 
-            titulo.textContent = filtroOficina === 'TODAS' ? "Consolidado de Novedades" : `Novedades en: ${filtroOficina}`;
+            // Dinamizar Título según clics
+            if (filtroNovedad) {
+                titulo.textContent = `Detalle: ${filtroNovedad}`;
+            } else {
+                titulo.textContent = filtroOficina === 'TODAS' ? "Consolidado de Novedades" : `Novedades en: ${filtroOficina}`;
+            }
+
             let filasInsertadas = 0;
+            // Contadores para el discriminador
+            let breakdown = { OF:0, 'SUB/MNE':0, PATR:0, AUX:0, NU:0 };
 
             listaOficinas.forEach(of => {
                 if (filtroOficina !== 'TODAS' && filtroOficina !== of) return;
@@ -1120,14 +1196,24 @@
 
                 if (rep) {
                     rep.personal.forEach(p => {
-                        // REGLA: Excluimos a los Disponibles ('En formacion') y a los Pendientes ('Stand by')
+                        // REGLA BASE: Excluimos Disponibles y Pendientes
                         if (p.novedad !== 'En formacion' && p.novedad !== 'Stand by') {
+                            
+                            // MEJORA 5: Si el jefe dio clic a una novedad específica, saltamos las demás
+                            if (filtroNovedad && p.novedad !== filtroNovedad) {
+                                return;
+                            }
+
                             filasInsertadas++;
+                            
+                            // MEJORA 6: Llenar el contador discriminador
+                            if (breakdown[p.categoria] !== undefined) breakdown[p.categoria]++;
+
                             tbody.innerHTML += `
                                 <tr class="hover:bg-red-50/50 transition-colors border-b border-gray-100">
                                     <td class="px-3 sm:px-4 py-3 font-bold text-gray-500 text-[10px] sm:text-xs uppercase whitespace-nowrap">${of}</td>
                                     <td class="px-3 sm:px-4 py-3 font-semibold text-primary text-[10px] sm:text-xs whitespace-nowrap"><span class="text-gray-400 font-bold block leading-none text-[9px]">${p.categoria}</span>${p.grado} ${p.apellidos} ${p.nombres}</td>
-                                    <td class="px-3 sm:px-4 py-3 whitespace-nowrap"><span class="bg-red-100 text-red-700 font-bold text-[10px] sm:text-xs px-2 py-1 rounded-md border border-red-200">${p.novedad}</span></td>
+                                    <td class="px-3 sm:px-4 py-3 whitespace-nowrap"><span class="bg-red-100 text-red-700 font-bold text-[10px] sm:text-xs px-2 py-1 rounded-md border border-red-200 shadow-sm">${p.novedad}</span></td>
                                     <td class="px-3 sm:px-4 py-3 text-gray-600 text-xs italic min-w-[150px]">${p.observaciones || 'Sin detalles'}</td>
                                 </tr>
                             `;
@@ -1136,8 +1222,12 @@
                 }
             });
 
+            // Actualizar etiqueta del desglose de grados
+            desglose.textContent = `OF:${breakdown['OF']} - SUB:${breakdown['SUB/MNE']} - PT:${breakdown['PATR']} - AUX:${breakdown['AUX']} - NU:${breakdown['NU']}`;
+
             if (filasInsertadas === 0) {
-                tbody.innerHTML = `<tr><td colspan="4" class="p-8 text-center text-gray-400 italic text-sm">No se encontraron novedades bajo este criterio.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="4" class="p-8 text-center text-gray-400 italic text-sm">No hay personal reportado con esta novedad.</td></tr>`;
+                desglose.textContent = "Sin datos";
             }
 
             document.getElementById('modal-novedades').classList.remove('hidden');
