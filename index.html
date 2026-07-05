@@ -9,6 +9,8 @@
     
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     
+    <script type="text/javascript" src="https://alcdn.msauth.net/browser/2.35.0/js/msal-browser.min.js"></script>
+    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     
     <script>
@@ -71,24 +73,36 @@
             <h1 class="text-3xl font-extrabold text-dark mb-2 tracking-tight">CHECK-IN DEVAL</h1>
             <p class="text-gray-500 text-sm mb-8 font-medium">Sistema de Control de Asistencia y Novedades Diarias</p>
             
-            <div id="view-login-button-area" class="flex justify-center w-full transform transition hover:scale-105">
-                <div id="g_id_onload"
-                     data-client_id="648106062409-sc647ht5o79f5i2p9hl62hfj28gca001.apps.googleusercontent.com"
-                     data-context="signin"
-                     data-ux_mode="popup"
-                     data-callback="manejarRespuestaGoogle"
-                     data-auto_prompt="false">
+            <div id="view-login-button-area" class="flex flex-col gap-4 w-full transform transition hover:scale-105">
+                <div class="flex justify-center">
+                    <div id="g_id_onload"
+                         data-client_id="648106062409-sc647ht5o79f5i2p9hl62hfj28gca001.apps.googleusercontent.com"
+                         data-context="signin"
+                         data-ux_mode="popup"
+                         data-callback="manejarRespuestaGoogle"
+                         data-auto_prompt="false">
+                    </div>
+                    <div class="g_id_signin"
+                         data-type="standard"
+                         data-shape="rectangular"
+                         data-theme="filled_blue"
+                         data-text="signin_with"
+                         data-size="large"
+                         data-logo_alignment="left"
+                         data-width="300">
+                    </div>
                 </div>
 
-                <div class="g_id_signin"
-                     data-type="standard"
-                     data-shape="rectangular"
-                     data-theme="filled_blue"
-                     data-text="signin_with"
-                     data-size="large"
-                     data-logo_alignment="left"
-                     data-width="300">
+                <div class="flex items-center justify-center gap-2">
+                    <div class="h-px bg-gray-300 w-16"></div>
+                    <span class="text-xs text-gray-400 font-medium">O</span>
+                    <div class="h-px bg-gray-300 w-16"></div>
                 </div>
+
+                <button onclick="loginMicrosoft()" class="flex items-center justify-center gap-2 bg-white text-gray-700 border border-gray-300 rounded shadow-sm w-[300px] h-[40px] hover:bg-gray-50 transition-colors mx-auto font-medium text-[14px]">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 21 21" class="w-5 h-5"><rect x="1" y="1" width="9" height="9" fill="#f25022"/><rect x="1" y="11" width="9" height="9" fill="#00a4ef"/><rect x="11" y="1" width="9" height="9" fill="#7fba00"/><rect x="11" y="11" width="9" height="9" fill="#ffb900"/></svg>
+                    Iniciar sesión con Microsoft
+                </button>
             </div>
             
             <div id="login-spinner" class="hidden mt-6">
@@ -285,12 +299,17 @@
                         <p class="text-sm text-gray-500">Vista en tiempo real de disponibilidad y novedades.</p>
                     </div>
                     <div class="flex flex-col sm:flex-row gap-3 w-full md:w-auto items-center">
+                        
                         <div class="bg-white px-4 py-2 rounded-full shadow-sm border border-gray-200 flex items-center gap-2 w-full sm:w-auto">
                             <span class="text-xs font-bold text-gray-400 uppercase">Hoy:</span>
                             <input type="date" id="filtro-fecha-dashboard" class="border-none outline-none text-gray-800 font-bold bg-transparent text-sm cursor-default" readonly>
                         </div>
                         
                         <div class="flex gap-2">
+                            <button onclick="abrirModalPendientes()" class="bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded-lg shadow-sm font-bold flex items-center justify-center gap-2 transition-colors text-xs sm:text-sm animate-pulse" title="Ver oficinas que no han reportado">
+                                <i class="ph-fill ph-warning"></i> <span class="hidden sm:inline">Sin Reportar</span>
+                            </button>
+
                             <button onclick="descargarDatosSheets()" class="w-10 h-10 bg-blue-100 hover:bg-blue-200 text-blue-600 rounded-full shadow-sm flex items-center justify-center transition-colors" title="Actualizar Datos">
                                 <i class="ph ph-arrows-clockwise text-xl animate-spin-hover"></i>
                             </button>
@@ -354,15 +373,20 @@
 
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
                     <div class="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-                        <div class="bg-gray-50 px-4 sm:px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+                        <div class="bg-gray-50 px-4 sm:px-6 py-4 border-b border-gray-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
                             <h3 class="font-bold text-gray-800 text-sm sm:text-base">Estado de Reportes por Oficina</h3>
+                            
+                            <div class="relative w-full sm:w-64">
+                                <input type="text" id="buscador-oficina" onkeyup="filtrarOficinas()" placeholder="Buscar oficina..." class="w-full pl-8 pr-3 py-2 border border-gray-300 rounded-lg text-xs sm:text-sm focus:outline-none focus:ring-1 focus:ring-secondary">
+                                <i class="ph ph-magnifying-glass absolute left-2.5 top-2.5 text-gray-400 text-lg"></i>
+                            </div>
                         </div>
-                        <div class="overflow-x-auto">
+                        <div class="overflow-x-auto max-h-[500px]">
                             <table class="w-full text-left border-collapse min-w-[700px]">
-                                <thead class="bg-white border-b text-gray-500 text-xs uppercase tracking-wider">
+                                <thead class="bg-white sticky top-0 border-b text-gray-500 text-xs uppercase tracking-wider shadow-sm z-10">
                                     <tr>
                                         <th class="px-3 py-3 font-semibold">Oficina</th>
-                                        <th class="px-2 py-3 font-semibold text-center">Estado</th>
+                                        <th class="px-2 py-3 font-semibold text-center">Estado de Envío</th>
                                         <th class="px-2 py-3 font-semibold text-center text-blue-600">Disponibles</th>
                                         <th class="px-2 py-3 font-semibold text-center text-blue-600">Detalle Disp.</th>
                                         <th class="px-2 py-3 font-semibold text-center text-red-600">Novedades</th>
@@ -444,6 +468,15 @@
         // --- BASE DE DATOS LOCAL Y URL GOOGLE ---
         const URL_SECRETA_GOOGLE = "https://script.google.com/macros/s/AKfycbwBaU5PWbGXnC-1cOTm6-uiNVUtnV7J4_2GQtEnL6frIqe8dsYWtdWe1pReMS6dDNi2Vg/exec";
         
+        // --- CONFIGURACIÓN MICROSOFT MSAL ---
+        const msalConfig = {
+            auth: {
+                clientId: "9641b317-3b1d-4de0-afca-7e34be884804",
+                authority: "https://login.microsoftonline.com/common"
+            }
+        };
+        const msalInstance = new msal.PublicClientApplication(msalConfig);
+        
         let listaOficinas = []; 
         let personalBase = {};
         let reportesAlmacenados = [];
@@ -462,10 +495,10 @@
             { val: 'En servicio', text: '🚓 En servicio', aisla: true }, 
             { val: 'Vacaciones', text: '🏖️ Vacaciones', aisla: true },
             { val: 'Permiso', text: '📄 Permiso', aisla: true },
+            { val: 'Franquicia', text: '😎 Franquicia', aisla: true },
             { val: 'Cita Médica', text: '🏥 Cita Médica', aisla: true },
             { val: 'Permiso Diferencial', text: '⚖️ Permiso Diferencial', aisla: true },
             { val: 'Comisión Estudio', text: '📚 Comisión Estudio', aisla: true },
-            { val: 'Comisión del Servicio', text: '🚨 Comisión del Servicio', aisla: true },
             { val: 'Excusa del servicio', text: '🩺 Excusa del servicio', aisla: true },
             { val: 'Ley Maria', text: '👶 Ley Maria', aisla: true },
             { val: 'Licencia de Luto', text: '🕊️ Licencia de Luto', aisla: true }
@@ -483,7 +516,7 @@
             actualizarGradosConfig();
         });
 
-        // --- 0. LOGIN OFICIAL DE GOOGLE ---
+        // --- 0. LOGIN DE GOOGLE Y MICROSOFT ---
         function manejarRespuestaGoogle(response) {
             const base64Url = response.credential.split('.')[1];
             const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
@@ -493,10 +526,25 @@
             
             const datosUsuario = JSON.parse(payload);
             
+            iniciarSesionVisual(datosUsuario.name);
+        }
+
+        function loginMicrosoft() {
+            msalInstance.loginPopup({ scopes: ["user.read"] })
+                .then(response => {
+                    iniciarSesionVisual(response.account.name);
+                })
+                .catch(error => {
+                    console.error(error);
+                    mostrarToast('Error al conectar con Microsoft', 'error');
+                });
+        }
+
+        function iniciarSesionVisual(nombreUsuario) {
             document.getElementById('view-login-button-area').classList.add('hidden');
             document.getElementById('login-spinner').classList.remove('hidden');
             
-            mostrarToast(`Hola, ${datosUsuario.name}`, 'success');
+            mostrarToast(`Bienvenido, ${nombreUsuario}`, 'success');
             descargarDatosSheets();
         }
 
@@ -856,7 +904,6 @@
             });
         }
 
-        // MEJORA 1: Bloqueo inteligente del reporte si hay personas en "Stand by"
         function enviarReporte() {
             const of = document.getElementById('select-oficina-reporte').value;
             const fecha = document.getElementById('input-fecha').value;
@@ -892,7 +939,7 @@
                 });
             });
 
-            // Validación estricta
+            // Validación estricta para evitar envío si hay gente en Stand by
             if (personalPendiente.length > 0) {
                 alert("ALERTA: Reporte Incompleto\n\nNo puede enviar el reporte porque tiene funcionarios en 'Stand by'. Debe actualizar la situación de:\n\n- " + personalPendiente.join("\n- ") + "\n\nPor favor, asigne el estado real a todos antes de enviar.");
                 mostrarToast('Complete el estado de todo el personal', 'error');
@@ -960,29 +1007,30 @@
             const tbodyEst = document.getElementById('tbody-estado-oficinas');
             tbodyEst.innerHTML = '';
 
-            // MEJORA 4: Orden Alfabético Dinámico de las Oficinas para el Dashboard
+            // Ordenamiento Alfabético de Oficinas
             const oficinasOrdenadas = [...listaOficinas].sort((a, b) => a.localeCompare(b, 'es', {sensitivity: 'base'}));
 
             oficinasOrdenadas.forEach(of => {
                 const rep = reportesAlmacenados.find(r => r.oficina === of && r.fecha === fechaFiltro);
                 const personalNominal = personalBase[of] || [];
+                let tienePersonal = personalNominal.length > 0;
 
                 let personalAContar = [];
                 let estadoHTML = '';
+                let estaReportado = false;
                 
-                // MEJORA 4: Si existe reporte, automáticamente es Reportado
-                if (rep) {
+                // Lógica Estricta: Reportado = 0 personas en Stand by
+                if (rep && tienePersonal) {
+                    const tieneStandBy = rep.personal.some(p => p.novedad === 'Stand by');
+                    estaReportado = !tieneStandBy;
                     personalAContar = rep.personal;
-                    estadoHTML = `<span class="bg-emerald-100 text-emerald-700 text-[10px] px-2 py-1 rounded-full font-bold">✅ Reportado</span>`;
+                } else if (!tienePersonal) {
+                    estaReportado = true; // Si no tiene personal, no debe reportar
                 } else {
-                    estadoHTML = `<span class="bg-gray-200 text-gray-700 text-[10px] px-2 py-1 rounded-full font-bold">⏳ Pendiente</span>`;
+                    estaReportado = false;
                     personalAContar = personalNominal.map(p => ({
-                        categoria: p.categoria,
-                        grado: p.grado,
-                        apellidos: p.apellidos,
-                        nombres: p.nombres,
-                        novedad: 'Stand by', 
-                        observaciones: 'Sin reporte enviado'
+                        categoria: p.categoria, grado: p.grado, apellidos: p.apellidos, nombres: p.nombres,
+                        novedad: 'Stand by', observaciones: 'Sin reporte enviado'
                     }));
                 }
 
@@ -1009,26 +1057,37 @@
                     }
                 });
 
-                // MEJORA 3: Nuevas columnas dinámicas
+                // Construcción visual basada en estado de reporte
+                if (estaReportado && tienePersonal) {
+                    estadoHTML = `<span class="bg-emerald-100 text-emerald-700 text-[10px] px-2 py-1 rounded-full font-bold">✅ Reportado</span>`;
+                } else if (!tienePersonal) {
+                    estadoHTML = `<span class="bg-gray-200 text-gray-500 text-[10px] px-2 py-1 rounded-full font-bold">Sin personal</span>`;
+                } else {
+                    // Alerta llamativa para los NO REPORTADOS
+                    estadoHTML = `<span class="bg-red-500 text-white text-[10px] px-2 py-1 rounded-full font-bold shadow-sm animate-pulse">⚠️ SIN REPORTAR</span>`;
+                }
+
                 let dispNumHTML = `<span class="font-mono font-bold text-blue-600 text-[10px] sm:text-xs whitespace-nowrap">${dispOficina['OF']}-${dispOficina['SUB/MNE']}-${dispOficina['PATR']}-${dispOficina['AUX']}-${dispOficina['NU']}</span>`;
-                let novNumHTML = `<span class="font-mono font-bold text-red-600 text-[10px] sm:text-xs whitespace-nowrap">${novOficinaCateg['OF']}-${novOficinaCateg['SUB/MNE']}-${novOficinaCateg['PATR']}-${novOficinaCateg['AUX']}-${novOficinaCateg['NU']}</span>`;
+                let novNumHTML = '';
+                let btnNovHTML = '';
+
+                if (estaReportado) {
+                    novNumHTML = `<span class="font-mono font-bold text-red-600 text-[10px] sm:text-xs whitespace-nowrap">${novOficinaCateg['OF']}-${novOficinaCateg['SUB/MNE']}-${novOficinaCateg['PATR']}-${novOficinaCateg['AUX']}-${novOficinaCateg['NU']}</span>`;
+                    if (novOficina > 0) {
+                        btnNovHTML = `<button onclick="abrirModalDetalle('${of}', 'NOVEDADES')" class="bg-red-50 hover:bg-red-100 text-red-600 font-bold px-2 py-1 rounded border border-red-200 transition-colors text-[10px] sm:text-xs flex items-center gap-1 mx-auto">${novOficina} Nov. <i class="ph ph-eye"></i></button>`;
+                    } else {
+                        btnNovHTML = `<span class="text-emerald-500 font-bold text-[10px] sm:text-xs">Sin Novedad</span>`;
+                    }
+                } else {
+                    novNumHTML = `<span class="font-mono font-bold text-gray-400 text-[10px] sm:text-xs whitespace-nowrap">--</span>`;
+                    btnNovHTML = `<span class="text-red-500 font-bold text-[10px] sm:text-xs bg-red-50 px-2 py-1 rounded border border-red-200">Pendiente</span>`;
+                }
                 
                 let btnDispHTML = '';
                 if (totDispOficina > 0) {
                     btnDispHTML = `<button onclick="abrirModalDetalle('${of}', 'DISPONIBLES')" class="bg-blue-50 hover:bg-blue-100 text-blue-600 font-bold px-2 py-1 rounded border border-blue-200 transition-colors text-[10px] sm:text-xs flex items-center gap-1 mx-auto">${totDispOficina} Disp. <i class="ph ph-eye"></i></button>`;
                 } else {
                     btnDispHTML = `<span class="text-gray-400 italic text-[10px] sm:text-xs">--</span>`;
-                }
-
-                let btnNovHTML = '';
-                if (novOficina > 0) {
-                    btnNovHTML = `<button onclick="abrirModalDetalle('${of}', 'NOVEDADES')" class="bg-red-50 hover:bg-red-100 text-red-600 font-bold px-2 py-1 rounded border border-red-200 transition-colors text-[10px] sm:text-xs flex items-center gap-1 mx-auto">${novOficina} Nov. <i class="ph ph-eye"></i></button>`;
-                } else {
-                    if (!rep) {
-                        btnNovHTML = `<span class="text-gray-400 italic text-[10px] sm:text-xs">--</span>`;
-                    } else {
-                        btnNovHTML = `<span class="text-emerald-500 font-bold text-[10px] sm:text-xs">Sin Novedad</span>`;
-                    }
                 }
 
                 tbodyEst.innerHTML += `
@@ -1087,6 +1146,7 @@
                 if(tipo.includes('Vacaciones')) { icon = 'ph-airplane-tilt'; color = 'bg-blue-100 text-blue-600'; }
                 else if(tipo.includes('Médica') || tipo.includes('Excusa')) { icon = 'ph-first-aid'; color = 'bg-red-100 text-red-600'; }
                 else if(tipo.includes('Permiso')) { icon = 'ph-file-text'; color = 'bg-yellow-100 text-yellow-700'; }
+                else if(tipo.includes('Franquicia')) { icon = 'ph-sunglasses'; color = 'bg-orange-100 text-orange-600'; }
                 else if(tipo.includes('Estudio')) { icon = 'ph-books'; color = 'bg-purple-100 text-purple-600'; }
                 else if(tipo.includes('Ley Maria')) { icon = 'ph-baby'; color = 'bg-pink-100 text-pink-600'; }
                 else if(tipo.includes('Luto')) { icon = 'ph-flower-tulip'; color = 'bg-gray-800 text-white'; }
@@ -1101,6 +1161,26 @@
                         <span class="bg-red-500 text-white font-bold text-xs px-2.5 py-1 rounded-full shadow-sm">${cant}</span>
                     </li>
                 `;
+            }
+        }
+
+        // --- FILTRO DE BUSQUEDA PARA OFICINAS ---
+        function filtrarOficinas() {
+            let input = document.getElementById('buscador-oficina');
+            let filter = input.value.toUpperCase();
+            let table = document.getElementById("tbody-estado-oficinas");
+            let tr = table.getElementsByTagName("tr");
+
+            for (let i = 0; i < tr.length; i++) {
+                let td = tr[i].getElementsByTagName("td")[0]; 
+                if (td) {
+                    let txtValue = td.textContent || td.innerText;
+                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                        tr[i].style.display = "";
+                    } else {
+                        tr[i].style.display = "none";
+                    }
+                }
             }
         }
 
@@ -1157,7 +1237,7 @@
             mostrarToast('Descargando archivo Excel...', 'success');
         }
 
-        // MEJORA 2 y 5: Modal Generalizado (Soporta Novedades, Disponibles y Filtros Específicos)
+        // MODAL INTELIGENTE
         function abrirModalDetalle(filtroOficina, modoFiltro) {
             const fecha = document.getElementById('filtro-fecha-dashboard').value;
             const titulo = document.getElementById('modal-titulo');
@@ -1169,7 +1249,6 @@
 
             tbody.innerHTML = '';
 
-            // Dinamizar Visuales según el Modo
             if (modoFiltro === 'DISPONIBLES') {
                 titulo.textContent = filtroOficina === 'TODAS' ? "Personal Disponible (Total)" : `Disponibles en: ${filtroOficina}`;
                 contenedorIco.className = "bg-blue-100 text-blue-600 p-2 rounded-lg shrink-0";
@@ -1179,7 +1258,6 @@
                 contenedorIco.className = "bg-red-100 text-red-500 p-2 rounded-lg shrink-0";
                 icono.className = "ph-fill ph-users-three text-xl";
             } else {
-                // Es un filtro específico (ej. Vacaciones)
                 titulo.textContent = `Detalle: ${modoFiltro}`;
                 contenedorIco.className = "bg-red-100 text-red-500 p-2 rounded-lg shrink-0";
                 icono.className = "ph-fill ph-warning-circle text-xl";
@@ -1209,8 +1287,7 @@
                             filasInsertadas++;
                             if (breakdown[p.categoria] !== undefined) breakdown[p.categoria]++;
                             
-                            // Si es disponible lo pinto azul, si es novedad rojo.
-                            const colorBadge = (modoFiltro === 'DISPONIBLES') ? 'bg-blue-100 text-blue-700 border-blue-200' : 'bg-red-100 text-red-700 border-red-200';
+                            const colorBadge = (modoFiltro === 'DISPONIBLES' || p.novedad === 'En formacion') ? 'bg-blue-100 text-blue-700 border-blue-200' : 'bg-red-100 text-red-700 border-red-200';
 
                             tbody.innerHTML += `
                                 <tr class="hover:bg-gray-50 transition-colors border-b border-gray-100">
@@ -1230,6 +1307,58 @@
             if (filasInsertadas === 0) {
                 tbody.innerHTML = `<tr><td colspan="4" class="p-8 text-center text-gray-400 italic text-sm">No hay personal para mostrar con este filtro.</td></tr>`;
                 desglose.textContent = "Sin datos";
+            }
+
+            document.getElementById('modal-novedades').classList.remove('hidden');
+        }
+
+        // NUEVO MODAL: LISTAR OFICINAS PENDIENTES DE REPORTE
+        function abrirModalPendientes() {
+            const fecha = document.getElementById('filtro-fecha-dashboard').value;
+            const titulo = document.getElementById('modal-titulo');
+            const desglose = document.getElementById('modal-desglose-grados');
+            const tbody = document.getElementById('tbody-modal-novedades');
+            
+            const contenedorIco = document.getElementById('modal-icono-contenedor');
+            const icono = document.getElementById('modal-icono');
+
+            titulo.textContent = "Oficinas Sin Reportar";
+            desglose.textContent = "Requieren atención inmediata";
+            contenedorIco.className = "bg-red-500 text-white p-2 rounded-lg shrink-0";
+            icono.className = "ph-fill ph-warning text-xl";
+
+            tbody.innerHTML = '';
+            let faltantes = 0;
+
+            const oficinasOrdenadas = [...listaOficinas].sort((a, b) => a.localeCompare(b, 'es', {sensitivity: 'base'}));
+
+            oficinasOrdenadas.forEach(of => {
+                const rep = reportesAlmacenados.find(r => r.oficina === of && r.fecha === fecha);
+                const personalNominal = personalBase[of] || [];
+                
+                if (personalNominal.length === 0) return; // Se ignoran oficinas vacías
+
+                let estaReportado = false;
+                if (rep) {
+                    const tieneStandBy = rep.personal.some(p => p.novedad === 'Stand by');
+                    estaReportado = !tieneStandBy;
+                }
+
+                if (!estaReportado) {
+                    faltantes++;
+                    tbody.innerHTML += `
+                        <tr class="hover:bg-red-50 transition-colors border-b border-gray-100">
+                            <td class="px-3 sm:px-4 py-3 font-bold text-gray-800 text-xs sm:text-sm uppercase whitespace-nowrap">${of}</td>
+                            <td class="px-3 sm:px-4 py-3 text-red-600 text-xs font-semibold">⚠️ Envío pendiente / Incompleto</td>
+                            <td class="px-3 sm:px-4 py-3 text-gray-400">--</td>
+                            <td class="px-3 sm:px-4 py-3 text-gray-400">--</td>
+                        </tr>
+                    `;
+                }
+            });
+
+            if (faltantes === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" class="p-8 text-center text-emerald-600 font-bold text-sm">✅ Todas las oficinas con personal han enviado su reporte.</td></tr>`;
             }
 
             document.getElementById('modal-novedades').classList.remove('hidden');
