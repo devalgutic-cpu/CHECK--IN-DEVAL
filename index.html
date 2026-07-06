@@ -472,7 +472,7 @@
 
     <script>
         // --- BASE DE DATOS LOCAL Y URL GOOGLE ---
-        const URL_SECRETA_GOOGLE = "https://script.google.com/macros/s/AKfycbz8uY3pVSHMC_GeWLZNxrILYWdWmxKrJlDPxtCXGz3ypHbUFUKsO65VxzKbTrK1sU6RAQ/exec";
+        const URL_SECRETA_GOOGLE = "https://script.google.com/macros/s/AKfycbxQoLueyLoVmTHh2DpGkP39bt47tY51DPfhXMMJiqrqi9eyjFKQBf_BORBIY3cBHT21hw/exec";
         
         // --- CONFIGURACIÓN MICROSOFT MSAL (RESTRINGIDO A CUENTAS INSTITUCIONALES) ---
         const msalConfig = {
@@ -516,7 +516,7 @@
         ];
 
         document.addEventListener('DOMContentLoaded', () => {
-            const hoy = new Date().toISOString().split('T')[0];
+            const hoy = new Date().toLocaleDateString('sv-SE', { timeZone: 'America/Bogota' });
             document.getElementById('input-fecha').value = hoy;
             document.getElementById('filtro-fecha-dashboard').value = hoy;
             
