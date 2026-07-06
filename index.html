@@ -525,12 +525,15 @@
                day: '2-digit' 
             });
             const partes = formateador.formatToParts(fechaActual);
-            const anio = partes.find(p => p.type === 'year').value;
-            const mes = partes.find(p => p.type === 'month').value;
-            const dia = partes.find(p => p.type === 'day').value;
+            
+            // EL TRUCO ESTÁ AQUÍ: .replace(/\D/g, '') destruye cualquier texto invisible
+            const anio = partes.find(p => p.type === 'year').value.replace(/\D/g, '');
+            const mes = partes.find(p => p.type === 'month').value.replace(/\D/g, '');
+            const dia = partes.find(p => p.type === 'day').value.replace(/\D/g, '');
 
             const hoy = `${anio}-${mes}-${dia}`;
-//
+            // ----------------------------------------------------
+
             document.getElementById('input-fecha').value = hoy;
             document.getElementById('filtro-fecha-dashboard').value = hoy;
             
@@ -623,7 +626,9 @@
                                 });
                             }
 
-                            const strFecha = String(fecha).split('T')[0].trim();
+                            // BLINDAJE DE EXTRACCIÓN DE FECHA DESDE GOOGLE
+                            const strFecha = String(fecha).split('T')[0].replace(/[^\d-]/g, '');
+                            
                             let reporteExistente = reportesAlmacenados.find(r => r.oficina === oficina && r.fecha === strFecha);
                             
                             let novFix = String(novedad).trim();
