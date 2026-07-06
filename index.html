@@ -185,14 +185,11 @@
                                     </button>
                                 </div>
                             </div>
-                            
                             <hr class="my-4">
-                            
                             <h3 class="text-sm font-semibold text-gray-600 mb-2">Oficinas Existentes</h3>
                             <div class="overflow-y-auto flex-1 max-h-[300px] border border-gray-200 rounded-lg">
                                 <table class="w-full text-left border-collapse">
-                                    <tbody id="tbody-lista-oficinas" class="divide-y divide-gray-200 text-sm">
-                                    </tbody>
+                                    <tbody id="tbody-lista-oficinas" class="divide-y divide-gray-200 text-sm"></tbody>
                                 </table>
                             </div>
                         </div>
@@ -252,8 +249,7 @@
                                                 <th class="p-3 font-semibold text-center w-24">Acción</th>
                                             </tr>
                                         </thead>
-                                        <tbody id="tbody-config-personal" class="divide-y divide-gray-200 text-sm">
-                                        </tbody>
+                                        <tbody id="tbody-config-personal" class="divide-y divide-gray-200 text-sm"></tbody>
                                     </table>
                                 </div>
 
@@ -309,8 +305,7 @@
                                         <th class="p-3 font-semibold">Observaciones</th>
                                     </tr>
                                 </thead>
-                                <tbody id="tbody-personal-reporte" class="divide-y divide-gray-200">
-                                </tbody>
+                                <tbody id="tbody-personal-reporte" class="divide-y divide-gray-200"></tbody>
                             </table>
                         </div>
 
@@ -324,7 +319,6 @@
             </div>
 
             <div id="view-superior" class="max-w-[1400px] mx-auto fade-in hidden">
-                
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-6 gap-4">
                     <div>
                         <h1 class="text-xl sm:text-2xl font-bold text-dark">Panel de Control DEVAL</h1>
@@ -424,8 +418,7 @@
                                         <th class="px-2 py-3 font-semibold text-center text-red-600">Detalle Nov.</th>
                                     </tr>
                                 </thead>
-                                <tbody id="tbody-estado-oficinas" class="divide-y divide-gray-100 text-sm">
-                                </tbody>
+                                <tbody id="tbody-estado-oficinas" class="divide-y divide-gray-100 text-sm"></tbody>
                             </table>
                         </div>
                     </div>
@@ -436,8 +429,7 @@
                             <p class="text-[10px] text-gray-500">Clic para ver detalle específico</p>
                         </div>
                         <div class="p-4 sm:p-6 flex-1 max-h-[400px] overflow-y-auto">
-                            <ul id="lista-novedades" class="space-y-3">
-                            </ul>
+                            <ul id="lista-novedades" class="space-y-3"></ul>
                         </div>
                     </div>
                 </div>
@@ -495,17 +487,18 @@
         // --- BASE DE DATOS LOCAL Y URL GOOGLE ---
         const URL_SECRETA_GOOGLE = "https://script.google.com/macros/s/AKfycbwBaU5PWbGXnC-1cOTm6-uiNVUtnV7J4_2GQtEnL6frIqe8dsYWtdWe1pReMS6dDNi2Vg/exec";
         
-        // --- CONFIGURACIÓN MICROSOFT MSAL ---
+        // --- CONFIGURACIÓN MICROSOFT MSAL (RESTRINGIDO A INSTITUCIONALES) ---
         const msalConfig = {
             auth: {
                 clientId: "9641b317-3b1d-4de0-afca-7e34be884804",
-                authority: "https://login.microsoftonline.com/organizations" 
+                authority: "https://login.microsoftonline.com/organizations",
+                redirectUri: window.location.origin + window.location.pathname
             },
             cache: { cacheLocation: "sessionStorage", storeAuthStateInCookie: false }
         };
         const msalInstance = new msal.PublicClientApplication(msalConfig);
         
-        // VARIABLES GLOBALES
+        // --- VARIABLES GLOBALES ---
         let sedeActual = "";
         let listaOficinas = []; 
         let personalBase = {};
@@ -547,7 +540,7 @@
             document.getElementById('dashboard-date-display').textContent = fechaFormateada;
         });
 
-        // --- VALIDACIÓN DE DOMINIO DE CORREO INSTITUCIONAL ---
+        // --- VALIDACIÓN DE DOMINIO INSTITUCIONAL ---
         function validarDominio(email) {
             if (!email) return false;
             const correoLimpio = email.trim().toLowerCase();
@@ -578,7 +571,8 @@
                     registrarLogin(email, response.account.name);
                 })
                 .catch(error => {
-                    console.error(error);
+                    console.error("Detalle del error MSAL:", error);
+                    alert("Aviso de Azure: " + error.message + "\n\nSi el error indica 'reply URL', debes registrar exactamente la URL de esta página en el portal de Azure como una SPA (Single Page Application).");
                     mostrarToast('Error al conectar con Microsoft', 'error');
                 });
         }
@@ -589,7 +583,7 @@
             
             const hoy = new Date();
             const fechaTxt = hoy.toISOString().split('T')[0];
-            const horaTxt = hoy.toTimeString().split('T')[1].split('.')[0]; // Ej: "14:30:00"
+            const horaTxt = hoy.toTimeString().split('T')[1].split('.')[0]; 
 
             const datosLogin = { accion: "login", email: email, nombre: nombre, fecha: fechaTxt, hora: horaTxt };
 
@@ -600,12 +594,10 @@
                 mostrarToast(`Bienvenido, ${nombre}`, 'success');
                 mostrarSeleccionSede();
             }).catch(err => {
-                console.error(err);
                 mostrarSeleccionSede(); 
             });
         }
 
-        // --- SELECCIÓN DE SEDE ---
         function mostrarSeleccionSede() {
             document.getElementById('view-login').classList.add('hidden');
             document.getElementById('view-sedes').classList.remove('hidden');
@@ -615,7 +607,6 @@
             sedeActual = sedeElegida;
             document.getElementById('topbar-sede').textContent = `DEVAL - ${sedeActual}`;
             
-            // UI visual de carga en sedes
             const botonesSede = document.querySelectorAll('#view-sedes button');
             botonesSede.forEach(b => b.classList.add('hidden'));
             document.getElementById('sede-spinner').classList.remove('hidden');
@@ -626,7 +617,8 @@
         }
 
         function descargarDatosSheets(sedeStr) {
-            fetch(URL_SECRETA_GOOGLE + "?sede=" + encodeURIComponent(sedeStr) + "&t=" + new Date().getTime())
+            const sedeReq = sedeStr || sedeActual;
+            fetch(URL_SECRETA_GOOGLE + "?sede=" + encodeURIComponent(sedeReq) + "&t=" + new Date().getTime())
             .then(res => res.json())
             .then(filas => {
                 listaOficinas = [];
@@ -862,7 +854,6 @@
             mostrarToast('Sincronizando con la base de datos...', 'info');
             const personalNominal = personalBase[of] || [];
             
-            // SE AÑADIÓ EL PARAMETRO DE LA SEDE ACTUAL
             const datosAEnviar = { accion: "sincronizar", sede: sedeActual, oficina: of, personal: personalNominal };
 
             fetch(URL_SECRETA_GOOGLE, {
