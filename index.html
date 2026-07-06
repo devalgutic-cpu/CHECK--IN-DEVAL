@@ -157,7 +157,12 @@
                         <button onclick="switchTab('superior')" id="tab-superior" class="px-2 sm:px-3 py-2 rounded-md text-xs sm:text-sm font-medium hover:bg-blue-700 transition-colors flex items-center gap-1 sm:gap-2 whitespace-nowrap">
                             <i class="ph ph-chart-bar text-2xl sm:text-3xl"></i> <span class="hidden md:inline">Dashboard</span>
                         </button>
-                        <button onclick="cerrarSesion()" class="ml-2 sm:ml-4 text-red-300 hover:text-white transition-colors p-2" title="Cerrar Sesión / Cambiar Sede">
+                        
+                        <button onclick="volverSedes()" class="px-2 sm:px-3 py-2 rounded-md text-xs sm:text-sm font-medium hover:bg-blue-700 transition-colors flex items-center gap-1 sm:gap-2 whitespace-nowrap text-yellow-300 ml-2 border border-blue-700">
+                            <i class="ph ph-swap text-2xl sm:text-3xl"></i> <span class="hidden md:inline">Cambiar Sede</span>
+                        </button>
+
+                        <button onclick="cerrarSesion()" class="ml-1 sm:ml-2 text-red-300 hover:text-white transition-colors p-2" title="Cerrar Sesión">
                             <i class="ph ph-sign-out text-3xl sm:text-4xl"></i>
                         </button>
                     </div>
@@ -168,6 +173,7 @@
         <main class="flex-1 overflow-y-auto p-2 sm:p-6 lg:p-8 bg-gray-100">
             
             <div id="view-config" class="max-w-6xl mx-auto fade-in hidden">
+                
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
                     <div class="lg:col-span-1 bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden flex flex-col">
                         <div class="bg-gray-50 px-4 sm:px-6 py-4 border-b border-gray-200">
@@ -185,11 +191,14 @@
                                     </button>
                                 </div>
                             </div>
+                            
                             <hr class="my-4">
+                            
                             <h3 class="text-sm font-semibold text-gray-600 mb-2">Oficinas Existentes</h3>
                             <div class="overflow-y-auto flex-1 max-h-[300px] border border-gray-200 rounded-lg">
                                 <table class="w-full text-left border-collapse">
-                                    <tbody id="tbody-lista-oficinas" class="divide-y divide-gray-200 text-sm"></tbody>
+                                    <tbody id="tbody-lista-oficinas" class="divide-y divide-gray-200 text-sm">
+                                    </tbody>
                                 </table>
                             </div>
                         </div>
@@ -249,7 +258,8 @@
                                                 <th class="p-3 font-semibold text-center w-24">Acción</th>
                                             </tr>
                                         </thead>
-                                        <tbody id="tbody-config-personal" class="divide-y divide-gray-200 text-sm"></tbody>
+                                        <tbody id="tbody-config-personal" class="divide-y divide-gray-200 text-sm">
+                                        </tbody>
                                     </table>
                                 </div>
 
@@ -305,7 +315,8 @@
                                         <th class="p-3 font-semibold">Observaciones</th>
                                     </tr>
                                 </thead>
-                                <tbody id="tbody-personal-reporte" class="divide-y divide-gray-200"></tbody>
+                                <tbody id="tbody-personal-reporte" class="divide-y divide-gray-200">
+                                </tbody>
                             </table>
                         </div>
 
@@ -319,12 +330,14 @@
             </div>
 
             <div id="view-superior" class="max-w-[1400px] mx-auto fade-in hidden">
+                
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-6 gap-4">
                     <div>
                         <h1 class="text-xl sm:text-2xl font-bold text-dark">Panel de Control DEVAL</h1>
                         <p class="text-sm text-gray-500">Vista en tiempo real de disponibilidad y novedades.</p>
                     </div>
                     <div class="flex flex-col sm:flex-row gap-3 w-full md:w-auto items-center">
+                        
                         <div class="bg-white px-4 py-2 rounded-full shadow-sm border border-gray-200 flex items-center gap-2 w-full sm:w-auto select-none">
                             <i class="ph-fill ph-calendar-blank text-primary text-lg"></i>
                             <span class="text-xs font-bold text-gray-400 uppercase">Fecha:</span>
@@ -418,7 +431,8 @@
                                         <th class="px-2 py-3 font-semibold text-center text-red-600">Detalle Nov.</th>
                                     </tr>
                                 </thead>
-                                <tbody id="tbody-estado-oficinas" class="divide-y divide-gray-100 text-sm"></tbody>
+                                <tbody id="tbody-estado-oficinas" class="divide-y divide-gray-100 text-sm">
+                                </tbody>
                             </table>
                         </div>
                     </div>
@@ -429,7 +443,8 @@
                             <p class="text-[10px] text-gray-500">Clic para ver detalle específico</p>
                         </div>
                         <div class="p-4 sm:p-6 flex-1 max-h-[400px] overflow-y-auto">
-                            <ul id="lista-novedades" class="space-y-3"></ul>
+                            <ul id="lista-novedades" class="space-y-3">
+                            </ul>
                         </div>
                     </div>
                 </div>
@@ -485,9 +500,9 @@
 
     <script>
         // --- BASE DE DATOS LOCAL Y URL GOOGLE ---
-        const URL_SECRETA_GOOGLE = "https://script.google.com/macros/s/AKfycbwBaU5PWbGXnC-1cOTm6-uiNVUtnV7J4_2GQtEnL6frIqe8dsYWtdWe1pReMS6dDNi2Vg/exec";
+        const URL_SECRETA_GOOGLE = "https://script.google.com/macros/s/AKfycbyK7Fvcd6kZEwW01GhWTk1I33uXwyw2SEzLB9BIflSx-ZBP95aRm9-Hd8Jm81LYRjRp/exec";
         
-        // --- CONFIGURACIÓN MICROSOFT MSAL (RESTRINGIDO A INSTITUCIONALES) ---
+        // --- CONFIGURACIÓN MICROSOFT MSAL ---
         const msalConfig = {
             auth: {
                 clientId: "9641b317-3b1d-4de0-afca-7e34be884804",
@@ -601,6 +616,19 @@
         function mostrarSeleccionSede() {
             document.getElementById('view-login').classList.add('hidden');
             document.getElementById('view-sedes').classList.remove('hidden');
+        }
+        
+        // --- BOTÓN PARA VOLVER A SEDES ---
+        function volverSedes() {
+            document.getElementById('app-layout').classList.add('hidden');
+            document.getElementById('view-sedes').classList.remove('hidden');
+            
+            // Restablecer el panel de carga de la sede
+            const botonesSede = document.querySelectorAll('#view-sedes button');
+            botonesSede.forEach(b => b.classList.remove('hidden'));
+            document.getElementById('sede-spinner').classList.add('hidden');
+            document.querySelector('#view-sedes h2').textContent = "Seleccione su Sede";
+            document.querySelector('#view-sedes p').textContent = "Elija el entorno sobre el cual desea operar.";
         }
 
         function seleccionarSede(sedeElegida) {
