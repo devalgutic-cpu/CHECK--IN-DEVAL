@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8"
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CHECK-IN DEVAL | Control de Asistencia</title>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -308,7 +308,7 @@
 
     <script>
         // --- BASE DE DATOS LOCAL Y URL GOOGLE ---
-        const URL_SECRETA_GOOGLE = "https://script.google.com/macros/s/AKfycbyj6y2nLpcJks4aPyBxnqBeDJCsNHC-JkvNvYhSXBC9ODMIyJvExaRoN60AC8DwQqu4OQ/exec";
+        const URL_SECRETA_GOOGLE = "https://script.google.com/macros/s/AKfycbzm1ft7hNP2TPbp6M4HuLB2mDkStKqx2OgjAJi719iTfw8k8WoN92MRXt4_4P8167u4Uw/exec";
         
         const msalConfig = {
             auth: { clientId: "9641b317-3b1d-4de0-afca-7e34be884804", authority: "https://login.microsoftonline.com/organizations", redirectUri: window.location.origin + window.location.pathname },
@@ -319,7 +319,7 @@
         let listaOficinas = []; 
         let personalBase = {};
         let reportesAlmacenados = [];
-	let usuarioAuditoriaActual = "Desconocido";
+        let usuarioAuditoriaActual = "Desconocido"; // <--- VARIABLE PARA AUDITORÍA
 
         // --- DICCIONARIO QUEMADO (HARDCODED) DE OFICINAS ---
         const DICCIONARIO_OFICINAS = {
@@ -370,14 +370,14 @@
             actualizarGradosConfig();
         });
 
+        // --- FUNCION MAESTRA DE AUTO-GUARDADO SILENCIOSO CON AUDITORÍA ---
         function sincronizarSilencioso(accion, payload) {
-    	   mostrarToast('Actualizando base de datos...', 'info');
-           fetch(URL_SECRETA_GOOGLE, {
-              method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-             // AÑADIMOS EL USUARIO AQUÍ ABAJO:
-           body: JSON.stringify({ accion: accion, usuario: usuarioAuditoriaActual, ...payload })
-        }).then(() => mostrarToast('Guardado automático exitoso', 'success'))
-          .catch(() => mostrarToast('Error sincronizando. Se guardará al reconectar', 'error'));
+            mostrarToast('Actualizando base de datos...', 'info');
+            fetch(URL_SECRETA_GOOGLE, {
+                method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify({ accion: accion, usuario: usuarioAuditoriaActual, ...payload }) // <-- USUARIO ENVIADO AQUÍ
+            }).then(() => mostrarToast('Guardado automático exitoso', 'success'))
+              .catch(() => mostrarToast('Error sincronizando. Se guardará al reconectar', 'error'));
         }
 
         function validarDominio(email) {
@@ -407,11 +407,11 @@
         }
 
         function iniciarSesionVisual(nombreUsuario) {
-    		usuarioAuditoriaActual = nombreUsuario; // <-- LÍNEA NUEVA
-    		document.getElementById('view-login-button-area').classList.add('hidden');
-    		document.getElementById('login-spinner').classList.remove('hidden');
-    		mostrarToast(`Bienvenido, ${nombreUsuario}`, 'success');
-    		descargarDatosSheets();
+            usuarioAuditoriaActual = nombreUsuario; // <-- CAPTURAMOS EL USUARIO AQUÍ
+            document.getElementById('view-login-button-area').classList.add('hidden');
+            document.getElementById('login-spinner').classList.remove('hidden');
+            mostrarToast(`Bienvenido, ${nombreUsuario}`, 'success');
+            descargarDatosSheets();
         }
 
         function descargarDatosSheets() {
@@ -423,7 +423,8 @@
                 if (filas && filas.length > 1) {
                     filas.forEach((fila, index) => {
                         if (index === 0) return; 
-                        const [fecha, oficina, categoria, grado, apellidos, nombres, novedad, observaciones, tipoOficinaDB] = fila;
+                        // Ampliado para soportar hasta la columna 11 (usuario y timestamp ignorados en frontend visual)
+                        const [fecha, oficina, categoria, grado, apellidos, nombres, novedad, observaciones, tipoOficinaDB, userAud, timeAud] = fila;
                         
                         if (oficina) {
                             if (!listaOficinas.includes(oficina)) {
@@ -431,11 +432,10 @@
                                 personalBase[oficina] = [];
                             }
                             
-                            // Rescatar el tipo de oficina de la DB (9na columna) o del Diccionario
                             if (tipoOficinaDB && tipoOficinaDB.trim() !== '') {
                                 mapaTiposOficina[oficina] = tipoOficinaDB.trim().toUpperCase();
                             } else if (!mapaTiposOficina[oficina]) {
-                                mapaTiposOficina[oficina] = 'PLANA MAYOR'; // Valor por defecto seguro
+                                mapaTiposOficina[oficina] = 'PLANA MAYOR'; 
                             }
                             
                             const yaExistePersona = personalBase[oficina].some(p => p.apellidos === apellidos && p.nombres === nombres);
@@ -526,7 +526,7 @@
 
             listaOficinas.push(nombreOficina);
             personalBase[nombreOficina] = [];
-            mapaTiposOficina[nombreOficina] = tipoOficina; // Guardamos el tipo de oficina
+            mapaTiposOficina[nombreOficina] = tipoOficina;
 
             actualizarDropdownsOficinas();
             document.getElementById('select-oficina-config').value = nombreOficina;
@@ -549,7 +549,6 @@
                 personalBase[nuevoNombre] = personalBase[oficinaVieja];
                 delete personalBase[oficinaVieja];
                 
-                // Mudar el tipo de oficina
                 mapaTiposOficina[nuevoNombre] = mapaTiposOficina[oficinaVieja];
                 delete mapaTiposOficina[oficinaVieja];
 
@@ -742,12 +741,12 @@
             document.getElementById('btn-enviar-reporte').disabled = true;
             mostrarToast('Enviando reporte a la base central...', 'info');
 
-            // Dentro de la función enviarReporte(), busca la constante datosAEnviar y déjala así:
+            // --- AÑADIMOS EL USUARIO EN EL ENVÍO DEL REPORTE ---
             const datosAEnviar = { 
                 fecha: fecha, 
                 oficina: of, 
                 tipo_oficina: mapaTiposOficina[of], 
-                usuario: usuarioAuditoriaActual, // <-- AÑADIMOS ESTO
+                usuario: usuarioAuditoriaActual, 
                 personal: personalReportado 
             };
 
@@ -770,7 +769,6 @@
             const tipoFiltro = document.getElementById('filtro-tipo-dashboard').value;
             if (!fechaFiltro) return;
 
-            // Filtramos las oficinas que el dashboard debe calcular
             const oficinasAProcesar = listaOficinas.filter(of => tipoFiltro === 'TODAS' || (mapaTiposOficina[of] || 'PLANA MAYOR') === tipoFiltro);
 
             let fuerzaNominal = { OF:0, 'SUB/MNE':0, PATR:0, AUX:0, NU:0 };
