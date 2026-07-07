@@ -472,7 +472,7 @@
 
     <script>
         // --- BASE DE DATOS LOCAL Y URL GOOGLE ---
-        const URL_SECRETA_GOOGLE = "https://script.google.com/macros/s/AKfycbxQoLueyLoVmTHh2DpGkP39bt47tY51DPfhXMMJiqrqi9eyjFKQBf_BORBIY3cBHT21hw/exec";
+        const URL_SECRETA_GOOGLE = "https://script.google.com/macros/s/AKfycbyjyLqV5ev3OrMdsASW_VoGRC0HXGvMGCvw5OS8gsGsylT_daNc4_nb_Xi6-UrQrCLD-g/exec";
         
         // --- CONFIGURACIÓN MICROSOFT MSAL (RESTRINGIDO A CUENTAS INSTITUCIONALES) ---
         const msalConfig = {
@@ -860,10 +860,10 @@
             const datosAEnviar = { accion: "sincronizar", oficina: of, personal: personalNominal };
 
             fetch(URL_SECRETA_GOOGLE, {
-                method: 'POST',
-                mode: 'no-cors',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(datosAEnviar)
+    		method: 'POST',
+   		mode: 'no-cors',
+    		headers: { 'Content-Type': 'text/plain;charset=utf-8' }, // <-- EL CAMBIO MÁGICO AQUÍ
+    		body: JSON.stringify(datosAEnviar)
             })
             .then(() => {
                 mostrarToast('Base de datos sincronizada con éxito', 'success');
@@ -987,10 +987,10 @@
             const datosAEnviar = { fecha: fecha, oficina: of, personal: personalReportado };
 
             fetch(URL_SECRETA_GOOGLE, {
-                method: 'POST',
-                mode: 'no-cors',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(datosAEnviar)
+    		method: 'POST',
+    		mode: 'no-cors',
+    		headers: { 'Content-Type': 'text/plain;charset=utf-8' }, // <-- Y EL CAMBIO AQUÍ TAMBIÉN
+    		body: JSON.stringify(datosAEnviar)
             })
             .then(() => {
                 let indice = reportesAlmacenados.findIndex(r => r.oficina === of && r.fecha === fecha);
