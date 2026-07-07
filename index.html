@@ -233,13 +233,7 @@
                                         </tbody>
                                     </table>
                                 </div>
-
-                                <div class="mt-4 flex justify-end">
-                                    <button onclick="guardarSincronizacionOficina()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg shadow-md transition-transform transform hover:-translate-y-0.5 flex items-center gap-2">
-                                        <i class="ph ph-cloud-arrow-up text-2xl"></i> Guardar y Sincronizar Base
-                                    </button>
                                 </div>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -472,6 +466,7 @@
 
     <script>
         // --- BASE DE DATOS LOCAL Y URL GOOGLE ---
+        // Tu nueva URL de la implementación actualizada:
         const URL_SECRETA_GOOGLE = "https://script.google.com/macros/s/AKfycbzm1ft7hNP2TPbp6M4HuLB2mDkStKqx2OgjAJi719iTfw8k8WoN92MRXt4_4P8167u4Uw/exec";
         
         // --- CONFIGURACIÓN MICROSOFT MSAL (RESTRINGIDO A CUENTAS INSTITUCIONALES) ---
@@ -548,6 +543,18 @@
             actualizarGradosConfig();
         });
 
+        // --- FUNCION MAESTRA DE AUTO-GUARDADO SILENCIOSO ---
+        function sincronizarSilencioso(accion, payload) {
+            mostrarToast('Actualizando base de datos...', 'info');
+            fetch(URL_SECRETA_GOOGLE, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify({ accion: accion, ...payload })
+            }).then(() => mostrarToast('Guardado automático exitoso', 'success'))
+              .catch(() => mostrarToast('Error sincronizando. Se guardará al reconectar', 'error'));
+        }
+
         // --- VALIDACIÓN DE DOMINIO DE CORREO INSTITUCIONAL ---
         function validarDominio(email) {
             if (!email) return false;
@@ -564,7 +571,6 @@
             }).join(''));
             
             const datosUsuario = JSON.parse(payload);
-            // El inicio con Google ha quedado liberado de restricciones
             iniciarSesionVisual(datosUsuario.name);
         }
 
@@ -573,9 +579,8 @@
                 .then(response => {
                     const email = response.account.username;
                     
-                    // Filtro de Dominio Microsoft (Restringido)
                     if (!validarDominio(email)) {
-                        alert("ACCESO DENEGADO\n\nEl correo '" + email + "' no pertenece a un dominio institucional autorizado (@correo.policia.gov.co o @policia.gov.co).");
+                        alert("ACCESO DENEGADO\n\nEl correo '" + email + "' no pertenece a un dominio institucional autorizado.");
                         msalInstance.logoutPopup({ mainWindowRedirectUri: window.location.origin + window.location.pathname });
                         return;
                     }
@@ -584,7 +589,7 @@
                 })
                 .catch(error => {
                     console.error("Detalle del error MSAL:", error);
-                    alert("Aviso de Azure: " + error.message + "\n\nSi el error indica 'reply URL', debes registrar exactamente la URL de esta página en el portal de Azure como una SPA (Single Page Application).");
+                    alert("Aviso de Azure: " + error.message);
                     mostrarToast('Error al conectar con Microsoft', 'error');
                 });
         }
@@ -626,11 +631,8 @@
                                 });
                             }
 
-                            // BLINDAJE DE EXTRACCIÓN DE FECHA DESDE GOOGLE
                             const strFecha = String(fecha).split('T')[0].replace(/[^\d-]/g, '');
-                            
                             let reporteExistente = reportesAlmacenados.find(r => r.oficina === oficina && r.fecha === strFecha);
-                            
                             let novFix = String(novedad).trim();
                             if (novFix === '0') novFix = 'Stand by';
 
@@ -686,7 +688,7 @@
 
         function cerrarSesion() { window.location.reload(); }
 
-        // --- 1. CONFIGURACIÓN DE OFICINAS ---
+        // --- 1. CONFIGURACIÓN DE OFICINAS Y PERSONAL ---
         function actualizarDropdownsOficinas() {
             const selectConfig = document.getElementById('select-oficina-config');
             const selectReporte = document.getElementById('select-oficina-reporte');
@@ -701,8 +703,8 @@
                     <tr class="hover:bg-gray-50 border-b border-gray-100">
                         <td class="p-3 font-semibold text-gray-800 uppercase">${of}</td>
                         <td class="p-3 text-center whitespace-nowrap">
-                            <button onclick="editarOficina('${of}')" class="text-blue-500 hover:text-blue-700 p-1 mr-2 transition-transform hover:scale-110" title="Editar"><i class="ph ph-pencil-simple text-lg"></i></button>
-                            <button onclick="eliminarOficina('${of}')" class="text-red-500 hover:text-red-700 p-1 transition-transform hover:scale-110" title="Eliminar"><i class="ph ph-trash text-lg"></i></button>
+                            <button onclick="editarOficina('${of}')" class="text-blue-500 hover:text-blue-700 p-1 mr-2 transition-transform hover:scale-110" title="Editar Nombre"><i class="ph ph-pencil-simple text-lg"></i></button>
+                            <button onclick="eliminarOficina('${of}')" class="text-red-500 hover:text-red-700 p-1 transition-transform hover:scale-110" title="Eliminar Oficina"><i class="ph ph-trash text-lg"></i></button>
                         </td>
                     </tr>
                 `;
@@ -734,7 +736,9 @@
             cargarPersonalConfig();
 
             input.value = '';
-            mostrarToast('Oficina creada exitosamente', 'success');
+            
+            // Auto-guardado de la nueva oficina (Crea la estructura base)
+            sincronizarSilencioso("sincronizar", { oficina: nombreOficina, personal: [] });
         }
 
         function editarOficina(oficinaVieja) {
@@ -753,7 +757,9 @@
                 actualizarDropdownsOficinas();
                 document.getElementById('select-oficina-config').value = nuevoNombre;
                 cargarPersonalConfig();
-                mostrarToast('Nombre de oficina actualizado', 'success');
+                
+                // Orden en cascada a Sheets para renombrar en todos lados
+                sincronizarSilencioso("renombrar_oficina", { oficina_vieja: oficinaVieja, oficina_nueva: nuevoNombre });
             }
         }
 
@@ -761,12 +767,17 @@
             let pwd = prompt("ACCESO RESTRINGIDO\nEsta acción eliminará la oficina y todo su personal base.\nIngrese la clave de Administrador:");
             if (pwd !== "GUTIC26") return (pwd !== null) ? mostrarToast("Clave incorrecta.", "error") : null;
 
-            if(confirm(`¿Está seguro de proceder con la eliminación de "${oficina}"?`)) {
+            if(confirm(`¿Está seguro de proceder con la eliminación completa de "${oficina}"?`)) {
                 listaOficinas = listaOficinas.filter(o => o !== oficina);
                 delete personalBase[oficina];
+                reportesAlmacenados = reportesAlmacenados.filter(r => r.oficina !== oficina);
+                
                 actualizarDropdownsOficinas();
+                document.getElementById('select-oficina-config').value = "";
                 cargarPersonalConfig();
-                mostrarToast('Oficina eliminada correctamente', 'success');
+                
+                // Orden en cascada a Sheets para eliminar todo registro vinculado
+                sincronizarSilencioso("eliminar_oficina", { oficina: oficina });
             }
         }
 
@@ -801,8 +812,8 @@
                         <td class="p-3 font-semibold text-primary whitespace-nowrap"><span class="text-[10px] text-gray-500 font-bold block leading-none">${p.categoria}</span>${p.grado}</td>
                         <td class="p-3 uppercase whitespace-nowrap">${p.apellidos} ${p.nombres}</td>
                         <td class="p-3 text-center whitespace-nowrap">
-                            <button onclick="editarPersonaDeOficina('${of}', ${idx})" class="text-blue-500 hover:text-blue-700 p-1 mr-2 transition-transform hover:scale-110" title="Editar"><i class="ph ph-pencil-simple text-lg"></i></button>
-                            <button onclick="eliminarPersonaDeOficina('${of}', ${idx})" class="text-red-500 hover:text-red-700 p-1 transition-transform hover:scale-110" title="Eliminar"><i class="ph ph-trash text-lg"></i></button>
+                            <button onclick="editarPersonaDeOficina('${of}', ${idx})" class="text-blue-500 hover:text-blue-700 p-1 mr-2 transition-transform hover:scale-110" title="Editar Rango/Nombres"><i class="ph ph-pencil-simple text-lg"></i></button>
+                            <button onclick="eliminarPersonaDeOficina('${of}', ${idx})" class="text-red-500 hover:text-red-700 p-1 transition-transform hover:scale-110" title="Dar de baja"><i class="ph ph-trash text-lg"></i></button>
                         </td>
                     </tr>
                 `;
@@ -824,10 +835,13 @@
             if (existe) return mostrarToast('Esta persona ya está registrada en la oficina', 'error');
 
             personalBase[of].push({ id: 'local_' + Date.now(), categoria: cat, grado: grado, apellidos: apellidos, nombres: nombres });
+            
             document.getElementById('config-apellidos').value = '';
             document.getElementById('config-nombres').value = '';
             cargarPersonalConfig();
-            mostrarToast('Funcionario agregado', 'success');
+            
+            // Auto-Guardado Inmediato de la persona en la base de datos
+            sincronizarSilencioso("sincronizar", { oficina: of, personal: personalBase[of] });
         }
 
         function editarPersonaDeOficina(oficina, idx) {
@@ -837,45 +851,43 @@
             document.getElementById('config-grado').value = persona.grado;
             document.getElementById('config-apellidos').value = persona.apellidos;
             document.getElementById('config-nombres').value = persona.nombres;
+            
+            // Retiramos temporalmente a la persona de la nómina para que se vuelva a agregar editada
             personalBase[oficina].splice(idx, 1);
+            
+            // Limpiamos el fantasma del reporte del día de hoy en cascada
+            const fechaHoy = document.getElementById('input-fecha').value;
+            const reporteHoy = reportesAlmacenados.find(r => r.oficina === oficina && r.fecha === fechaHoy);
+            if (reporteHoy) {
+                reporteHoy.personal = reporteHoy.personal.filter(p => !(p.apellidos === persona.apellidos && p.nombres === persona.nombres));
+            }
+
             cargarPersonalConfig();
-            mostrarToast('Modifique y presione Añadir.', 'info');
+            mostrarToast('Modifique los datos y presione Añadir para guardar.', 'info');
         }
 
         function eliminarPersonaDeOficina(oficina, idx) {
-            if (confirm('¿Eliminar funcionario localmente? (Recuerde Guardar Sincronización)')) {
+            if (confirm('¿Eliminar funcionario definitivamente? Esta acción lo borrará de la nómina y del sistema de control.')) {
+                const persona = personalBase[oficina][idx];
+                
+                // 1. Borrar de la nómina local
                 personalBase[oficina].splice(idx, 1);
+                
+                // 2. Borrar en cascada del Reporte de Hoy (El Fantasma)
+                const fechaHoy = document.getElementById('input-fecha').value;
+                const reporteHoy = reportesAlmacenados.find(r => r.oficina === oficina && r.fecha === fechaHoy);
+                if (reporteHoy) {
+                    reporteHoy.personal = reporteHoy.personal.filter(p => !(p.apellidos === persona.apellidos && p.nombres === persona.nombres));
+                }
+
                 cargarPersonalConfig();
-                mostrarToast('Funcionario eliminado', 'success');
+                
+                // 3. Auto-Guardado Inmediato para purgar en base de datos
+                sincronizarSilencioso("sincronizar", { oficina: oficina, personal: personalBase[oficina] });
             }
         }
 
-        // --- BOTÓN GUARDAR Y SINCRONIZAR BASE ---
-        function guardarSincronizacionOficina() {
-            const of = document.getElementById('select-oficina-config').value;
-            if (!of) return;
-
-            mostrarToast('Sincronizando con la base de datos...', 'info');
-            const personalNominal = personalBase[of] || [];
-            const datosAEnviar = { accion: "sincronizar", oficina: of, personal: personalNominal };
-
-            fetch(URL_SECRETA_GOOGLE, {
-    		method: 'POST',
-   		mode: 'no-cors',
-    		headers: { 'Content-Type': 'text/plain;charset=utf-8' }, // <-- EL CAMBIO MÁGICO AQUÍ
-    		body: JSON.stringify(datosAEnviar)
-            })
-            .then(() => {
-                mostrarToast('Base de datos sincronizada con éxito', 'success');
-                setTimeout(() => descargarDatosSheets(), 1000);
-            })
-            .catch(err => {
-                console.error(err);
-                mostrarToast('Error al guardar en la nube', 'error');
-            });
-        }
-
-        // --- 2. GESTIÓN DE REPORTES ---
+        // --- 2. GESTIÓN DE REPORTES DIARIOS ---
         function cargarPersonalParaReporte() {
             const of = document.getElementById('select-oficina-reporte').value;
             const fecha = document.getElementById('input-fecha').value;
@@ -987,10 +999,10 @@
             const datosAEnviar = { fecha: fecha, oficina: of, personal: personalReportado };
 
             fetch(URL_SECRETA_GOOGLE, {
-    		method: 'POST',
-    		mode: 'no-cors',
-    		headers: { 'Content-Type': 'text/plain;charset=utf-8' }, // <-- Y EL CAMBIO AQUÍ TAMBIÉN
-    		body: JSON.stringify(datosAEnviar)
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify(datosAEnviar)
             })
             .then(() => {
                 let indice = reportesAlmacenados.findIndex(r => r.oficina === of && r.fecha === fecha);
