@@ -308,7 +308,7 @@
 
     <script>
         // --- BASE DE DATOS LOCAL Y URL GOOGLE ---
-        const URL_SECRETA_GOOGLE = "https://script.google.com/macros/s/AKfycbzm1ft7hNP2TPbp6M4HuLB2mDkStKqx2OgjAJi719iTfw8k8WoN92MRXt4_4P8167u4Uw/exec";
+        const URL_SECRETA_GOOGLE = "https://script.google.com/macros/s/AKfycbwaKJC8u55ycxShIa4I7tw4_1WynHcP-FeEBIzKXD6sHeYTJolc2mD5vBuWI1cWe4hFyg/exec";
         
         const msalConfig = {
             auth: { clientId: "9641b317-3b1d-4de0-afca-7e34be884804", authority: "https://login.microsoftonline.com/organizations", redirectUri: window.location.origin + window.location.pathname },
@@ -431,8 +431,11 @@
                                 personalBase[oficina] = [];
                             }
                             
-                            if (tipoOficinaDB && tipoOficinaDB.trim() !== '') {
-                                mapaTiposOficina[oficina] = tipoOficinaDB.trim().toUpperCase();
+                            // 🛡️ EL ESCUDO DE HIERRO: El Diccionario domina sobre la Base de Datos
+                            if (DICCIONARIO_OFICINAS[oficina]) {
+                                mapaTiposOficina[oficina] = DICCIONARIO_OFICINAS[oficina];
+                            } else if (tipoOficinaDB && String(tipoOficinaDB).trim() !== '') {
+                                mapaTiposOficina[oficina] = String(tipoOficinaDB).trim().toUpperCase();
                             } else if (!mapaTiposOficina[oficina]) {
                                 mapaTiposOficina[oficina] = 'PLANA MAYOR'; 
                             }
@@ -461,12 +464,12 @@
                 actualizarDropdownsOficinas();
                 actualizarGradosConfig();
                 
+                // CÓDIGO CORREGIDO: SEPARADO PARA EVITAR TYPEERROR
                 document.getElementById('view-login').classList.add('hidden');
                 
-                // LÍNEAS CORREGIDAS
-                const appLayout = document.getElementById('app-layout');
-                appLayout.classList.remove('hidden');
-                appLayout.classList.add('flex');
+                const layoutDOM = document.getElementById('app-layout');
+                layoutDOM.classList.remove('hidden');
+                layoutDOM.classList.add('flex');
                 
                 if (!document.getElementById('view-superior').classList.contains('hidden')) actualizarDashboard();
                 else if (!document.getElementById('view-config').classList.contains('hidden')) cargarPersonalConfig();
@@ -477,13 +480,13 @@
                 console.error("🚨 MOTIVO DE LA DESCONEXIÓN:", err); 
                 mostrarToast('Error de conexión. Modo local activo.', 'error');
                 
+                // CÓDIGO CORREGIDO: SEPARADO PARA EVITAR TYPEERROR
                 document.getElementById('view-login').classList.add('hidden');
                 
-                // LÍNEAS CORREGIDAS EN EL CATCH
-                const appLayoutErr = document.getElementById('app-layout');
-                appLayoutErr.classList.remove('hidden');
-                appLayoutErr.classList.add('flex');
-
+                const layoutErrDOM = document.getElementById('app-layout');
+                layoutErrDOM.classList.remove('hidden');
+                layoutErrDOM.classList.add('flex');
+                
                 if (document.getElementById('view-superior').classList.contains('hidden') && document.getElementById('view-config').classList.contains('hidden')) switchTab('jefe');
             })
             .finally(() => {
