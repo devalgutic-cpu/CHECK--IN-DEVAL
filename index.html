@@ -308,7 +308,7 @@
 
     <script>
         // --- BASE DE DATOS LOCAL Y URL GOOGLE ---
-        const URL_SECRETA_GOOGLE = "https://script.google.com/macros/s/AKfycbxuugBqIP-PuySLwqqqYKkLc7XFAVP0IOBRFJMdQuI0xxFeQOYC8sRzM3HlegVJxa1p/exec";
+        const URL_SECRETA_GOOGLE = "https://script.google.com/macros/s/AKfycbwaKJC8u55ycxShIa4I7tw4_1WynHcP-FeEBIzKXD6sHeYTJolc2mD5vBuWI1cWe4hFyg/exec";
         
         const msalConfig = {
             auth: { clientId: "9641b317-3b1d-4de0-afca-7e34be884804", authority: "https://login.microsoftonline.com/organizations", redirectUri: window.location.origin + window.location.pathname },
@@ -471,7 +471,11 @@
                 mostrarToast('Datos sincronizados con la nube', 'success');
             })
             .catch(err => {
-                console.error(err); mostrarToast('Error de conexión. Modo local activo.', 'error');
+                // ESTA LÍNEA ES NUEVA: Te dirá el error exacto en la consola
+                console.error("🚨 MOTIVO DE LA DESCONEXIÓN:", err); 
+                
+                mostrarToast('Error de conexión. Modo local activo.', 'error');
+                
                 document.getElementById('view-login').classList.add('hidden');
                 document.getElementById('app-layout').classList.remove('hidden', 'flex').classList.add('flex');
                 if (document.getElementById('view-superior').classList.contains('hidden') && document.getElementById('view-config').classList.contains('hidden')) switchTab('jefe');
