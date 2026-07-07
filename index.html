@@ -1,118 +1,60 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8"
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CHECK-IN DEVAL | Control de Asistencia</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     
     <script src="https://accounts.google.com/gsi/client" async defer></script>
-    
     <script type="text/javascript" src="https://alcdn.msauth.net/browser/2.35.0/js/msal-browser.min.js"></script>
-    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     
     <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        primary: '#1e3a8a',
-                        secondary: '#3b82f6',
-                        accent: '#10b981',
-                        dark: '#1f2937',
-                        light: '#f3f4f6'
-                    }
-                }
-            }
-        }
+        tailwind.config = { theme: { extend: { colors: { primary: '#1e3a8a', secondary: '#3b82f6', accent: '#10b981', dark: '#1f2937', light: '#f3f4f6' } } } }
     </script>
     <style>
         .fade-in { animation: fadeIn 0.3s ease-in-out; }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        
-        .bg-animated {
-            background: linear-gradient(-45deg, #1e3a8a, #3b82f6, #0f172a, #10b981);
-            background-size: 400% 400%;
-            animation: gradientBG 15s ease infinite;
-        }
-        @keyframes gradientBG {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-        .floating {
-            animation: floating 3s ease-in-out infinite;
-        }
-        @keyframes floating {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-            100% { transform: translateY(0px); }
-        }
-        .animate-spin-hover:hover {
-            animation: spin 1s linear infinite;
-        }
+        .bg-animated { background: linear-gradient(-45deg, #1e3a8a, #3b82f6, #0f172a, #10b981); background-size: 400% 400%; animation: gradientBG 15s ease infinite; }
+        @keyframes gradientBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        .floating { animation: floating 3s ease-in-out infinite; }
+        @keyframes floating { 0% { transform: translateY(0px); } 50% { transform: translateY(-10px); } 100% { transform: translateY(0px); } }
+        .animate-spin-hover:hover { animation: spin 1s linear infinite; }
     </style>
 </head>
 <body class="bg-gray-100 text-gray-800 font-sans overflow-x-hidden flex flex-col h-screen">
 
     <div id="view-login" class="fixed inset-0 bg-animated flex flex-col items-center justify-center z-50">
         <div class="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] pointer-events-none"></div>
-        
         <div class="bg-white/95 backdrop-blur-sm p-8 sm:p-10 rounded-3xl shadow-2xl max-w-md w-full text-center relative z-10 mx-4 border border-white/20">
             <div class="bg-blue-100 w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg floating border-4 border-white">
                 <i class="ph-fill ph-shield-check text-5xl text-primary"></i>
             </div>
             <h1 class="text-3xl font-extrabold text-dark mb-2 tracking-tight">CHECK-IN DEVAL</h1>
-            <p class="text-gray-500 text-sm mb-8 font-medium">Sistema de Control de Asistencia y Novedades Diarias</p>
+            <p class="text-gray-500 text-sm mb-8 font-medium">Sistema de Control de Asistencia y Novedades</p>
             
             <div id="view-login-button-area" class="flex flex-col gap-4 w-full transform transition hover:scale-105">
                 <div class="flex justify-center">
-                    <div id="g_id_onload"
-                         data-client_id="648106062409-sc647ht5o79f5i2p9hl62hfj28gca001.apps.googleusercontent.com"
-                         data-context="signin"
-                         data-ux_mode="popup"
-                         data-callback="manejarRespuestaGoogle"
-                         data-auto_prompt="false">
-                    </div>
-                    <div class="g_id_signin"
-                         data-type="standard"
-                         data-shape="rectangular"
-                         data-theme="filled_blue"
-                         data-text="signin_with"
-                         data-size="large"
-                         data-logo_alignment="left"
-                         data-width="300">
-                    </div>
+                    <div id="g_id_onload" data-client_id="648106062409-sc647ht5o79f5i2p9hl62hfj28gca001.apps.googleusercontent.com" data-context="signin" data-ux_mode="popup" data-callback="manejarRespuestaGoogle" data-auto_prompt="false"></div>
+                    <div class="g_id_signin" data-type="standard" data-shape="rectangular" data-theme="filled_blue" data-text="signin_with" data-size="large" data-logo_alignment="left" data-width="300"></div>
                 </div>
-
                 <div class="flex items-center justify-center gap-2">
-                    <div class="h-px bg-gray-300 w-16"></div>
-                    <span class="text-xs text-gray-400 font-medium">O</span>
-                    <div class="h-px bg-gray-300 w-16"></div>
+                    <div class="h-px bg-gray-300 w-16"></div><span class="text-xs text-gray-400 font-medium">O</span><div class="h-px bg-gray-300 w-16"></div>
                 </div>
-
                 <button onclick="loginMicrosoft()" class="flex items-center justify-center gap-2 bg-white text-gray-700 border border-gray-300 rounded shadow-sm w-[300px] h-[40px] hover:bg-gray-50 transition-colors mx-auto font-medium text-[14px]">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 21 21" class="w-5 h-5"><rect x="1" y="1" width="9" height="9" fill="#f25022"/><rect x="1" y="11" width="9" height="9" fill="#00a4ef"/><rect x="11" y="1" width="9" height="9" fill="#7fba00"/><rect x="11" y="11" width="9" height="9" fill="#ffb900"/></svg>
                     Iniciar sesión con Microsoft
                 </button>
             </div>
-            
             <div id="login-spinner" class="hidden mt-6">
-                <i class="ph ph-spinner animate-spin text-4xl text-primary"></i>
-                <p class="text-sm text-gray-500 mt-3 font-semibold animate-pulse">Sincronizando base de datos...</p>
+                <i class="ph ph-spinner animate-spin text-4xl text-primary"></i><p class="text-sm text-gray-500 mt-3 font-semibold animate-pulse">Sincronizando base de datos...</p>
             </div>
         </div>
-        
-        <div class="absolute bottom-6 text-white/80 text-xs text-center w-full z-10 px-4 font-medium tracking-wide">
-            &copy; 2026 DEVAL - Políticas de Copyright <br> <span class="font-bold text-accent">Powered by GUTIC DEVAL</span>
-        </div>
+        <div class="absolute bottom-6 text-white/80 text-xs text-center w-full z-10 px-4 font-medium tracking-wide">&copy; 2026 DEVAL - Políticas de Copyright <br> <span class="font-bold text-accent">Powered by GUTIC DEVAL</span></div>
     </div>
 
     <div id="app-layout" class="hidden flex-col h-screen w-full">
@@ -124,62 +66,47 @@
                         <span class="font-bold text-lg sm:text-xl tracking-wide">DEVAL</span>
                     </div>
                     <div class="flex space-x-1 sm:space-x-4 overflow-x-auto no-scrollbar flex-1 justify-end items-center">
-                        <button onclick="switchTab('config')" id="tab-config" class="px-2 sm:px-3 py-2 rounded-md text-xs sm:text-sm font-medium hover:bg-blue-700 transition-colors flex items-center gap-1 sm:gap-2 whitespace-nowrap">
-                            <i class="ph ph-gear text-2xl sm:text-3xl"></i> <span class="hidden md:inline">Configuración</span>
-                        </button>
-                        <button onclick="switchTab('jefe')" id="tab-jefe" class="px-2 sm:px-3 py-2 rounded-md text-xs sm:text-sm font-medium bg-blue-800 hover:bg-blue-700 transition-colors flex items-center gap-1 sm:gap-2 whitespace-nowrap">
-                            <i class="ph ph-user-list text-2xl sm:text-3xl"></i> <span class="hidden md:inline">Reporte</span>
-                        </button>
-                        <button onclick="switchTab('superior')" id="tab-superior" class="px-2 sm:px-3 py-2 rounded-md text-xs sm:text-sm font-medium hover:bg-blue-700 transition-colors flex items-center gap-1 sm:gap-2 whitespace-nowrap">
-                            <i class="ph ph-chart-bar text-2xl sm:text-3xl"></i> <span class="hidden md:inline">Dashboard</span>
-                        </button>
-                        <button onclick="cerrarSesion()" class="ml-2 sm:ml-4 text-red-300 hover:text-white transition-colors p-2" title="Cerrar Sesión">
-                            <i class="ph ph-sign-out text-3xl sm:text-4xl"></i>
-                        </button>
+                        <button onclick="switchTab('config')" id="tab-config" class="px-2 sm:px-3 py-2 rounded-md text-xs sm:text-sm font-medium hover:bg-blue-700 transition-colors flex items-center gap-1 sm:gap-2 whitespace-nowrap"><i class="ph ph-gear text-2xl sm:text-3xl"></i> <span class="hidden md:inline">Configuración</span></button>
+                        <button onclick="switchTab('jefe')" id="tab-jefe" class="px-2 sm:px-3 py-2 rounded-md text-xs sm:text-sm font-medium bg-blue-800 hover:bg-blue-700 transition-colors flex items-center gap-1 sm:gap-2 whitespace-nowrap"><i class="ph ph-user-list text-2xl sm:text-3xl"></i> <span class="hidden md:inline">Reporte</span></button>
+                        <button onclick="switchTab('superior')" id="tab-superior" class="px-2 sm:px-3 py-2 rounded-md text-xs sm:text-sm font-medium hover:bg-blue-700 transition-colors flex items-center gap-1 sm:gap-2 whitespace-nowrap"><i class="ph ph-chart-bar text-2xl sm:text-3xl"></i> <span class="hidden md:inline">Dashboard</span></button>
+                        <button onclick="cerrarSesion()" class="ml-2 sm:ml-4 text-red-300 hover:text-white transition-colors p-2" title="Cerrar Sesión"><i class="ph ph-sign-out text-3xl sm:text-4xl"></i></button>
                     </div>
                 </div>
             </div>
         </nav>
 
         <main class="flex-1 overflow-y-auto p-2 sm:p-6 lg:p-8 bg-gray-100">
-            
             <div id="view-config" class="max-w-6xl mx-auto fade-in hidden">
-                
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
                     <div class="lg:col-span-1 bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden flex flex-col">
                         <div class="bg-gray-50 px-4 sm:px-6 py-4 border-b border-gray-200">
-                            <h2 class="text-lg sm:text-xl font-bold text-dark flex items-center gap-2">
-                                <i class="ph ph-buildings text-secondary text-2xl"></i> Gestión Oficinas
-                            </h2>
+                            <h2 class="text-lg sm:text-xl font-bold text-dark flex items-center gap-2"><i class="ph ph-buildings text-secondary text-2xl"></i> Gestión Oficinas</h2>
                         </div>
                         <div class="p-4 sm:p-6 flex-1 flex flex-col">
                             <div class="mb-4">
-                                <label class="block text-sm font-semibold text-gray-700 mb-2">Nueva oficina</label>
-                                <div class="flex gap-2">
-                                    <input type="text" id="input-nueva-oficina" class="w-full p-2 sm:p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-secondary outline-none uppercase text-sm" placeholder="EJ. COMANDANCIA">
-                                    <button onclick="agregarNuevaOficina()" class="bg-primary hover:bg-blue-800 text-white font-bold px-4 rounded-lg transition-colors flex justify-center items-center gap-1 shrink-0">
-                                        <i class="ph ph-plus-circle"></i>
-                                    </button>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Crear nueva oficina</label>
+                                <div class="flex flex-col gap-2">
+                                    <input type="text" id="input-nueva-oficina" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-secondary outline-none uppercase text-sm" placeholder="EJ. COMANDANCIA">
+                                    <div class="flex gap-2">
+                                        <select id="input-tipo-nueva-oficina" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-secondary outline-none text-sm font-bold text-gray-700">
+                                            <option value="PLANA MAYOR">PLANA MAYOR</option>
+                                            <option value="ESPECIALIDADES">ESPECIALIDADES</option>
+                                        </select>
+                                        <button onclick="agregarNuevaOficina()" class="bg-primary hover:bg-blue-800 text-white font-bold px-4 rounded-lg transition-colors flex justify-center items-center gap-1 shrink-0"><i class="ph ph-plus-circle"></i></button>
+                                    </div>
                                 </div>
                             </div>
-                            
                             <hr class="my-4">
-                            
                             <h3 class="text-sm font-semibold text-gray-600 mb-2">Oficinas Existentes</h3>
                             <div class="overflow-y-auto flex-1 max-h-[300px] border border-gray-200 rounded-lg">
-                                <table class="w-full text-left border-collapse">
-                                    <tbody id="tbody-lista-oficinas" class="divide-y divide-gray-200 text-sm">
-                                    </tbody>
-                                </table>
+                                <table class="w-full text-left border-collapse"><tbody id="tbody-lista-oficinas" class="divide-y divide-gray-200 text-sm"></tbody></table>
                             </div>
                         </div>
                     </div>
 
                     <div class="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
                         <div class="bg-gray-50 px-4 sm:px-6 py-4 border-b border-gray-200">
-                            <h2 class="text-lg sm:text-xl font-bold text-dark flex items-center gap-2">
-                                <i class="ph ph-users text-secondary text-2xl"></i> Asignación de Personal
-                            </h2>
+                            <h2 class="text-lg sm:text-xl font-bold text-dark flex items-center gap-2"><i class="ph ph-users text-secondary text-2xl"></i> Asignación de Personal</h2>
                         </div>
                         <div class="p-4 sm:p-6">
                             <div class="mb-6">
@@ -191,49 +118,19 @@
 
                             <div id="panel-personal-config" class="hidden">
                                 <div class="bg-blue-50/50 border border-blue-100 rounded-lg p-4 mb-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 items-end">
-                                    <div>
-                                        <label class="block text-xs font-semibold text-gray-600 mb-1">Categoría</label>
-                                        <select id="config-categoria" onchange="actualizarGradosConfig()" class="w-full p-2 border border-gray-300 rounded focus:ring-1 focus:ring-secondary outline-none bg-white text-sm font-bold">
-                                            <option value="OF">OF</option>
-                                            <option value="SUB/MNE">SUB/MNE</option>
-                                            <option value="PATR">PATR</option>
-                                            <option value="AUX">AUX</option>
-                                            <option value="NU">NU</option>
-                                        </select>
-                                    </div>
-                                    <div>
-                                        <label class="block text-xs font-semibold text-gray-600 mb-1">Grado</label>
-                                        <select id="config-grado" class="w-full p-2 border border-gray-300 rounded focus:ring-1 focus:ring-secondary outline-none bg-white text-sm font-bold"></select>
-                                    </div>
-                                    <div class="lg:col-span-1">
-                                        <label class="block text-xs font-semibold text-gray-600 mb-1">Apellidos</label>
-                                        <input type="text" id="config-apellidos" class="w-full p-2 border border-gray-300 rounded focus:ring-1 focus:ring-secondary outline-none uppercase text-sm">
-                                    </div>
-                                    <div class="lg:col-span-1">
-                                        <label class="block text-xs font-semibold text-gray-600 mb-1">Nombres</label>
-                                        <input type="text" id="config-nombres" class="w-full p-2 border border-gray-300 rounded focus:ring-1 focus:ring-secondary outline-none uppercase text-sm">
-                                    </div>
-                                    <div class="lg:col-span-1 mt-2 sm:mt-0">
-                                        <button onclick="agregarPersonaAOficina()" class="bg-accent hover:bg-emerald-600 text-white font-bold py-2 px-4 rounded w-full h-[38px] flex items-center justify-center gap-1 shadow-sm transition">
-                                            <i class="ph ph-user-plus text-lg"></i> Añadir
-                                        </button>
-                                    </div>
+                                    <div><label class="block text-xs font-semibold text-gray-600 mb-1">Categoría</label><select id="config-categoria" onchange="actualizarGradosConfig()" class="w-full p-2 border border-gray-300 rounded focus:ring-1 focus:ring-secondary outline-none bg-white text-sm font-bold"><option value="OF">OF</option><option value="SUB/MNE">SUB/MNE</option><option value="PATR">PATR</option><option value="AUX">AUX</option><option value="NU">NU</option></select></div>
+                                    <div><label class="block text-xs font-semibold text-gray-600 mb-1">Grado</label><select id="config-grado" class="w-full p-2 border border-gray-300 rounded focus:ring-1 focus:ring-secondary outline-none bg-white text-sm font-bold"></select></div>
+                                    <div class="lg:col-span-1"><label class="block text-xs font-semibold text-gray-600 mb-1">Apellidos</label><input type="text" id="config-apellidos" class="w-full p-2 border border-gray-300 rounded focus:ring-1 focus:ring-secondary outline-none uppercase text-sm"></div>
+                                    <div class="lg:col-span-1"><label class="block text-xs font-semibold text-gray-600 mb-1">Nombres</label><input type="text" id="config-nombres" class="w-full p-2 border border-gray-300 rounded focus:ring-1 focus:ring-secondary outline-none uppercase text-sm"></div>
+                                    <div class="lg:col-span-1 mt-2 sm:mt-0"><button onclick="agregarPersonaAOficina()" class="bg-accent hover:bg-emerald-600 text-white font-bold py-2 px-4 rounded w-full h-[38px] flex items-center justify-center gap-1 shadow-sm transition"><i class="ph ph-user-plus text-lg"></i> Añadir</button></div>
                                 </div>
-
                                 <div class="overflow-x-auto border border-gray-200 rounded-lg shadow-sm">
                                     <table class="w-full text-left border-collapse min-w-[500px]">
-                                        <thead class="bg-gray-100 text-gray-600 text-xs uppercase tracking-wider">
-                                            <tr>
-                                                <th class="p-3 font-semibold">Categoría/Grado</th>
-                                                <th class="p-3 font-semibold">Apellidos y Nombres</th>
-                                                <th class="p-3 font-semibold text-center w-24">Acción</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="tbody-config-personal" class="divide-y divide-gray-200 text-sm">
-                                        </tbody>
+                                        <thead class="bg-gray-100 text-gray-600 text-xs uppercase tracking-wider"><tr><th class="p-3 font-semibold">Categoría/Grado</th><th class="p-3 font-semibold">Apellidos y Nombres</th><th class="p-3 font-semibold text-center w-24">Acción</th></tr></thead>
+                                        <tbody id="tbody-config-personal" class="divide-y divide-gray-200 text-sm"></tbody>
                                     </table>
                                 </div>
-                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -242,49 +139,32 @@
             <div id="view-jefe" class="max-w-5xl mx-auto fade-in block">
                 <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden mb-6">
                     <div class="bg-gray-50 px-4 sm:px-6 py-4 border-b border-gray-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-                        <h2 class="text-lg sm:text-xl font-bold text-dark flex items-center gap-2">
-                            <i class="ph ph-clipboard-text text-secondary text-2xl"></i> Reporte Diario
-                        </h2>
+                        <h2 class="text-lg sm:text-xl font-bold text-dark flex items-center gap-2"><i class="ph ph-clipboard-text text-secondary text-2xl"></i> Reporte Diario</h2>
                         <span id="current-date-display" class="text-xs sm:text-sm font-medium text-gray-500 bg-gray-200 px-3 py-1 rounded-full whitespace-nowrap capitalize"></span>
                     </div>
-
                     <div class="p-4 sm:p-6">
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-6">
                             <div>
                                 <label class="block text-sm font-semibold text-gray-700 mb-2">Seleccione Oficina</label>
-                                <select id="select-oficina-reporte" onchange="cargarPersonalParaReporte()" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-secondary outline-none transition-all">
-                                    <option value="" disabled selected>Seleccione...</option>
-                                </select>
+                                <select id="select-oficina-reporte" onchange="cargarPersonalParaReporte()" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-secondary outline-none transition-all"><option value="" disabled selected>Seleccione...</option></select>
                             </div>
                             <div>
                                 <label class="block text-sm font-semibold text-gray-700 mb-2">Fecha del Reporte</label>
                                 <div class="w-full p-3 border border-gray-200 bg-gray-50 rounded-lg text-gray-700 font-bold flex items-center gap-2 select-none shadow-inner">
-                                    <i class="ph-fill ph-calendar-check text-xl text-primary"></i>
-                                    <span id="jefe-date-display" class="capitalize"></span>
+                                    <i class="ph-fill ph-calendar-check text-xl text-primary"></i><span id="jefe-date-display" class="capitalize"></span>
                                 </div>
                                 <input type="hidden" id="input-fecha">
                             </div>
                         </div>
-
                         <div id="mensaje-sin-personal" class="hidden bg-yellow-50 text-yellow-700 p-4 rounded-lg border border-yellow-200 mb-4 flex items-center gap-3 text-sm">
-                            <i class="ph-fill ph-warning-circle text-2xl shrink-0"></i>
-                            <p>Esta oficina no tiene personal asignado. Configure la base primero.</p>
+                            <i class="ph-fill ph-warning-circle text-2xl shrink-0"></i><p>Esta oficina no tiene personal asignado. Configure la base primero.</p>
                         </div>
-
                         <div id="contenedor-tabla-reporte" class="hidden overflow-x-auto border border-gray-200 rounded-lg mb-4 shadow-sm">
                             <table class="w-full text-left border-collapse min-w-[700px]" id="tabla-personal">
-                                <thead class="bg-gray-50 text-gray-600 text-xs uppercase tracking-wider">
-                                    <tr>
-                                        <th class="p-3 font-semibold w-1/4">Grado y Nombres</th>
-                                        <th class="p-3 font-semibold w-1/3">Situación / Novedad</th>
-                                        <th class="p-3 font-semibold">Observaciones</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="tbody-personal-reporte" class="divide-y divide-gray-200">
-                                </tbody>
+                                <thead class="bg-gray-50 text-gray-600 text-xs uppercase tracking-wider"><tr><th class="p-3 font-semibold w-1/4">Grado y Nombres</th><th class="p-3 font-semibold w-1/3">Situación / Novedad</th><th class="p-3 font-semibold">Observaciones</th></tr></thead>
+                                <tbody id="tbody-personal-reporte" class="divide-y divide-gray-200"></tbody>
                             </table>
                         </div>
-
                         <div class="flex justify-end items-center mt-6">
                             <button id="btn-enviar-reporte" onclick="enviarReporte()" class="hidden w-full sm:w-auto bg-accent hover:bg-emerald-600 text-white font-bold py-3 px-8 rounded-lg shadow-md transition-transform transform hover:-translate-y-0.5 flex items-center justify-center gap-2">
                                 <i class="ph ph-paper-plane-tilt text-xl"></i> Enviar Reporte
@@ -295,7 +175,6 @@
             </div>
 
             <div id="view-superior" class="max-w-[1400px] mx-auto fade-in hidden">
-                
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-6 gap-4">
                     <div>
                         <h1 class="text-xl sm:text-2xl font-bold text-dark">Panel de Control DEVAL</h1>
@@ -303,6 +182,15 @@
                     </div>
                     <div class="flex flex-col sm:flex-row gap-3 w-full md:w-auto items-center">
                         
+                        <div class="bg-white px-3 py-2 rounded-full shadow-sm border border-gray-200 flex items-center gap-2 w-full sm:w-auto select-none focus-within:ring-2 focus-within:ring-primary transition-all">
+                            <i class="ph-fill ph-funnel text-primary text-lg"></i>
+                            <select id="filtro-tipo-dashboard" onchange="actualizarDashboard()" class="text-xs sm:text-sm font-bold text-gray-700 outline-none bg-transparent cursor-pointer w-full">
+                                <option value="TODAS">TODAS LAS DEPENDENCIAS</option>
+                                <option value="PLANA MAYOR">SOLO PLANA MAYOR</option>
+                                <option value="ESPECIALIDADES">SOLO ESPECIALIDADES</option>
+                            </select>
+                        </div>
+
                         <div class="bg-white px-4 py-2 rounded-full shadow-sm border border-gray-200 flex items-center gap-2 w-full sm:w-auto select-none">
                             <i class="ph-fill ph-calendar-blank text-primary text-lg"></i>
                             <span class="text-xs font-bold text-gray-400 uppercase">Fecha:</span>
@@ -311,16 +199,9 @@
                         </div>
                         
                         <div class="flex gap-2">
-                            <button onclick="abrirModalPendientes()" class="bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded-lg shadow-sm font-bold flex items-center justify-center gap-2 transition-colors text-xs sm:text-sm animate-pulse" title="Ver oficinas que no han reportado">
-                                <i class="ph-fill ph-warning"></i> <span class="hidden sm:inline">Sin Reportar</span>
-                            </button>
-
-                            <button onclick="descargarDatosSheets()" class="w-10 h-10 bg-blue-100 hover:bg-blue-200 text-blue-600 rounded-full shadow-sm flex items-center justify-center transition-colors" title="Actualizar Datos">
-                                <i class="ph ph-arrows-clockwise text-xl animate-spin-hover"></i>
-                            </button>
-                            <button onclick="descargarExcel()" class="w-10 h-10 bg-green-600 hover:bg-green-700 text-white rounded-full shadow-md flex items-center justify-center transition-transform hover:scale-105" title="Descargar Base (Excel)">
-                                <i class="ph ph-file-xls text-xl"></i>
-                            </button>
+                            <button onclick="abrirModalPendientes()" class="bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded-lg shadow-sm font-bold flex items-center justify-center gap-2 transition-colors text-xs sm:text-sm animate-pulse" title="Ver oficinas que no han reportado"><i class="ph-fill ph-warning"></i> <span class="hidden sm:inline">Sin Reportar</span></button>
+                            <button onclick="descargarDatosSheets()" class="w-10 h-10 bg-blue-100 hover:bg-blue-200 text-blue-600 rounded-full shadow-sm flex items-center justify-center transition-colors" title="Actualizar Datos"><i class="ph ph-arrows-clockwise text-xl animate-spin-hover"></i></button>
+                            <button onclick="descargarExcel()" class="w-10 h-10 bg-green-600 hover:bg-green-700 text-white rounded-full shadow-md flex items-center justify-center transition-transform hover:scale-105" title="Descargar Base (Excel)"><i class="ph ph-file-xls text-xl"></i></button>
                         </div>
                     </div>
                 </div>
@@ -328,49 +209,27 @@
                 <div class="grid grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4 mb-8">
                     <div class="bg-white p-3 sm:p-5 rounded-xl shadow-sm border border-gray-100 flex flex-col sm:flex-row items-start sm:items-center gap-3 border-b-4 sm:border-b-0 sm:border-l-4 border-primary">
                         <div class="bg-blue-100 p-2 sm:p-3 rounded-full text-primary shrink-0"><i class="ph ph-buildings text-xl sm:text-2xl"></i></div>
-                        <div>
-                            <p class="text-[10px] sm:text-[11px] text-gray-500 font-bold uppercase">Fuerza Efectiva</p>
-                            <h3 class="text-lg sm:text-xl font-bold text-gray-800" id="dash-fuerza-efectiva">0-0-0-0-0</h3>
-                        </div>
+                        <div><p class="text-[10px] sm:text-[11px] text-gray-500 font-bold uppercase">Fuerza Efectiva</p><h3 class="text-lg sm:text-xl font-bold text-gray-800" id="dash-fuerza-efectiva">0-0-0-0-0</h3></div>
                     </div>
-                    
                     <div class="bg-white p-3 sm:p-5 rounded-xl shadow-sm border border-gray-100 flex flex-col sm:flex-row items-start sm:items-center gap-3 border-b-4 sm:border-b-0 sm:border-l-4 border-blue-400">
                         <div class="bg-blue-50 p-2 sm:p-3 rounded-full text-blue-500 shrink-0"><i class="ph ph-list-numbers text-xl sm:text-2xl"></i></div>
-                        <div>
-                            <p class="text-[10px] sm:text-[11px] text-gray-500 font-bold uppercase">Disponibles (Desg)</p>
-                            <h3 class="text-lg sm:text-xl font-bold text-gray-800" id="dash-fuerza-disponible">0-0-0-0-0</h3>
-                        </div>
+                        <div><p class="text-[10px] sm:text-[11px] text-gray-500 font-bold uppercase">Disponibles (Desg)</p><h3 class="text-lg sm:text-xl font-bold text-gray-800" id="dash-fuerza-disponible">0-0-0-0-0</h3></div>
                     </div>
-                    
                     <div onclick="abrirModalDetalle('TODAS', 'DISPONIBLES')" class="bg-white p-3 sm:p-5 rounded-xl shadow-sm border border-gray-100 flex flex-col sm:flex-row items-start sm:items-center gap-3 border-b-4 sm:border-b-0 sm:border-l-4 border-accent cursor-pointer hover:bg-green-50 transition-colors group">
                         <div class="bg-green-100 p-2 sm:p-3 rounded-full text-accent shrink-0 group-hover:scale-110 transition-transform"><i class="ph-fill ph-users-three text-xl sm:text-2xl"></i></div>
-                        <div>
-                            <p class="text-[10px] sm:text-[11px] text-gray-500 font-bold uppercase">T. Disponibles</p>
-                            <h3 class="text-lg sm:text-xl font-bold text-gray-800" id="dash-total-disponible">0</h3>
-                            <p class="text-[9px] text-green-500 mt-1 font-semibold flex items-center gap-1">Detalle <i class="ph ph-arrow-right"></i></p>
-                        </div>
+                        <div><p class="text-[10px] sm:text-[11px] text-gray-500 font-bold uppercase">T. Disponibles</p><h3 class="text-lg sm:text-xl font-bold text-gray-800" id="dash-total-disponible">0</h3><p class="text-[9px] text-green-500 mt-1 font-semibold flex items-center gap-1">Detalle <i class="ph ph-arrow-right"></i></p></div>
                     </div>
-                    
                     <div onclick="abrirModalDetalle('TODAS', 'NOVEDADES')" class="bg-white p-3 sm:p-5 rounded-xl shadow-sm border border-gray-100 flex flex-col sm:flex-row items-start sm:items-center gap-3 border-b-4 sm:border-b-0 sm:border-l-4 border-red-500 cursor-pointer hover:bg-red-50 transition-colors group">
                         <div class="bg-red-100 p-2 sm:p-3 rounded-full text-red-500 shrink-0 group-hover:scale-110 transition-transform"><i class="ph-fill ph-warning-circle text-xl sm:text-2xl"></i></div>
-                        <div>
-                            <p class="text-[10px] sm:text-[11px] text-gray-500 font-bold uppercase">T. Novedades</p>
-                            <h3 class="text-lg sm:text-xl font-bold text-gray-800" id="dash-total-novedades">0</h3>
-                            <p class="text-[9px] text-red-400 mt-1 font-semibold flex items-center gap-1">Detalle <i class="ph ph-arrow-right"></i></p>
-                        </div>
+                        <div><p class="text-[10px] sm:text-[11px] text-gray-500 font-bold uppercase">T. Novedades</p><h3 class="text-lg sm:text-xl font-bold text-gray-800" id="dash-total-novedades">0</h3><p class="text-[9px] text-red-400 mt-1 font-semibold flex items-center gap-1">Detalle <i class="ph ph-arrow-right"></i></p></div>
                     </div>
-
                     <div class="bg-white p-3 sm:p-5 rounded-xl shadow-sm border border-gray-100 flex flex-col sm:flex-row items-start sm:items-center gap-3 border-b-4 sm:border-b-0 sm:border-l-4 border-purple-500 relative overflow-hidden col-span-2 lg:col-span-1">
                         <div class="absolute -right-3 -top-3 text-purple-50 opacity-50"><i class="ph-fill ph-target text-6xl"></i></div>
                         <div class="bg-purple-50 p-2 sm:p-3 rounded-full text-purple-600 shrink-0 z-10"><i class="ph-fill ph-activity text-xl sm:text-2xl"></i></div>
                         <div class="z-10 w-full">
                             <p class="text-[10px] sm:text-[11px] text-gray-500 font-bold uppercase">Índice Operativo</p>
-                            <div class="flex items-end gap-1">
-                                <h3 class="text-lg sm:text-xl font-black text-gray-800" id="dash-indice-operatividad">0%</h3>
-                            </div>
-                            <div class="w-full bg-gray-200 rounded-full h-1.5 mt-1 overflow-hidden">
-                                <div id="dash-bar-operatividad" class="bg-purple-500 h-1.5 rounded-full" style="width: 0%"></div>
-                            </div>
+                            <div class="flex items-end gap-1"><h3 class="text-lg sm:text-xl font-black text-gray-800" id="dash-indice-operatividad">0%</h3></div>
+                            <div class="w-full bg-gray-200 rounded-full h-1.5 mt-1 overflow-hidden"><div id="dash-bar-operatividad" class="bg-purple-500 h-1.5 rounded-full" style="width: 0%"></div></div>
                             <p class="text-[9px] sm:text-[10px] mt-1 font-bold" id="dash-estado-operativo">Calculando...</p>
                         </div>
                     </div>
@@ -397,21 +256,16 @@
                                         <th class="px-2 py-3 font-semibold text-center text-red-600">Detalle Nov.</th>
                                     </tr>
                                 </thead>
-                                <tbody id="tbody-estado-oficinas" class="divide-y divide-gray-100 text-sm">
-                                </tbody>
+                                <tbody id="tbody-estado-oficinas" class="divide-y divide-gray-100 text-sm"></tbody>
                             </table>
                         </div>
                     </div>
-
                     <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden flex flex-col">
                         <div class="bg-gray-50 px-4 sm:px-6 py-4 border-b border-gray-200">
                             <h3 class="font-bold text-gray-800 text-sm sm:text-base">Consolidado Novedades</h3>
                             <p class="text-[10px] text-gray-500">Clic para ver detalle específico</p>
                         </div>
-                        <div class="p-4 sm:p-6 flex-1 max-h-[400px] overflow-y-auto">
-                            <ul id="lista-novedades" class="space-y-3">
-                            </ul>
-                        </div>
+                        <div class="p-4 sm:p-6 flex-1 max-h-[400px] overflow-y-auto"><ul id="lista-novedades" class="space-y-3"></ul></div>
                     </div>
                 </div>
             </div>
@@ -426,108 +280,81 @@
         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-5xl overflow-hidden fade-in flex flex-col max-h-[90vh]">
             <div class="bg-gray-50 px-4 sm:px-6 py-3 border-b border-gray-200 flex justify-between items-center shrink-0">
                 <div class="flex items-center gap-3">
-                    <div id="modal-icono-contenedor" class="bg-red-100 text-red-500 p-2 rounded-lg shrink-0">
-                        <i id="modal-icono" class="ph-fill ph-users-three text-xl"></i>
-                    </div>
+                    <div id="modal-icono-contenedor" class="bg-red-100 text-red-500 p-2 rounded-lg shrink-0"><i id="modal-icono" class="ph-fill ph-users-three text-xl"></i></div>
                     <div>
                         <h3 class="font-bold text-base sm:text-lg text-gray-800" id="modal-titulo">Personal</h3>
                         <p class="text-[10px] sm:text-xs text-gray-600 font-bold font-mono bg-white border border-gray-200 px-2 py-0.5 rounded mt-0.5 inline-block shadow-sm" id="modal-desglose-grados">OF:0 - SUB:0 - PT:0 - AUX:0 - NU:0</p>
                     </div>
                 </div>
-                <button onclick="cerrarModalDetalle()" class="text-gray-400 hover:text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-full p-2 transition-colors">
-                    <i class="ph ph-x text-lg"></i>
-                </button>
+                <button onclick="cerrarModalDetalle()" class="text-gray-400 hover:text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-full p-2 transition-colors"><i class="ph ph-x text-lg"></i></button>
             </div>
             <div class="p-0 overflow-y-auto flex-1">
                 <table class="w-full text-left border-collapse text-xs sm:text-sm min-w-[600px]">
                     <thead class="bg-white sticky top-0 border-b border-gray-200 shadow-sm z-10">
-                        <tr class="text-gray-500 uppercase tracking-wider">
-                            <th class="px-4 py-3 font-semibold">Oficina</th>
-                            <th class="px-4 py-3 font-semibold">Grado y Nombre</th>
-                            <th class="px-4 py-3 font-semibold">Situación</th>
-                            <th class="px-4 py-3 font-semibold">Observaciones</th>
-                        </tr>
+                        <tr class="text-gray-500 uppercase tracking-wider"><th class="px-4 py-3 font-semibold">Oficina</th><th class="px-4 py-3 font-semibold">Grado y Nombre</th><th class="px-4 py-3 font-semibold">Situación</th><th class="px-4 py-3 font-semibold">Observaciones</th></tr>
                     </thead>
                     <tbody id="tbody-modal-novedades" class="divide-y divide-gray-100"></tbody>
                 </table>
             </div>
             <div class="bg-gray-50 px-4 sm:px-6 py-3 border-t border-gray-200 text-right shrink-0">
-                <button onclick="cerrarModalDetalle()" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-2 px-6 rounded-lg transition-colors text-sm">
-                    Cerrar
-                </button>
+                <button onclick="cerrarModalDetalle()" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-2 px-6 rounded-lg transition-colors text-sm">Cerrar</button>
             </div>
         </div>
     </div>
 
     <div id="toast" class="fixed bottom-5 right-5 text-white px-4 sm:px-6 py-3 rounded-lg shadow-lg transform transition-all duration-500 translate-y-20 opacity-0 flex items-center gap-3 z-[60] text-sm font-medium">
-        <i id="toast-icon" class="text-xl sm:text-2xl"></i>
-        <span id="toast-message"></span>
+        <i id="toast-icon" class="text-xl sm:text-2xl"></i><span id="toast-message"></span>
     </div>
 
     <script>
         // --- BASE DE DATOS LOCAL Y URL GOOGLE ---
-        // Tu nueva URL de la implementación actualizada:
-        const URL_SECRETA_GOOGLE = "https://script.google.com/macros/s/AKfycbzm1ft7hNP2TPbp6M4HuLB2mDkStKqx2OgjAJi719iTfw8k8WoN92MRXt4_4P8167u4Uw/exec";
+        const URL_SECRETA_GOOGLE = "https://script.google.com/macros/s/AKfycbyj6y2nLpcJks4aPyBxnqBeDJCsNHC-JkvNvYhSXBC9ODMIyJvExaRoN60AC8DwQqu4OQ/exec";
         
-        // --- CONFIGURACIÓN MICROSOFT MSAL (RESTRINGIDO A CUENTAS INSTITUCIONALES) ---
         const msalConfig = {
-            auth: {
-                clientId: "9641b317-3b1d-4de0-afca-7e34be884804",
-                authority: "https://login.microsoftonline.com/organizations",
-                redirectUri: window.location.origin + window.location.pathname
-            },
-            cache: {
-                cacheLocation: "sessionStorage",
-                storeAuthStateInCookie: false,
-            }
+            auth: { clientId: "9641b317-3b1d-4de0-afca-7e34be884804", authority: "https://login.microsoftonline.com/organizations", redirectUri: window.location.origin + window.location.pathname },
+            cache: { cacheLocation: "sessionStorage", storeAuthStateInCookie: false, }
         };
         const msalInstance = new msal.PublicClientApplication(msalConfig);
         
         let listaOficinas = []; 
         let personalBase = {};
         let reportesAlmacenados = [];
+	let usuarioAuditoriaActual = "Desconocido";
 
-        const gradosPorCategoria = {
-            'OF': ['ST', 'TE', 'CT', 'MY', 'TC', 'CR'],
-            'SUB/MNE': ['SI', 'IT', 'IJ', 'SC', 'CM'],
-            'PATR': ['PT', 'PP'],
-            'AUX': ['AUX'],
-            'NU': ['NU']
+        // --- DICCIONARIO QUEMADO (HARDCODED) DE OFICINAS ---
+        const DICCIONARIO_OFICINAS = {
+            'ASEPO-DEVAL': 'PLANA MAYOR', 'ASJUR': 'PLANA MAYOR', 'AUXPO': 'PLANA MAYOR', 'CIEPS': 'PLANA MAYOR',
+            'CONDIN12': 'PLANA MAYOR', 'COJUZ 26': 'PLANA MAYOR', 'COSEC-PPL': 'PLANA MAYOR', 'DERHU': 'PLANA MAYOR',
+            'EMFAG': 'PLANA MAYOR', 'GESTER': 'PLANA MAYOR', 'GUCOE': 'PLANA MAYOR', 'GUDCI CNSCC': 'PLANA MAYOR',
+            'GUDVI': 'PLANA MAYOR', 'GUGED': 'PLANA MAYOR', 'GUTAH': 'PLANA MAYOR', 'GUTIC': 'PLANA MAYOR',
+            'JEFAD': 'PLANA MAYOR', 'OAC': 'PLANA MAYOR', 'PLANE': 'PLANA MAYOR', 'POLCO': 'PLANA MAYOR',
+            'SEGUR': 'PLANA MAYOR', 'SUMEC': 'PLANA MAYOR', 'UNDEJ': 'PLANA MAYOR', 'UNIPEP': 'PLANA MAYOR', 'SIART': 'PLANA MAYOR',
+            'GAULA': 'ESPECIALIDADES', 'GOES': 'ESPECIALIDADES', 'GOESH': 'ESPECIALIDADES', 'GUDMO 12': 'ESPECIALIDADES',
+            'SECAR': 'ESPECIALIDADES', 'SEPRO': 'ESPECIALIDADES', 'SIJIN': 'ESPECIALIDADES'
         };
+        // Estado Dinámico de Tipos (En caso de que se creen nuevas)
+        let mapaTiposOficina = { ...DICCIONARIO_OFICINAS };
+
+        const gradosPorCategoria = { 'OF': ['ST', 'TE', 'CT', 'MY', 'TC', 'CR'], 'SUB/MNE': ['SI', 'IT', 'IJ', 'SC', 'CM'], 'PATR': ['PT', 'PP'], 'AUX': ['AUX'], 'NU': ['NU'] };
 
         const opcionesNovedad = [
-            { val: 'Stand by', text: '⏳ Stand by', aisla: false },
-            { val: 'En formacion', text: '✅ En formación', aisla: false },
-            { val: 'En servicio', text: '🚓 En servicio', aisla: true }, 
-            { val: 'Vacaciones', text: '🏖️ Vacaciones', aisla: true },
-            { val: 'Permiso', text: '📄 Permiso', aisla: true },
-            { val: 'Franquicia', text: '😎 Franquicia', aisla: true },
-            { val: 'Cita Médica', text: '🏥 Cita Médica', aisla: true },
-            { val: 'Permiso Diferencial', text: '⚖️ Permiso Diferencial', aisla: true },
-            { val: 'Comisión Estudio', text: '📚 Comisión Estudio', aisla: true },
-            { val: 'Excusa del servicio', text: '🩺 Excusa del servicio', aisla: true },
-            { val: 'Ley Maria', text: '👶 Ley Maria', aisla: true },
-            { val: 'Licencia de Luto', text: '🕊️ Licencia de Luto', aisla: true }
+            { val: 'Stand by', text: '⏳ Stand by', aisla: false }, { val: 'En formacion', text: '✅ En formación', aisla: false },
+            { val: 'En servicio', text: '🚓 En servicio', aisla: true }, { val: 'Vacaciones', text: '🏖️ Vacaciones', aisla: true },
+            { val: 'Permiso', text: '📄 Permiso', aisla: true }, { val: 'Franquicia', text: '😎 Franquicia', aisla: true },
+            { val: 'Cita Médica', text: '🏥 Cita Médica', aisla: true }, { val: 'Permiso Diferencial', text: '⚖️ Permiso Diferencial', aisla: true },
+            { val: 'Comisión Estudio', text: '📚 Comisión Estudio', aisla: true }, { val: 'Excusa del servicio', text: '🩺 Excusa del servicio', aisla: true },
+            { val: 'Ley Maria', text: '👶 Ley Maria', aisla: true }, { val: 'Licencia de Luto', text: '🕊️ Licencia de Luto', aisla: true }
         ];
 
         document.addEventListener('DOMContentLoaded', () => {
-            // --- GENERADOR DE FECHA BLINDADO (ZONA COLOMBIA) ---
             const fechaActual = new Date();
-            const formateador = new Intl.DateTimeFormat('es-CO', { 
-               timeZone: 'America/Bogota', 
-               year: 'numeric', 
-               month: '2-digit', 
-               day: '2-digit' 
-            });
+            const formateador = new Intl.DateTimeFormat('es-CO', { timeZone: 'America/Bogota', year: 'numeric', month: '2-digit', day: '2-digit' });
             const partes = formateador.formatToParts(fechaActual);
             
-            // EL TRUCO ESTÁ AQUÍ: .replace(/\D/g, '') destruye cualquier texto invisible
             const anio = partes.find(p => p.type === 'year').value.replace(/\D/g, '');
             const mes = partes.find(p => p.type === 'month').value.replace(/\D/g, '');
             const dia = partes.find(p => p.type === 'day').value.replace(/\D/g, '');
-
             const hoy = `${anio}-${mes}-${dia}`;
-            // ----------------------------------------------------
 
             document.getElementById('input-fecha').value = hoy;
             document.getElementById('filtro-fecha-dashboard').value = hoy;
@@ -543,76 +370,60 @@
             actualizarGradosConfig();
         });
 
-        // --- FUNCION MAESTRA DE AUTO-GUARDADO SILENCIOSO ---
         function sincronizarSilencioso(accion, payload) {
-            mostrarToast('Actualizando base de datos...', 'info');
-            fetch(URL_SECRETA_GOOGLE, {
-                method: 'POST',
-                mode: 'no-cors',
-                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                body: JSON.stringify({ accion: accion, ...payload })
-            }).then(() => mostrarToast('Guardado automático exitoso', 'success'))
-              .catch(() => mostrarToast('Error sincronizando. Se guardará al reconectar', 'error'));
+    	   mostrarToast('Actualizando base de datos...', 'info');
+           fetch(URL_SECRETA_GOOGLE, {
+              method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+             // AÑADIMOS EL USUARIO AQUÍ ABAJO:
+           body: JSON.stringify({ accion: accion, usuario: usuarioAuditoriaActual, ...payload })
+        }).then(() => mostrarToast('Guardado automático exitoso', 'success'))
+          .catch(() => mostrarToast('Error sincronizando. Se guardará al reconectar', 'error'));
         }
 
-        // --- VALIDACIÓN DE DOMINIO DE CORREO INSTITUCIONAL ---
         function validarDominio(email) {
             if (!email) return false;
             const correoLimpio = email.trim().toLowerCase();
             return correoLimpio.endsWith('@correo.policia.gov.co') || correoLimpio.endsWith('@policia.gov.co');
         }
 
-        // --- 0. LOGIN ---
         function manejarRespuestaGoogle(response) {
             const base64Url = response.credential.split('.')[1];
             const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-            const payload = decodeURIComponent(atob(base64).split('').map(function(c) {
-                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-            }).join(''));
-            
-            const datosUsuario = JSON.parse(payload);
-            iniciarSesionVisual(datosUsuario.name);
+            const payload = decodeURIComponent(atob(base64).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join(''));
+            iniciarSesionVisual(JSON.parse(payload).name);
         }
 
         function loginMicrosoft() {
             msalInstance.loginPopup({ scopes: ["user.read"], prompt: "select_account" })
                 .then(response => {
-                    const email = response.account.username;
-                    
-                    if (!validarDominio(email)) {
-                        alert("ACCESO DENEGADO\n\nEl correo '" + email + "' no pertenece a un dominio institucional autorizado.");
+                    if (!validarDominio(response.account.username)) {
+                        alert("ACCESO DENEGADO\n\nEl correo no pertenece a un dominio institucional autorizado.");
                         msalInstance.logoutPopup({ mainWindowRedirectUri: window.location.origin + window.location.pathname });
                         return;
                     }
-
                     iniciarSesionVisual(response.account.name);
                 })
-                .catch(error => {
-                    console.error("Detalle del error MSAL:", error);
-                    alert("Aviso de Azure: " + error.message);
-                    mostrarToast('Error al conectar con Microsoft', 'error');
-                });
+                .catch(error => { console.error(error); alert("Aviso de Azure: " + error.message); mostrarToast('Error con Microsoft', 'error'); });
         }
 
         function iniciarSesionVisual(nombreUsuario) {
-            document.getElementById('view-login-button-area').classList.add('hidden');
-            document.getElementById('login-spinner').classList.remove('hidden');
-            mostrarToast(`Bienvenido, ${nombreUsuario}`, 'success');
-            descargarDatosSheets();
+    		usuarioAuditoriaActual = nombreUsuario; // <-- LÍNEA NUEVA
+    		document.getElementById('view-login-button-area').classList.add('hidden');
+    		document.getElementById('login-spinner').classList.remove('hidden');
+    		mostrarToast(`Bienvenido, ${nombreUsuario}`, 'success');
+    		descargarDatosSheets();
         }
 
         function descargarDatosSheets() {
             fetch(URL_SECRETA_GOOGLE + "?t=" + new Date().getTime())
             .then(res => res.json())
             .then(filas => {
-                listaOficinas = [];
-                personalBase = {};
-                reportesAlmacenados = [];
+                listaOficinas = []; personalBase = {}; reportesAlmacenados = [];
 
                 if (filas && filas.length > 1) {
                     filas.forEach((fila, index) => {
                         if (index === 0) return; 
-                        const [fecha, oficina, categoria, grado, apellidos, nombres, novedad, observaciones] = fila;
+                        const [fecha, oficina, categoria, grado, apellidos, nombres, novedad, observaciones, tipoOficinaDB] = fila;
                         
                         if (oficina) {
                             if (!listaOficinas.includes(oficina)) {
@@ -620,16 +431,15 @@
                                 personalBase[oficina] = [];
                             }
                             
-                            const yaExistePersona = personalBase[oficina].some(p => p.apellidos === apellidos && p.nombres === nombres);
-                            if (!yaExistePersona) {
-                                personalBase[oficina].push({
-                                    id: 'online_' + index,
-                                    categoria: categoria,
-                                    grado: grado,
-                                    apellidos: apellidos,
-                                    nombres: nombres
-                                });
+                            // Rescatar el tipo de oficina de la DB (9na columna) o del Diccionario
+                            if (tipoOficinaDB && tipoOficinaDB.trim() !== '') {
+                                mapaTiposOficina[oficina] = tipoOficinaDB.trim().toUpperCase();
+                            } else if (!mapaTiposOficina[oficina]) {
+                                mapaTiposOficina[oficina] = 'PLANA MAYOR'; // Valor por defecto seguro
                             }
+                            
+                            const yaExistePersona = personalBase[oficina].some(p => p.apellidos === apellidos && p.nombres === nombres);
+                            if (!yaExistePersona) personalBase[oficina].push({ id: 'online_'+index, categoria, grado, apellidos, nombres });
 
                             const strFecha = String(fecha).split('T')[0].replace(/[^\d-]/g, '');
                             let reporteExistente = reportesAlmacenados.find(r => r.oficina === oficina && r.fecha === strFecha);
@@ -640,13 +450,10 @@
 
                             if (reporteExistente) {
                                 const personaIndex = reporteExistente.personal.findIndex(p => p.apellidos === apellidos && p.nombres === nombres);
-                                if (personaIndex !== -1) {
-                                    reporteExistente.personal[personaIndex] = personaReporte; 
-                                } else {
-                                    reporteExistente.personal.push(personaReporte);
-                                }
+                                if (personaIndex !== -1) reporteExistente.personal[personaIndex] = personaReporte; 
+                                else reporteExistente.personal.push(personaReporte);
                             } else {
-                                reportesAlmacenados.push({ oficina: oficina, fecha: strFecha, personal: [personaReporte] });
+                                reportesAlmacenados.push({ oficina, fecha: strFecha, personal: [personaReporte] });
                             }
                         }
                     });
@@ -656,29 +463,18 @@
                 actualizarGradosConfig();
                 
                 document.getElementById('view-login').classList.add('hidden');
-                document.getElementById('app-layout').classList.remove('hidden');
-                document.getElementById('app-layout').classList.add('flex');
+                document.getElementById('app-layout').classList.remove('hidden', 'flex').classList.add('flex');
                 
-                if (!document.getElementById('view-superior').classList.contains('hidden')) {
-                    actualizarDashboard();
-                } else if (!document.getElementById('view-config').classList.contains('hidden')) {
-                    cargarPersonalConfig();
-                } else {
-                    cargarPersonalParaReporte();
-                    if(document.getElementById('view-jefe').classList.contains('hidden')) switchTab('jefe'); 
-                }
+                if (!document.getElementById('view-superior').classList.contains('hidden')) actualizarDashboard();
+                else if (!document.getElementById('view-config').classList.contains('hidden')) cargarPersonalConfig();
+                else { cargarPersonalParaReporte(); if(document.getElementById('view-jefe').classList.contains('hidden')) switchTab('jefe'); }
                 mostrarToast('Datos sincronizados con la nube', 'success');
             })
             .catch(err => {
-                console.error("Error al sincronizar:", err);
-                mostrarToast('Error de conexión. Modo local activo.', 'error');
-                
+                console.error(err); mostrarToast('Error de conexión. Modo local activo.', 'error');
                 document.getElementById('view-login').classList.add('hidden');
-                document.getElementById('app-layout').classList.remove('hidden');
-                document.getElementById('app-layout').classList.add('flex');
-                if (document.getElementById('view-superior').classList.contains('hidden') && document.getElementById('view-config').classList.contains('hidden')) {
-                     switchTab('jefe');
-                }
+                document.getElementById('app-layout').classList.remove('hidden', 'flex').classList.add('flex');
+                if (document.getElementById('view-superior').classList.contains('hidden') && document.getElementById('view-config').classList.contains('hidden')) switchTab('jefe');
             })
             .finally(() => {
                 document.getElementById('login-spinner').classList.add('hidden');
@@ -699,9 +495,12 @@
 
             listaOficinas.forEach((of) => {
                 optionsHTML += `<option value="${of}">${of}</option>`;
+                let badgeTipo = mapaTiposOficina[of] === 'ESPECIALIDADES' ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700';
                 tablaOficinasHTML += `
                     <tr class="hover:bg-gray-50 border-b border-gray-100">
-                        <td class="p-3 font-semibold text-gray-800 uppercase">${of}</td>
+                        <td class="p-3 font-semibold text-gray-800 uppercase">
+                            ${of} <br><span class="${badgeTipo} text-[9px] px-2 py-0.5 rounded-full font-bold mt-1 inline-block">${mapaTiposOficina[of] || 'PLANA MAYOR'}</span>
+                        </td>
                         <td class="p-3 text-center whitespace-nowrap">
                             <button onclick="editarOficina('${of}')" class="text-blue-500 hover:text-blue-700 p-1 mr-2 transition-transform hover:scale-110" title="Editar Nombre"><i class="ph ph-pencil-simple text-lg"></i></button>
                             <button onclick="eliminarOficina('${of}')" class="text-red-500 hover:text-red-700 p-1 transition-transform hover:scale-110" title="Eliminar Oficina"><i class="ph ph-trash text-lg"></i></button>
@@ -710,11 +509,8 @@
                 `;
             });
 
-            const valConfig = selectConfig.value;
-            const valReporte = selectReporte.value;
-
-            selectConfig.innerHTML = optionsHTML;
-            selectReporte.innerHTML = optionsHTML;
+            const valConfig = selectConfig.value; const valReporte = selectReporte.value;
+            selectConfig.innerHTML = optionsHTML; selectReporte.innerHTML = optionsHTML;
             if(tbodyOficinas) tbodyOficinas.innerHTML = tablaOficinasHTML;
 
             if (listaOficinas.includes(valConfig)) selectConfig.value = valConfig;
@@ -722,23 +518,23 @@
         }
 
         function agregarNuevaOficina() {
-            const input = document.getElementById('input-nueva-oficina');
-            const nombreOficina = input.value.trim().toUpperCase();
+            const nombreOficina = document.getElementById('input-nueva-oficina').value.trim().toUpperCase();
+            const tipoOficina = document.getElementById('input-tipo-nueva-oficina').value;
 
             if (!nombreOficina) return mostrarToast('Escriba el nombre de la oficina', 'error');
             if (listaOficinas.includes(nombreOficina)) return mostrarToast('La oficina ya existe', 'error');
 
             listaOficinas.push(nombreOficina);
             personalBase[nombreOficina] = [];
+            mapaTiposOficina[nombreOficina] = tipoOficina; // Guardamos el tipo de oficina
 
             actualizarDropdownsOficinas();
             document.getElementById('select-oficina-config').value = nombreOficina;
             cargarPersonalConfig();
 
-            input.value = '';
+            document.getElementById('input-nueva-oficina').value = '';
             
-            // Auto-guardado de la nueva oficina (Crea la estructura base)
-            sincronizarSilencioso("sincronizar", { oficina: nombreOficina, personal: [] });
+            sincronizarSilencioso("sincronizar", { oficina: nombreOficina, tipo_oficina: tipoOficina, personal: [] });
         }
 
         function editarOficina(oficinaVieja) {
@@ -752,13 +548,16 @@
                 listaOficinas[index] = nuevoNombre;
                 personalBase[nuevoNombre] = personalBase[oficinaVieja];
                 delete personalBase[oficinaVieja];
+                
+                // Mudar el tipo de oficina
+                mapaTiposOficina[nuevoNombre] = mapaTiposOficina[oficinaVieja];
+                delete mapaTiposOficina[oficinaVieja];
 
                 reportesAlmacenados.forEach(r => { if(r.oficina === oficinaVieja) r.oficina = nuevoNombre; });
                 actualizarDropdownsOficinas();
                 document.getElementById('select-oficina-config').value = nuevoNombre;
                 cargarPersonalConfig();
                 
-                // Orden en cascada a Sheets para renombrar en todos lados
                 sincronizarSilencioso("renombrar_oficina", { oficina_vieja: oficinaVieja, oficina_nueva: nuevoNombre });
             }
         }
@@ -770,13 +569,13 @@
             if(confirm(`¿Está seguro de proceder con la eliminación completa de "${oficina}"?`)) {
                 listaOficinas = listaOficinas.filter(o => o !== oficina);
                 delete personalBase[oficina];
+                delete mapaTiposOficina[oficina];
                 reportesAlmacenados = reportesAlmacenados.filter(r => r.oficina !== oficina);
                 
                 actualizarDropdownsOficinas();
                 document.getElementById('select-oficina-config').value = "";
                 cargarPersonalConfig();
                 
-                // Orden en cascada a Sheets para eliminar todo registro vinculado
                 sincronizarSilencioso("eliminar_oficina", { oficina: oficina });
             }
         }
@@ -785,9 +584,7 @@
             const cat = document.getElementById('config-categoria').value;
             const selectGrado = document.getElementById('config-grado');
             let html = '';
-            if (gradosPorCategoria[cat]) {
-                gradosPorCategoria[cat].forEach(g => { html += `<option value="${g}">${g}</option>`; });
-            }
+            if (gradosPorCategoria[cat]) gradosPorCategoria[cat].forEach(g => html += `<option value="${g}">${g}</option>`);
             selectGrado.innerHTML = html;
         }
 
@@ -828,62 +625,46 @@
             const nombres = document.getElementById('config-nombres').value.trim().toUpperCase();
 
             if (!apellidos || !nombres) return mostrarToast('Debe ingresar Apellidos y Nombres', 'error');
-
             if (!personalBase[of]) personalBase[of] = [];
             
-            const existe = personalBase[of].some(p => p.apellidos === apellidos && p.nombres === nombres);
-            if (existe) return mostrarToast('Esta persona ya está registrada en la oficina', 'error');
+            if (personalBase[of].some(p => p.apellidos === apellidos && p.nombres === nombres)) return mostrarToast('Esta persona ya está registrada en la oficina', 'error');
 
             personalBase[of].push({ id: 'local_' + Date.now(), categoria: cat, grado: grado, apellidos: apellidos, nombres: nombres });
             
-            document.getElementById('config-apellidos').value = '';
-            document.getElementById('config-nombres').value = '';
+            document.getElementById('config-apellidos').value = ''; document.getElementById('config-nombres').value = '';
             cargarPersonalConfig();
             
-            // Auto-Guardado Inmediato de la persona en la base de datos
-            sincronizarSilencioso("sincronizar", { oficina: of, personal: personalBase[of] });
+            sincronizarSilencioso("sincronizar", { oficina: of, tipo_oficina: mapaTiposOficina[of], personal: personalBase[of] });
         }
 
         function editarPersonaDeOficina(oficina, idx) {
             const persona = personalBase[oficina][idx];
-            document.getElementById('config-categoria').value = persona.categoria;
-            actualizarGradosConfig();
+            document.getElementById('config-categoria').value = persona.categoria; actualizarGradosConfig();
             document.getElementById('config-grado').value = persona.grado;
             document.getElementById('config-apellidos').value = persona.apellidos;
             document.getElementById('config-nombres').value = persona.nombres;
             
-            // Retiramos temporalmente a la persona de la nómina para que se vuelva a agregar editada
             personalBase[oficina].splice(idx, 1);
             
-            // Limpiamos el fantasma del reporte del día de hoy en cascada
             const fechaHoy = document.getElementById('input-fecha').value;
             const reporteHoy = reportesAlmacenados.find(r => r.oficina === oficina && r.fecha === fechaHoy);
-            if (reporteHoy) {
-                reporteHoy.personal = reporteHoy.personal.filter(p => !(p.apellidos === persona.apellidos && p.nombres === persona.nombres));
-            }
+            if (reporteHoy) reporteHoy.personal = reporteHoy.personal.filter(p => !(p.apellidos === persona.apellidos && p.nombres === persona.nombres));
 
             cargarPersonalConfig();
             mostrarToast('Modifique los datos y presione Añadir para guardar.', 'info');
         }
 
         function eliminarPersonaDeOficina(oficina, idx) {
-            if (confirm('¿Eliminar funcionario definitivamente? Esta acción lo borrará de la nómina y del sistema de control.')) {
+            if (confirm('¿Eliminar funcionario definitivamente? Esta acción lo borrará de la nómina y del sistema.')) {
                 const persona = personalBase[oficina][idx];
-                
-                // 1. Borrar de la nómina local
                 personalBase[oficina].splice(idx, 1);
                 
-                // 2. Borrar en cascada del Reporte de Hoy (El Fantasma)
                 const fechaHoy = document.getElementById('input-fecha').value;
                 const reporteHoy = reportesAlmacenados.find(r => r.oficina === oficina && r.fecha === fechaHoy);
-                if (reporteHoy) {
-                    reporteHoy.personal = reporteHoy.personal.filter(p => !(p.apellidos === persona.apellidos && p.nombres === persona.nombres));
-                }
+                if (reporteHoy) reporteHoy.personal = reporteHoy.personal.filter(p => !(p.apellidos === persona.apellidos && p.nombres === persona.nombres));
 
                 cargarPersonalConfig();
-                
-                // 3. Auto-Guardado Inmediato para purgar en base de datos
-                sincronizarSilencioso("sincronizar", { oficina: oficina, personal: personalBase[oficina] });
+                sincronizarSilencioso("sincronizar", { oficina: oficina, tipo_oficina: mapaTiposOficina[oficina], personal: personalBase[oficina] });
             }
         }
 
@@ -899,65 +680,37 @@
             if (!of || !fecha) return;
 
             const personalNominal = personalBase[of] || [];
-            if (personalNominal.length === 0) {
-                contTabla.classList.add('hidden');
-                btnEnviar.classList.add('hidden');
-                msgSinPers.classList.remove('hidden');
-                return;
-            }
+            if (personalNominal.length === 0) { contTabla.classList.add('hidden'); btnEnviar.classList.add('hidden'); msgSinPers.classList.remove('hidden'); return; }
 
-            msgSinPers.classList.add('hidden');
-            contTabla.classList.remove('hidden');
-            btnEnviar.classList.remove('hidden');
+            msgSinPers.classList.add('hidden'); contTabla.classList.remove('hidden'); btnEnviar.classList.remove('hidden');
             tbody.innerHTML = '';
 
             const reporteExistente = reportesAlmacenados.find(r => r.oficina === of && r.fecha === fecha);
 
             personalNominal.forEach((p) => {
-                let novedadActual = 'Stand by'; 
-                let obsActual = '';
-
+                let novedadActual = 'Stand by'; let obsActual = '';
                 if (reporteExistente) {
                     const buscado = reporteExistente.personal.find(pers => pers.apellidos === p.apellidos && pers.nombres === p.nombres);
-                    if (buscado) {
-                        novedadActual = buscado.novedad || 'Stand by';
-                        obsActual = buscado.observaciones || '';
-                    }
+                    if (buscado) { novedadActual = buscado.novedad || 'Stand by'; obsActual = buscado.observaciones || ''; }
                 }
 
                 let opcionesHTML = '';
-                opcionesNovedad.forEach(opt => {
-                    opcionesHTML += `<option value="${opt.val}" ${opt.val === novedadActual ? 'selected' : ''}>${opt.text}</option>`;
-                });
+                opcionesNovedad.forEach(opt => opcionesHTML += `<option value="${opt.val}" ${opt.val === novedadActual ? 'selected' : ''}>${opt.text}</option>`);
 
                 tbody.innerHTML += `
                     <tr class="hover:bg-gray-50 border-b border-gray-100" data-cat="${p.categoria}" data-grado="${p.grado}" data-apellidos="${p.apellidos}" data-nombres="${p.nombres}">
-                        <td class="p-2 sm:p-3 font-semibold text-primary text-xs sm:text-sm whitespace-nowrap">
-                            <span class="block text-[10px] text-gray-400 leading-none">${p.categoria}</span>
-                            ${p.grado}
-                        </td>
+                        <td class="p-2 sm:p-3 font-semibold text-primary text-xs sm:text-sm whitespace-nowrap"><span class="block text-[10px] text-gray-400 leading-none">${p.categoria}</span>${p.grado}</td>
                         <td class="p-2 sm:p-3 font-medium text-gray-800 text-xs sm:text-sm uppercase min-w-[150px]">${p.apellidos} ${p.nombres}</td>
-                        <td class="p-2 min-w-[140px]">
-                            <select class="w-full p-2 border ${novedadActual === 'Stand by' ? 'border-orange-300 bg-orange-50' : 'border-gray-300 bg-white'} rounded text-xs font-semibold focus:ring-1 focus:ring-secondary outline-none select-novedad-fila transition-colors">
-                                ${opcionesHTML}
-                            </select>
-                        </td>
-                        <td class="p-2">
-                            <input type="text" value="${obsActual}" class="w-full p-2 border border-gray-300 rounded text-xs focus:ring-1 focus:ring-secondary outline-none input-obs-fila" placeholder="Nota (opcional)">
-                        </td>
+                        <td class="p-2 min-w-[140px]"><select class="w-full p-2 border ${novedadActual === 'Stand by' ? 'border-orange-300 bg-orange-50' : 'border-gray-300 bg-white'} rounded text-xs font-semibold outline-none select-novedad-fila transition-colors">${opcionesHTML}</select></td>
+                        <td class="p-2"><input type="text" value="${obsActual}" class="w-full p-2 border border-gray-300 rounded text-xs outline-none input-obs-fila" placeholder="Nota (opcional)"></td>
                     </tr>
                 `;
             });
             
             document.querySelectorAll('.select-novedad-fila').forEach(sel => {
                 sel.addEventListener('change', function() {
-                    if(this.value === 'Stand by') {
-                        this.classList.add('border-orange-300', 'bg-orange-50');
-                        this.classList.remove('border-gray-300', 'bg-white');
-                    } else {
-                        this.classList.remove('border-orange-300', 'bg-orange-50');
-                        this.classList.add('border-gray-300', 'bg-white');
-                    }
+                    if(this.value === 'Stand by') { this.classList.add('border-orange-300', 'bg-orange-50'); this.classList.remove('border-gray-300', 'bg-white'); } 
+                    else { this.classList.remove('border-orange-300', 'bg-orange-50'); this.classList.add('border-gray-300', 'bg-white'); }
                 });
             });
         }
@@ -969,41 +722,36 @@
 
             if (!of || !fecha || filas.length === 0) return mostrarToast('Error al procesar', 'error');
 
-            let personalPendiente = [];
-            let personalReportado = [];
+            let personalPendiente = []; let personalReportado = [];
 
             filas.forEach(f => {
                 const novedad = f.querySelector('.select-novedad-fila').value;
                 const observaciones = f.querySelector('.input-obs-fila').value.trim();
-                const cate = f.getAttribute('data-cat');
-                const grado = f.getAttribute('data-grado');
-                const apellidos = f.getAttribute('data-apellidos');
-                const nombres = f.getAttribute('data-nombres');
+                const cate = f.getAttribute('data-cat'); const grado = f.getAttribute('data-grado');
+                const apellidos = f.getAttribute('data-apellidos'); const nombres = f.getAttribute('data-nombres');
 
                 if (novedad === 'Stand by') personalPendiente.push(`${grado} ${apellidos} ${nombres}`);
-
-                personalReportado.push({
-                    categoria: cate, grado: grado, apellidos: apellidos, nombres: nombres,
-                    novedad: novedad, observaciones: observaciones
-                });
+                personalReportado.push({ categoria: cate, grado: grado, apellidos: apellidos, nombres: nombres, novedad: novedad, observaciones: observaciones });
             });
 
             if (personalPendiente.length > 0) {
-                alert("ALERTA: Reporte Incompleto\n\nNo puede enviar el reporte porque tiene funcionarios en 'Stand by'. Debe actualizar la situación de:\n\n- " + personalPendiente.join("\n- ") + "\n\nPor favor, asigne el estado real a todos antes de enviar.");
+                alert("ALERTA: Reporte Incompleto\n\nNo puede enviar el reporte porque tiene funcionarios en 'Stand by'.\n\nPor favor, asigne el estado real a todos antes de enviar.");
                 return mostrarToast('Complete el estado de todo el personal', 'error');
             }
 
             document.getElementById('btn-enviar-reporte').disabled = true;
             mostrarToast('Enviando reporte a la base central...', 'info');
 
-            const datosAEnviar = { fecha: fecha, oficina: of, personal: personalReportado };
+            // Dentro de la función enviarReporte(), busca la constante datosAEnviar y déjala así:
+            const datosAEnviar = { 
+                fecha: fecha, 
+                oficina: of, 
+                tipo_oficina: mapaTiposOficina[of], 
+                usuario: usuarioAuditoriaActual, // <-- AÑADIMOS ESTO
+                personal: personalReportado 
+            };
 
-            fetch(URL_SECRETA_GOOGLE, {
-                method: 'POST',
-                mode: 'no-cors',
-                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                body: JSON.stringify(datosAEnviar)
-            })
+            fetch(URL_SECRETA_GOOGLE, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(datosAEnviar) })
             .then(() => {
                 let indice = reportesAlmacenados.findIndex(r => r.oficina === of && r.fecha === fecha);
                 if (indice !== -1) reportesAlmacenados[indice].personal = personalReportado;
@@ -1012,113 +760,79 @@
                 mostrarToast('Reporte guardado con éxito', 'success');
                 actualizarDashboard();
             })
-            .catch(err => {
-                console.error(err);
-                mostrarToast('Error de conexión', 'error');
-            })
+            .catch(err => { console.error(err); mostrarToast('Error de conexión', 'error'); })
             .finally(() => { document.getElementById('btn-enviar-reporte').disabled = false; });
         }
 
-        // --- 3. DASHBOARD Y ANALÍTICA ---
+        // --- 3. DASHBOARD Y ANALÍTICA CON FILTRO INTELIGENTE ---
         function actualizarDashboard() {
             const fechaFiltro = document.getElementById('filtro-fecha-dashboard').value;
+            const tipoFiltro = document.getElementById('filtro-tipo-dashboard').value;
             if (!fechaFiltro) return;
+
+            // Filtramos las oficinas que el dashboard debe calcular
+            const oficinasAProcesar = listaOficinas.filter(of => tipoFiltro === 'TODAS' || (mapaTiposOficina[of] || 'PLANA MAYOR') === tipoFiltro);
 
             let fuerzaNominal = { OF:0, 'SUB/MNE':0, PATR:0, AUX:0, NU:0 };
             let totalNominalBase = 0;
             
-            listaOficinas.forEach(of => {
-                (personalBase[of] || []).forEach(p => {
-                    if (fuerzaNominal[p.categoria] !== undefined) { fuerzaNominal[p.categoria]++; totalNominalBase++; }
-                });
+            oficinasAProcesar.forEach(of => {
+                (personalBase[of] || []).forEach(p => { if (fuerzaNominal[p.categoria] !== undefined) { fuerzaNominal[p.categoria]++; totalNominalBase++; } });
             });
 
             document.getElementById('dash-fuerza-efectiva').textContent = `${fuerzaNominal['OF']}-${fuerzaNominal['SUB/MNE']}-${fuerzaNominal['PATR']}-${fuerzaNominal['AUX']}-${fuerzaNominal['NU']}`;
 
-            let totales = {
-                disponible: 0, ausentes: 0,
-                of_disp: 0, sub_disp: 0, patr_disp: 0, aux_disp: 0, nu_disp: 0,
-                novedadesMap: {}
-            };
+            let totales = { disponible: 0, ausentes: 0, of_disp: 0, sub_disp: 0, patr_disp: 0, aux_disp: 0, nu_disp: 0, novedadesMap: {} };
 
             const tbodyEst = document.getElementById('tbody-estado-oficinas');
             tbodyEst.innerHTML = '';
 
-            const oficinasOrdenadas = [...listaOficinas].sort((a, b) => a.localeCompare(b, 'es', {sensitivity: 'base'}));
+            const oficinasOrdenadas = [...oficinasAProcesar].sort((a, b) => a.localeCompare(b, 'es', {sensitivity: 'base'}));
 
             oficinasOrdenadas.forEach(of => {
                 const rep = reportesAlmacenados.find(r => r.oficina === of && r.fecha === fechaFiltro);
                 const personalNominal = personalBase[of] || [];
                 let tienePersonal = personalNominal.length > 0;
-                let personalAContar = [];
-                let estadoHTML = '';
-                let estaReportado = false;
+                let personalAContar = []; let estadoHTML = ''; let estaReportado = false;
                 
                 if (rep && tienePersonal) {
                     const tieneStandBy = rep.personal.some(p => p.novedad === 'Stand by');
-                    estaReportado = !tieneStandBy;
-                    personalAContar = rep.personal;
-                } else if (!tienePersonal) {
-                    estaReportado = true; 
-                } else {
-                    estaReportado = false;
-                    personalAContar = personalNominal.map(p => ({
-                        categoria: p.categoria, grado: p.grado, apellidos: p.apellidos, nombres: p.nombres,
-                        novedad: 'Stand by', observaciones: 'Sin reporte enviado'
-                    }));
-                }
+                    estaReportado = !tieneStandBy; personalAContar = rep.personal;
+                } else if (!tienePersonal) { estaReportado = true; } 
+                else { estaReportado = false; personalAContar = personalNominal.map(p => ({ categoria: p.categoria, grado: p.grado, apellidos: p.apellidos, nombres: p.nombres, novedad: 'Stand by', observaciones: 'Sin reporte enviado' })); }
 
-                let dispOficina = { OF:0, 'SUB/MNE':0, PATR:0, AUX:0, NU:0 };
-                let novOficinaCateg = { OF:0, 'SUB/MNE':0, PATR:0, AUX:0, NU:0 };
-                let totDispOficina = 0;
-                let novOficina = 0;
+                let dispOficina = { OF:0, 'SUB/MNE':0, PATR:0, AUX:0, NU:0 }; let novOficinaCateg = { OF:0, 'SUB/MNE':0, PATR:0, AUX:0, NU:0 };
+                let totDispOficina = 0; let novOficina = 0;
 
                 personalAContar.forEach(p => {
                     if (p.novedad === 'En formacion') {
-                        totales.disponible++; totDispOficina++;
-                        dispOficina[p.categoria] = (dispOficina[p.categoria] || 0) + 1;
-                        totales.of_disp += (p.categoria === 'OF' ? 1 : 0);
-                        totales.sub_disp += (p.categoria === 'SUB/MNE' ? 1 : 0);
-                        totales.patr_disp += (p.categoria === 'PATR' ? 1 : 0);
-                        totales.aux_disp += (p.categoria === 'AUX' ? 1 : 0);
-                        totales.nu_disp += (p.categoria === 'NU' ? 1 : 0);
+                        totales.disponible++; totDispOficina++; dispOficina[p.categoria] = (dispOficina[p.categoria] || 0) + 1;
+                        totales.of_disp += (p.categoria === 'OF' ? 1 : 0); totales.sub_disp += (p.categoria === 'SUB/MNE' ? 1 : 0);
+                        totales.patr_disp += (p.categoria === 'PATR' ? 1 : 0); totales.aux_disp += (p.categoria === 'AUX' ? 1 : 0); totales.nu_disp += (p.categoria === 'NU' ? 1 : 0);
                     } else if (p.novedad !== 'Stand by') {
-                        totales.ausentes++; novOficina++;
-                        novOficinaCateg[p.categoria] = (novOficinaCateg[p.categoria] || 0) + 1;
+                        totales.ausentes++; novOficina++; novOficinaCateg[p.categoria] = (novOficinaCateg[p.categoria] || 0) + 1;
                         totales.novedadesMap[p.novedad] = (totales.novedadesMap[p.novedad] || 0) + 1;
                     }
                 });
 
-                if (estaReportado && tienePersonal) {
-                    estadoHTML = `<span class="bg-emerald-100 text-emerald-700 text-[10px] px-2 py-1 rounded-full font-bold">✅ Reportado</span>`;
-                } else if (!tienePersonal) {
-                    estadoHTML = `<span class="bg-gray-200 text-gray-500 text-[10px] px-2 py-1 rounded-full font-bold">Sin personal</span>`;
-                } else {
-                    estadoHTML = `<span class="bg-red-500 text-white text-[10px] px-2 py-1 rounded-full font-bold shadow-sm animate-pulse">⚠️ SIN REPORTAR</span>`;
-                }
+                if (estaReportado && tienePersonal) estadoHTML = `<span class="bg-emerald-100 text-emerald-700 text-[10px] px-2 py-1 rounded-full font-bold">✅ Reportado</span>`;
+                else if (!tienePersonal) estadoHTML = `<span class="bg-gray-200 text-gray-500 text-[10px] px-2 py-1 rounded-full font-bold">Sin personal</span>`;
+                else estadoHTML = `<span class="bg-red-500 text-white text-[10px] px-2 py-1 rounded-full font-bold shadow-sm animate-pulse">⚠️ SIN REPORTAR</span>`;
 
                 let dispNumHTML = `<span class="font-mono font-bold text-blue-600 text-[10px] sm:text-xs whitespace-nowrap">${dispOficina['OF']}-${dispOficina['SUB/MNE']}-${dispOficina['PATR']}-${dispOficina['AUX']}-${dispOficina['NU']}</span>`;
-                let novNumHTML = '';
-                let btnNovHTML = '';
+                let novNumHTML = ''; let btnNovHTML = '';
 
                 if (estaReportado) {
                     novNumHTML = `<span class="font-mono font-bold text-red-600 text-[10px] sm:text-xs whitespace-nowrap">${novOficinaCateg['OF']}-${novOficinaCateg['SUB/MNE']}-${novOficinaCateg['PATR']}-${novOficinaCateg['AUX']}-${novOficinaCateg['NU']}</span>`;
-                    if (novOficina > 0) {
-                        btnNovHTML = `<button onclick="abrirModalDetalle('${of}', 'NOVEDADES')" class="bg-red-50 hover:bg-red-100 text-red-600 font-bold px-2 py-1 rounded border border-red-200 transition-colors text-[10px] sm:text-xs flex items-center gap-1 mx-auto">${novOficina} Nov. <i class="ph ph-eye"></i></button>`;
-                    } else {
-                        btnNovHTML = `<span class="text-emerald-500 font-bold text-[10px] sm:text-xs">Sin Novedad</span>`;
-                    }
+                    if (novOficina > 0) btnNovHTML = `<button onclick="abrirModalDetalle('${of}', 'NOVEDADES')" class="bg-red-50 hover:bg-red-100 text-red-600 font-bold px-2 py-1 rounded border border-red-200 transition-colors text-[10px] sm:text-xs flex items-center gap-1 mx-auto">${novOficina} Nov. <i class="ph ph-eye"></i></button>`;
+                    else btnNovHTML = `<span class="text-emerald-500 font-bold text-[10px] sm:text-xs">Sin Novedad</span>`;
                 } else {
-                    novNumHTML = `<span class="font-mono font-bold text-gray-400 text-[10px] sm:text-xs whitespace-nowrap">--</span>`;
-                    btnNovHTML = `<span class="text-red-500 font-bold text-[10px] sm:text-xs bg-red-50 px-2 py-1 rounded border border-red-200">Pendiente</span>`;
+                    novNumHTML = `<span class="font-mono font-bold text-gray-400 text-[10px] sm:text-xs whitespace-nowrap">--</span>`; btnNovHTML = `<span class="text-red-500 font-bold text-[10px] sm:text-xs bg-red-50 px-2 py-1 rounded border border-red-200">Pendiente</span>`;
                 }
                 
                 let btnDispHTML = '';
-                if (totDispOficina > 0) {
-                    btnDispHTML = `<button onclick="abrirModalDetalle('${of}', 'DISPONIBLES')" class="bg-blue-50 hover:bg-blue-100 text-blue-600 font-bold px-2 py-1 rounded border border-blue-200 transition-colors text-[10px] sm:text-xs flex items-center gap-1 mx-auto">${totDispOficina} Disp. <i class="ph ph-eye"></i></button>`;
-                } else {
-                    btnDispHTML = `<span class="text-gray-400 italic text-[10px] sm:text-xs">--</span>`;
-                }
+                if (totDispOficina > 0) btnDispHTML = `<button onclick="abrirModalDetalle('${of}', 'DISPONIBLES')" class="bg-blue-50 hover:bg-blue-100 text-blue-600 font-bold px-2 py-1 rounded border border-blue-200 transition-colors text-[10px] sm:text-xs flex items-center gap-1 mx-auto">${totDispOficina} Disp. <i class="ph ph-eye"></i></button>`;
+                else btnDispHTML = `<span class="text-gray-400 italic text-[10px] sm:text-xs">--</span>`;
 
                 tbodyEst.innerHTML += `
                     <tr class="hover:bg-gray-50 border-b border-gray-100">
@@ -1137,41 +851,23 @@
             document.getElementById('dash-total-novedades').textContent = totales.ausentes;
 
             let pctOperatividad = totalNominalBase > 0 ? Math.round((totales.disponible / totalNominalBase) * 100) : 0;
-            let barra = document.getElementById('dash-bar-operatividad');
-            let textoValor = document.getElementById('dash-indice-operatividad');
-            let textoDiagnostico = document.getElementById('dash-estado-operativo');
+            let barra = document.getElementById('dash-bar-operatividad'); let textoValor = document.getElementById('dash-indice-operatividad'); let textoDiagnostico = document.getElementById('dash-estado-operativo');
             
-            textoValor.textContent = pctOperatividad + '%';
-            barra.style.width = pctOperatividad + '%';
+            textoValor.textContent = pctOperatividad + '%'; barra.style.width = pctOperatividad + '%';
             
             if (pctOperatividad >= 80) {
-                barra.className = 'bg-emerald-500 h-1.5 rounded-full transition-all duration-1000';
-                textoValor.className = 'text-lg sm:text-xl font-black text-emerald-600';
-                textoDiagnostico.textContent = 'ESTADO ÓPTIMO';
-                textoDiagnostico.className = 'text-[9px] sm:text-[10px] mt-1 font-bold text-emerald-500';
+                barra.className = 'bg-emerald-500 h-1.5 rounded-full transition-all duration-1000'; textoValor.className = 'text-lg sm:text-xl font-black text-emerald-600'; textoDiagnostico.textContent = 'ESTADO ÓPTIMO'; textoDiagnostico.className = 'text-[9px] sm:text-[10px] mt-1 font-bold text-emerald-500';
             } else if (pctOperatividad >= 50) {
-                barra.className = 'bg-yellow-500 h-1.5 rounded-full transition-all duration-1000';
-                textoValor.className = 'text-lg sm:text-xl font-black text-yellow-600';
-                textoDiagnostico.textContent = 'ESTADO REGULAR';
-                textoDiagnostico.className = 'text-[9px] sm:text-[10px] mt-1 font-bold text-yellow-500';
+                barra.className = 'bg-yellow-500 h-1.5 rounded-full transition-all duration-1000'; textoValor.className = 'text-lg sm:text-xl font-black text-yellow-600'; textoDiagnostico.textContent = 'ESTADO REGULAR'; textoDiagnostico.className = 'text-[9px] sm:text-[10px] mt-1 font-bold text-yellow-500';
             } else {
-                barra.className = 'bg-red-500 h-1.5 rounded-full transition-all duration-1000';
-                textoValor.className = 'text-lg sm:text-xl font-black text-red-600';
-                textoDiagnostico.textContent = 'ESTADO CRÍTICO';
-                textoDiagnostico.className = 'text-[9px] sm:text-[10px] mt-1 font-bold text-red-500';
+                barra.className = 'bg-red-500 h-1.5 rounded-full transition-all duration-1000'; textoValor.className = 'text-lg sm:text-xl font-black text-red-600'; textoDiagnostico.textContent = 'ESTADO CRÍTICO'; textoDiagnostico.className = 'text-[9px] sm:text-[10px] mt-1 font-bold text-red-500';
             }
 
-            const listaNov = document.getElementById('lista-novedades');
-            listaNov.innerHTML = '';
-            
-            if (Object.keys(totales.novedadesMap).length === 0) {
-                listaNov.innerHTML = `<div class="text-center text-gray-400 italic py-6 text-sm">No hay novedades registradas.</div>`;
-                return;
-            }
+            const listaNov = document.getElementById('lista-novedades'); listaNov.innerHTML = '';
+            if (Object.keys(totales.novedadesMap).length === 0) { listaNov.innerHTML = `<div class="text-center text-gray-400 italic py-6 text-sm">No hay novedades registradas.</div>`; return; }
 
             for (const [tipo, cant] of Object.entries(totales.novedadesMap)) {
                 let icon = 'ph-info'; let color = 'bg-gray-100 text-gray-600';
-                
                 if(tipo.includes('Vacaciones')) { icon = 'ph-airplane-tilt'; color = 'bg-blue-100 text-blue-600'; }
                 else if(tipo.includes('Médica') || tipo.includes('Excusa')) { icon = 'ph-first-aid'; color = 'bg-red-100 text-red-600'; }
                 else if(tipo.includes('Permiso')) { icon = 'ph-file-text'; color = 'bg-yellow-100 text-yellow-700'; }
@@ -1184,8 +880,7 @@
                 listaNov.innerHTML += `
                     <li onclick="abrirModalDetalle('TODAS', '${tipo}')" class="flex items-center justify-between p-3 bg-gray-50 hover:bg-red-50 border border-gray-200 rounded-xl cursor-pointer transition-colors group shadow-sm">
                         <div class="flex items-center gap-3">
-                            <div class="${color} p-2 rounded-lg group-hover:scale-110 transition-transform"><i class="ph-fill ${icon} text-lg"></i></div>
-                            <span class="font-medium text-gray-700 text-xs sm:text-sm group-hover:text-red-700">${tipo}</span>
+                            <div class="${color} p-2 rounded-lg group-hover:scale-110 transition-transform"><i class="ph-fill ${icon} text-lg"></i></div><span class="font-medium text-gray-700 text-xs sm:text-sm group-hover:text-red-700">${tipo}</span>
                         </div>
                         <span class="bg-red-500 text-white font-bold text-xs px-2.5 py-1 rounded-full shadow-sm">${cant}</span>
                     </li>
@@ -1203,86 +898,65 @@
                 let td = tr[i].getElementsByTagName("td")[0]; 
                 if (td) {
                     let txtValue = td.textContent || td.innerText;
-                    if (txtValue.toUpperCase().indexOf(filter) > -1) tr[i].style.display = "";
-                    else tr[i].style.display = "none";
+                    if (txtValue.toUpperCase().indexOf(filter) > -1) tr[i].style.display = ""; else tr[i].style.display = "none";
                 }
             }
         }
 
         function descargarExcel() {
             const fecha = document.getElementById('filtro-fecha-dashboard').value;
+            const tipoFiltro = document.getElementById('filtro-tipo-dashboard').value;
             if (!fecha) return;
+            
+            const oficinasAProcesar = listaOficinas.filter(of => tipoFiltro === 'TODAS' || (mapaTiposOficina[of] || 'PLANA MAYOR') === tipoFiltro);
             let datosParaExcel = [];
 
-            listaOficinas.forEach(of => {
+            oficinasAProcesar.forEach(of => {
                 const rep = reportesAlmacenados.find(r => r.oficina === of && r.fecha === fecha);
                 const personalNominal = personalBase[of] || [];
 
                 if(rep) {
-                    rep.personal.forEach(p => {
-                        datosParaExcel.push({ "Fecha": fecha, "Oficina": of, "Categoría": p.categoria, "Grado": p.grado, "Apellidos": p.apellidos, "Nombres": p.nombres, "Situación": p.novedad, "Observaciones": p.observaciones || '' });
-                    });
+                    rep.personal.forEach(p => datosParaExcel.push({ "Fecha": fecha, "Tipo": mapaTiposOficina[of], "Oficina": of, "Categoría": p.categoria, "Grado": p.grado, "Apellidos": p.apellidos, "Nombres": p.nombres, "Situación": p.novedad, "Observaciones": p.observaciones || '' }));
                 } else {
-                     personalNominal.forEach(p => {
-                        datosParaExcel.push({ "Fecha": fecha, "Oficina": of, "Categoría": p.categoria, "Grado": p.grado, "Apellidos": p.apellidos, "Nombres": p.nombres, "Situación": "Stand by", "Observaciones": "Sin reporte" });
-                    });
+                     personalNominal.forEach(p => datosParaExcel.push({ "Fecha": fecha, "Tipo": mapaTiposOficina[of], "Oficina": of, "Categoría": p.categoria, "Grado": p.grado, "Apellidos": p.apellidos, "Nombres": p.nombres, "Situación": "Stand by", "Observaciones": "Sin reporte" }));
                 }
             });
 
             if(datosParaExcel.length === 0) return mostrarToast('No hay datos para exportar', 'error');
 
-            const hoja = XLSX.utils.json_to_sheet(datosParaExcel);
-            const libro = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(libro, hoja, "Reporte_DEVAL");
-            XLSX.writeFile(libro, `Reporte_DEVAL_${fecha}.xlsx`);
+            const hoja = XLSX.utils.json_to_sheet(datosParaExcel); const libro = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(libro, hoja, "Reporte_DEVAL"); XLSX.writeFile(libro, `Reporte_${tipoFiltro}_${fecha}.xlsx`);
             mostrarToast('Descargando archivo Excel...', 'success');
         }
 
         function abrirModalDetalle(filtroOficina, modoFiltro) {
             const fecha = document.getElementById('filtro-fecha-dashboard').value;
-            const titulo = document.getElementById('modal-titulo');
-            const desglose = document.getElementById('modal-desglose-grados');
-            const tbody = document.getElementById('tbody-modal-novedades');
-            const contenedorIco = document.getElementById('modal-icono-contenedor');
-            const icono = document.getElementById('modal-icono');
-
+            const tipoFiltro = document.getElementById('filtro-tipo-dashboard').value;
+            const oficinasAProcesar = listaOficinas.filter(of => tipoFiltro === 'TODAS' || (mapaTiposOficina[of] || 'PLANA MAYOR') === tipoFiltro);
+            
+            const titulo = document.getElementById('modal-titulo'); const desglose = document.getElementById('modal-desglose-grados');
+            const tbody = document.getElementById('tbody-modal-novedades'); const contenedorIco = document.getElementById('modal-icono-contenedor'); const icono = document.getElementById('modal-icono');
             tbody.innerHTML = '';
 
-            if (modoFiltro === 'DISPONIBLES') {
-                titulo.textContent = filtroOficina === 'TODAS' ? "Personal Disponible (Total)" : `Disponibles en: ${filtroOficina}`;
-                contenedorIco.className = "bg-blue-100 text-blue-600 p-2 rounded-lg shrink-0";
-                icono.className = "ph-fill ph-check-circle text-xl";
-            } else if (modoFiltro === 'NOVEDADES') {
-                titulo.textContent = filtroOficina === 'TODAS' ? "Consolidado de Novedades" : `Novedades en: ${filtroOficina}`;
-                contenedorIco.className = "bg-red-100 text-red-500 p-2 rounded-lg shrink-0";
-                icono.className = "ph-fill ph-users-three text-xl";
-            } else {
-                titulo.textContent = `Detalle: ${modoFiltro}`;
-                contenedorIco.className = "bg-red-100 text-red-500 p-2 rounded-lg shrink-0";
-                icono.className = "ph-fill ph-warning-circle text-xl";
-            }
+            if (modoFiltro === 'DISPONIBLES') { titulo.textContent = filtroOficina === 'TODAS' ? "Personal Disponible (Total)" : `Disponibles en: ${filtroOficina}`; contenedorIco.className = "bg-blue-100 text-blue-600 p-2 rounded-lg shrink-0"; icono.className = "ph-fill ph-check-circle text-xl"; } 
+            else if (modoFiltro === 'NOVEDADES') { titulo.textContent = filtroOficina === 'TODAS' ? "Consolidado de Novedades" : `Novedades en: ${filtroOficina}`; contenedorIco.className = "bg-red-100 text-red-500 p-2 rounded-lg shrink-0"; icono.className = "ph-fill ph-users-three text-xl"; } 
+            else { titulo.textContent = `Detalle: ${modoFiltro}`; contenedorIco.className = "bg-red-100 text-red-500 p-2 rounded-lg shrink-0"; icono.className = "ph-fill ph-warning-circle text-xl"; }
 
-            let filasInsertadas = 0;
-            let breakdown = { OF:0, 'SUB/MNE':0, PATR:0, AUX:0, NU:0 };
+            let filasInsertadas = 0; let breakdown = { OF:0, 'SUB/MNE':0, PATR:0, AUX:0, NU:0 };
 
-            listaOficinas.forEach(of => {
+            oficinasAProcesar.forEach(of => {
                 if (filtroOficina !== 'TODAS' && filtroOficina !== of) return;
                 const rep = reportesAlmacenados.find(r => r.oficina === of && r.fecha === fecha);
 
                 if (rep) {
                     rep.personal.forEach(p => {
                         let incluir = false;
-                        if (modoFiltro === 'DISPONIBLES') {
-                            if (p.novedad === 'En formacion') incluir = true;
-                        } else if (modoFiltro === 'NOVEDADES') {
-                            if (p.novedad !== 'En formacion' && p.novedad !== 'Stand by') incluir = true;
-                        } else {
-                            if (p.novedad === modoFiltro) incluir = true;
-                        }
+                        if (modoFiltro === 'DISPONIBLES') { if (p.novedad === 'En formacion') incluir = true; } 
+                        else if (modoFiltro === 'NOVEDADES') { if (p.novedad !== 'En formacion' && p.novedad !== 'Stand by') incluir = true; } 
+                        else { if (p.novedad === modoFiltro) incluir = true; }
 
                         if (incluir) {
-                            filasInsertadas++;
-                            if (breakdown[p.categoria] !== undefined) breakdown[p.categoria]++;
+                            filasInsertadas++; if (breakdown[p.categoria] !== undefined) breakdown[p.categoria]++;
                             const colorBadge = (modoFiltro === 'DISPONIBLES' || p.novedad === 'En formacion') ? 'bg-blue-100 text-blue-700 border-blue-200' : 'bg-red-100 text-red-700 border-red-200';
 
                             tbody.innerHTML += `
@@ -1299,41 +973,31 @@
             });
 
             desglose.textContent = `OF:${breakdown['OF']} - SUB:${breakdown['SUB/MNE']} - PT:${breakdown['PATR']} - AUX:${breakdown['AUX']} - NU:${breakdown['NU']}`;
-            if (filasInsertadas === 0) {
-                tbody.innerHTML = `<tr><td colspan="4" class="p-8 text-center text-gray-400 italic text-sm">No hay personal para mostrar con este filtro.</td></tr>`;
-                desglose.textContent = "Sin datos";
-            }
+            if (filasInsertadas === 0) { tbody.innerHTML = `<tr><td colspan="4" class="p-8 text-center text-gray-400 italic text-sm">No hay personal para mostrar.</td></tr>`; desglose.textContent = "Sin datos"; }
             document.getElementById('modal-novedades').classList.remove('hidden');
         }
 
         function abrirModalPendientes() {
             const fecha = document.getElementById('filtro-fecha-dashboard').value;
-            const titulo = document.getElementById('modal-titulo');
-            const desglose = document.getElementById('modal-desglose-grados');
-            const tbody = document.getElementById('tbody-modal-novedades');
-            const contenedorIco = document.getElementById('modal-icono-contenedor');
-            const icono = document.getElementById('modal-icono');
+            const tipoFiltro = document.getElementById('filtro-tipo-dashboard').value;
+            const oficinasAProcesar = listaOficinas.filter(of => tipoFiltro === 'TODAS' || (mapaTiposOficina[of] || 'PLANA MAYOR') === tipoFiltro);
+            
+            const titulo = document.getElementById('modal-titulo'); const desglose = document.getElementById('modal-desglose-grados');
+            const tbody = document.getElementById('tbody-modal-novedades'); const contenedorIco = document.getElementById('modal-icono-contenedor'); const icono = document.getElementById('modal-icono');
 
-            titulo.textContent = "Oficinas Sin Reportar";
-            desglose.textContent = "Requieren atención inmediata";
-            contenedorIco.className = "bg-red-500 text-white p-2 rounded-lg shrink-0";
-            icono.className = "ph-fill ph-warning text-xl";
-            tbody.innerHTML = '';
-            let faltantes = 0;
+            titulo.textContent = "Oficinas Sin Reportar"; desglose.textContent = "Requieren atención inmediata";
+            contenedorIco.className = "bg-red-500 text-white p-2 rounded-lg shrink-0"; icono.className = "ph-fill ph-warning text-xl";
+            tbody.innerHTML = ''; let faltantes = 0;
 
-            const oficinasOrdenadas = [...listaOficinas].sort((a, b) => a.localeCompare(b, 'es', {sensitivity: 'base'}));
+            const oficinasOrdenadas = [...oficinasAProcesar].sort((a, b) => a.localeCompare(b, 'es', {sensitivity: 'base'}));
 
             oficinasOrdenadas.forEach(of => {
                 const rep = reportesAlmacenados.find(r => r.oficina === of && r.fecha === fecha);
                 const personalNominal = personalBase[of] || [];
-                
                 if (personalNominal.length === 0) return; 
 
                 let estaReportado = false;
-                if (rep) {
-                    const tieneStandBy = rep.personal.some(p => p.novedad === 'Stand by');
-                    estaReportado = !tieneStandBy;
-                }
+                if (rep) { const tieneStandBy = rep.personal.some(p => p.novedad === 'Stand by'); estaReportado = !tieneStandBy; }
 
                 if (!estaReportado) {
                     faltantes++;
@@ -1354,18 +1018,10 @@
 
         function cerrarModalDetalle() { document.getElementById('modal-novedades').classList.add('hidden'); }
 
-        // --- UI AUXILIARES ---
         function switchTab(tabId) {
-            document.getElementById('view-config').classList.add('hidden');
-            document.getElementById('view-jefe').classList.add('hidden');
-            document.getElementById('view-superior').classList.add('hidden');
-
-            document.getElementById('tab-config').classList.remove('bg-blue-800');
-            document.getElementById('tab-jefe').classList.remove('bg-blue-800');
-            document.getElementById('tab-superior').classList.remove('bg-blue-800');
-
-            document.getElementById(`view-${tabId}`).classList.remove('hidden');
-            document.getElementById(`tab-${tabId}`).classList.add('bg-blue-800');
+            document.getElementById('view-config').classList.add('hidden'); document.getElementById('view-jefe').classList.add('hidden'); document.getElementById('view-superior').classList.add('hidden');
+            document.getElementById('tab-config').classList.remove('bg-blue-800'); document.getElementById('tab-jefe').classList.remove('bg-blue-800'); document.getElementById('tab-superior').classList.remove('bg-blue-800');
+            document.getElementById(`view-${tabId}`).classList.remove('hidden'); document.getElementById(`tab-${tabId}`).classList.add('bg-blue-800');
 
             if (tabId === 'superior') actualizarDashboard();
             if (tabId === 'jefe') cargarPersonalParaReporte();
@@ -1373,25 +1029,14 @@
 
         let toastTimeout;
         function mostrarToast(mensaje, tipo = 'info') {
-            const toast = document.getElementById('toast');
-            const icon = document.getElementById('toast-icon');
-            const msg = document.getElementById('toast-message');
-
-            clearTimeout(toastTimeout);
-            toast.classList.remove('bg-emerald-600', 'bg-red-600', 'bg-blue-600');
-
+            const toast = document.getElementById('toast'); const icon = document.getElementById('toast-icon'); const msg = document.getElementById('toast-message');
+            clearTimeout(toastTimeout); toast.classList.remove('bg-emerald-600', 'bg-red-600', 'bg-blue-600');
             msg.textContent = mensaje;
             if (tipo === 'success') { toast.classList.add('bg-emerald-600'); icon.className = "ph-fill ph-check-circle text-xl sm:text-2xl"; } 
             else if (tipo === 'error') { toast.classList.add('bg-red-600'); icon.className = "ph-fill ph-x-circle text-xl sm:text-2xl"; } 
             else if (tipo === 'info') { toast.classList.add('bg-blue-600'); icon.className = "ph-fill ph-info text-xl sm:text-2xl"; }
-
-            toast.classList.remove('translate-y-20', 'opacity-0');
-            toast.classList.add('translate-y-0', 'opacity-100');
-
-            toastTimeout = setTimeout(() => {
-                toast.classList.remove('translate-y-0', 'opacity-100');
-                toast.classList.add('translate-y-20', 'opacity-0');
-            }, 4000);
+            toast.classList.remove('translate-y-20', 'opacity-0'); toast.classList.add('translate-y-0', 'opacity-100');
+            toastTimeout = setTimeout(() => { toast.classList.remove('translate-y-0', 'opacity-100'); toast.classList.add('translate-y-20', 'opacity-0'); }, 4000);
         }
     </script>
 </body>
