@@ -18,67 +18,52 @@
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
         .bg-animated { background: linear-gradient(-45deg, #1e3a8a, #3b82f6, #0f172a, #10b981); background-size: 400% 400%; animation: gradientBG 15s ease infinite; }
         @keyframes gradientBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        
         .floating { animation: floating 3s ease-in-out infinite; }
         @keyframes floating { 0% { transform: translateY(0px); } 50% { transform: translateY(-10px); } 100% { transform: translateY(0px); } }
         .animate-spin-hover:hover { animation: spin 1s linear infinite; }
-        
-        /* --- CLAYMORPHISM UI (Neumorfismo Suave) --- */
-        .clay-box {
-            background: #ffffff;
-            border-radius: 20px;
-            box-shadow: 
-                8px 8px 16px #e2e4e8, 
-                -8px -8px 16px #ffffff,
-                inset 2px 2px 5px rgba(255,255,255,0.8),
-                inset -3px -3px 7px rgba(0,0,0,0.03);
-            border: 1px solid rgba(255,255,255,0.5);
+
+        /* Estilo Alto Contraste - Tarjetas Modernas */
+        .card-modern {
+            background-color: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            border: 1px solid #e5e7eb;
+            overflow: hidden;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
-        .clay-box-login {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 30px;
-            box-shadow: 
-                15px 15px 30px rgba(0, 0, 0, 0.2), 
-                -15px -15px 30px rgba(255, 255, 255, 0.1),
-                inset 3px 3px 6px rgba(255,255,255,0.8),
-                inset -4px -4px 8px rgba(0,0,0,0.05);
-            border: 1px solid rgba(255,255,255,0.3);
+        .card-modern:hover {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            transform: translateY(-2px);
         }
-        .clay-btn-primary {
-            background: #ffffff;
-            color: #1f2937;
-            border-radius: 12px;
-            box-shadow: 
-                5px 5px 10px #d1d5db, 
-                -5px -5px 10px #ffffff,
-                inset 2px 2px 5px rgba(255,255,255,0.8),
-                inset -2px -2px 5px rgba(0,0,0,0.05);
-            transition: all 0.2s ease;
-        }
-        .clay-btn-primary:active {
-            box-shadow: inset 4px 4px 8px #d1d5db, inset -4px -4px 8px #ffffff;
-            transform: scale(0.98);
-        }
+        .color-strip-blue { border-left: 6px solid #3b82f6; }
+        .color-strip-emerald { border-left: 6px solid #10b981; }
+        .color-strip-red { border-left: 6px solid #ef4444; }
+        .color-strip-purple { border-left: 6px solid #8b5cf6; }
+        .color-strip-dark { border-left: 6px solid #1e3a8a; }
     </style>
 </head>
-<body class="bg-gray-100 text-gray-800 font-sans overflow-x-hidden flex flex-col h-screen">
+<body class="bg-slate-100 text-gray-800 font-sans overflow-x-hidden flex flex-col h-screen">
 
+    <!-- LOGIN -->
     <div id="view-login" class="fixed inset-0 bg-animated flex flex-col items-center justify-center z-50">
         <div class="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] pointer-events-none"></div>
         
-        <div class="clay-box-login p-8 sm:p-10 max-w-md w-full text-center relative z-10 mx-4">
-            <div class="bg-blue-100 w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg floating border-4 border-white">
+        <!-- Tarjeta Login High Contrast -->
+        <div class="bg-white/95 backdrop-blur-md p-8 sm:p-10 max-w-md w-full text-center relative z-10 mx-4 rounded-3xl shadow-2xl border border-white/40">
+            <div class="bg-blue-100 w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6 shadow-md floating border-4 border-white">
                 <i class="ph-fill ph-shield-check text-5xl text-primary"></i>
             </div>
             <h1 class="text-3xl font-extrabold text-dark mb-2 tracking-tight">CHECK-IN DEVAL</h1>
             <p class="text-gray-500 text-sm mb-8 font-medium">Sistema Institucional de Asistencia</p>
             
             <div id="view-login-button-area" class="flex flex-col gap-4 w-full transform transition">
-                <button onclick="loginMicrosoft()" class="clay-btn-primary flex items-center justify-center gap-3 w-[300px] h-[50px] mx-auto font-bold text-[14px]">
+                <button onclick="loginMicrosoft()" class="flex items-center justify-center gap-3 w-[300px] h-[50px] mx-auto font-bold text-[14px] bg-white text-gray-700 border-2 border-gray-200 rounded-xl hover:bg-gray-50 hover:border-blue-300 transition-all shadow-sm">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 21 21" class="w-6 h-6"><rect x="1" y="1" width="9" height="9" fill="#f25022"/><rect x="1" y="11" width="9" height="9" fill="#00a4ef"/><rect x="11" y="1" width="9" height="9" fill="#7fba00"/><rect x="11" y="11" width="9" height="9" fill="#ffb900"/></svg>
-                    Iniciar sesión con Institucional
+                    Iniciar sesión Institucional
                 </button>
             </div>
             <div id="login-spinner" class="hidden mt-6">
@@ -88,8 +73,9 @@
         <div class="absolute bottom-6 text-white/80 text-xs text-center w-full z-10 px-4 font-medium tracking-wide">&copy; 2026 DEVAL - Políticas de Seguridad <br> <span class="font-bold text-accent">Powered by GUTIC DEVAL</span></div>
     </div>
 
+    <!-- APP LAYOUT -->
     <div id="app-layout" class="hidden flex-col h-screen w-full">
-        <nav class="bg-primary text-white shadow-md z-10 shrink-0">
+        <nav class="bg-primary text-white shadow-lg z-10 shrink-0 border-b-4 border-blue-900">
             <div class="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
                 <div class="flex items-center justify-between h-16">
                     <div class="flex items-center gap-2 shrink-0 mr-2 sm:mr-4">
@@ -98,6 +84,7 @@
                     </div>
                     <div class="flex space-x-1 sm:space-x-4 overflow-x-auto no-scrollbar flex-1 justify-end items-center">
                         
+                        <!-- INTERRUPTOR MAESTRO (SOLO VISIBLE PARA ADMIN) -->
                         <div id="admin-toggle-container" class="hidden items-center gap-2 mr-2 sm:mr-4 border-r border-blue-400/50 pr-2 sm:pr-4">
                             <span class="text-[10px] sm:text-xs font-bold text-blue-200 leading-tight text-right hidden sm:block">Acceso<br>Config</span>
                             <label class="relative inline-flex items-center cursor-pointer" title="Habilitar o bloquear la Configuración para todos">
@@ -106,6 +93,7 @@
                             </label>
                         </div>
 
+                        <!-- BOTONES DE NAVEGACIÓN -->
                         <button onclick="switchTab('config')" id="tab-config" class="hidden px-2 sm:px-3 py-2 rounded-md text-xs sm:text-sm font-medium hover:bg-blue-700 transition-colors items-center gap-1 sm:gap-2 whitespace-nowrap"><i class="ph ph-gear text-2xl sm:text-3xl"></i> <span class="hidden md:inline">Configuración</span></button>
                         
                         <button onclick="switchTab('jefe')" id="tab-jefe" class="px-2 sm:px-3 py-2 rounded-md text-xs sm:text-sm font-medium bg-blue-800 hover:bg-blue-700 transition-colors flex items-center gap-1 sm:gap-2 whitespace-nowrap"><i class="ph ph-user-list text-2xl sm:text-3xl"></i> <span class="hidden md:inline">Reporte</span></button>
@@ -116,10 +104,11 @@
             </div>
         </nav>
 
-        <main class="flex-1 overflow-y-auto p-2 sm:p-6 lg:p-8 bg-gray-100">
+        <main class="flex-1 overflow-y-auto p-2 sm:p-6 lg:p-8">
+            <!-- VISTA CONFIGURACION -->
             <div id="view-config" class="max-w-6xl mx-auto fade-in hidden">
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-                    <div class="lg:col-span-1 clay-box overflow-hidden flex flex-col">
+                    <div class="lg:col-span-1 card-modern flex flex-col">
                         <div class="bg-gray-50 px-4 sm:px-6 py-4 border-b border-gray-200">
                             <h2 class="text-lg sm:text-xl font-bold text-dark flex items-center gap-2"><i class="ph ph-buildings text-secondary text-2xl"></i> Gestión Oficinas</h2>
                         </div>
@@ -145,7 +134,7 @@
                         </div>
                     </div>
 
-                    <div class="lg:col-span-2 clay-box overflow-hidden">
+                    <div class="lg:col-span-2 card-modern">
                         <div class="bg-gray-50 px-4 sm:px-6 py-4 border-b border-gray-200">
                             <h2 class="text-lg sm:text-xl font-bold text-dark flex items-center gap-2"><i class="ph ph-users text-secondary text-2xl"></i> Asignación de Personal</h2>
                         </div>
@@ -158,7 +147,7 @@
                             </div>
 
                             <div id="panel-personal-config" class="hidden">
-                                <div class="bg-blue-50/50 border border-blue-100 rounded-lg p-4 mb-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 items-end">
+                                <div class="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 items-end">
                                     <div><label class="block text-xs font-semibold text-gray-600 mb-1">Categoría</label><select id="config-categoria" onchange="actualizarGradosConfig()" class="w-full p-2 border border-gray-300 rounded focus:ring-1 focus:ring-secondary outline-none bg-white text-sm font-bold"><option value="OF">OF</option><option value="SUB/MNE">SUB/MNE</option><option value="PATR">PATR</option><option value="AUX">AUX</option><option value="NU">NU</option></select></div>
                                     <div><label class="block text-xs font-semibold text-gray-600 mb-1">Grado</label><select id="config-grado" class="w-full p-2 border border-gray-300 rounded focus:ring-1 focus:ring-secondary outline-none bg-white text-sm font-bold"></select></div>
                                     <div class="lg:col-span-1"><label class="block text-xs font-semibold text-gray-600 mb-1">Apellidos</label><input type="text" id="config-apellidos" class="w-full p-2 border border-gray-300 rounded focus:ring-1 focus:ring-secondary outline-none uppercase text-sm"></div>
@@ -177,17 +166,18 @@
                 </div>
             </div>
 
+            <!-- VISTA REPORTE JEFE -->
             <div id="view-jefe" class="max-w-5xl mx-auto fade-in block">
-                <div class="clay-box overflow-hidden mb-6">
+                <div class="card-modern mb-6 color-strip-dark">
                     <div class="bg-gray-50 px-4 sm:px-6 py-4 border-b border-gray-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
                         <h2 class="text-lg sm:text-xl font-bold text-dark flex items-center gap-2"><i class="ph ph-clipboard-text text-secondary text-2xl"></i> Reporte Diario</h2>
-                        <span id="current-date-display" class="text-xs sm:text-sm font-medium text-gray-500 bg-gray-200 px-3 py-1 rounded-full whitespace-nowrap capitalize"></span>
+                        <span id="current-date-display" class="text-xs sm:text-sm font-bold text-blue-800 bg-blue-100 px-4 py-1.5 rounded-full whitespace-nowrap capitalize"></span>
                     </div>
                     <div class="p-4 sm:p-6">
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-6">
                             <div>
                                 <label class="block text-sm font-semibold text-gray-700 mb-2">Seleccione Oficina</label>
-                                <select id="select-oficina-reporte" onchange="cargarPersonalParaReporte()" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-secondary outline-none transition-all"><option value="" disabled selected>Seleccione...</option></select>
+                                <select id="select-oficina-reporte" onchange="cargarPersonalParaReporte()" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-secondary outline-none transition-all shadow-sm"><option value="" disabled selected>Seleccione...</option></select>
                             </div>
                             <div>
                                 <label class="block text-sm font-semibold text-gray-700 mb-2">Fecha del Reporte</label>
@@ -197,33 +187,35 @@
                                 <input type="hidden" id="input-fecha">
                             </div>
                         </div>
-                        <div id="mensaje-sin-personal" class="hidden bg-yellow-50 text-yellow-700 p-4 rounded-lg border border-yellow-200 mb-4 flex items-center gap-3 text-sm">
-                            <i class="ph-fill ph-warning-circle text-2xl shrink-0"></i><p>Esta oficina no tiene personal asignado. Configure la base primero.</p>
+                        <div id="mensaje-sin-personal" class="hidden bg-yellow-50 text-yellow-700 p-4 rounded-xl border border-yellow-200 mb-4 flex items-center gap-3 text-sm font-medium shadow-sm">
+                            <i class="ph-fill ph-warning-circle text-2xl shrink-0"></i><p>Esta oficina no tiene personal asignado. Solicite a Talento Humano la asignación.</p>
                         </div>
-                        <div id="contenedor-tabla-reporte" class="hidden overflow-x-auto border border-gray-200 rounded-lg mb-4 shadow-sm">
+                        <div id="contenedor-tabla-reporte" class="hidden overflow-x-auto border border-gray-200 rounded-xl mb-4 shadow-sm">
                             <table class="w-full text-left border-collapse min-w-[700px]" id="tabla-personal">
-                                <thead class="bg-gray-50 text-gray-600 text-xs uppercase tracking-wider"><tr><th class="p-3 font-semibold w-1/4">Grado y Nombres</th><th class="p-3 font-semibold w-1/3">Situación / Novedad</th><th class="p-3 font-semibold">Observaciones</th></tr></thead>
-                                <tbody id="tbody-personal-reporte" class="divide-y divide-gray-200"></tbody>
+                                <thead class="bg-gray-100 text-gray-600 text-xs uppercase tracking-wider"><tr><th class="p-3 font-semibold w-1/4">Grado y Nombres</th><th class="p-3 font-semibold w-1/3">Situación / Novedad</th><th class="p-3 font-semibold">Observaciones</th></tr></thead>
+                                <tbody id="tbody-personal-reporte" class="divide-y divide-gray-200 bg-white"></tbody>
                             </table>
                         </div>
                         <div class="flex justify-end items-center mt-6">
-                            <button id="btn-enviar-reporte" onclick="enviarReporte()" class="hidden w-full sm:w-auto bg-accent hover:bg-emerald-600 text-white font-bold py-3 px-8 rounded-lg shadow-md transition-transform transform hover:-translate-y-0.5 flex items-center justify-center gap-2">
-                                <i class="ph ph-paper-plane-tilt text-xl"></i> Enviar Reporte
+                            <button id="btn-enviar-reporte" onclick="enviarReporte()" class="hidden w-full sm:w-auto bg-accent hover:bg-emerald-600 text-white font-bold py-3 px-8 rounded-xl shadow-md transition-transform transform hover:-translate-y-0.5 flex items-center justify-center gap-2">
+                                <i class="ph ph-paper-plane-tilt text-xl"></i> Enviar Reporte Seguro
                             </button>
                         </div>
                     </div>
                 </div>
             </div>
 
+            <!-- VISTA DASHBOARD SUPERIOR -->
             <div id="view-superior" class="max-w-[1400px] mx-auto fade-in hidden">
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-6 gap-4">
                     <div>
-                        <h1 class="text-xl sm:text-2xl font-bold text-dark">Panel de Control DEVAL</h1>
-                        <p class="text-sm text-gray-500">Vista en tiempo real de disponibilidad y novedades.</p>
+                        <h1 class="text-xl sm:text-2xl font-black text-dark tracking-tight">Panel de Control DEVAL</h1>
+                        <p class="text-sm text-gray-500 font-medium">Vista analítica en tiempo real.</p>
                     </div>
                     <div class="flex flex-col sm:flex-row gap-3 w-full md:w-auto items-center">
                         
-                        <div class="bg-white px-3 py-2 rounded-full shadow-sm border border-gray-200 flex items-center gap-2 w-full sm:w-auto select-none focus-within:ring-2 focus-within:ring-primary transition-all">
+                        <!-- FILTRO TIPO DE OFICINA -->
+                        <div class="bg-white px-3 py-2.5 rounded-xl shadow-sm border border-gray-200 flex items-center gap-2 w-full sm:w-auto select-none focus-within:ring-2 focus-within:ring-primary transition-all">
                             <i class="ph-fill ph-funnel text-primary text-lg"></i>
                             <select id="filtro-tipo-dashboard" onchange="actualizarDashboard()" class="text-xs sm:text-sm font-bold text-gray-700 outline-none bg-transparent cursor-pointer w-full">
                                 <option value="TODAS">TODAS LAS DEPENDENCIAS</option>
@@ -232,7 +224,7 @@
                             </select>
                         </div>
 
-                        <div class="bg-white px-4 py-2 rounded-full shadow-sm border border-gray-200 flex items-center gap-2 w-full sm:w-auto select-none">
+                        <div class="bg-white px-4 py-2.5 rounded-xl shadow-sm border border-gray-200 flex items-center gap-2 w-full sm:w-auto select-none">
                             <i class="ph-fill ph-calendar-blank text-primary text-lg"></i>
                             <span class="text-xs font-bold text-gray-400 uppercase">Fecha:</span>
                             <span id="dashboard-date-display" class="text-gray-800 font-bold text-sm cursor-default capitalize"></span>
@@ -240,33 +232,39 @@
                         </div>
                         
                         <div class="flex gap-2">
-                            <button onclick="abrirModalPendientes()" class="bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded-lg shadow-sm font-bold flex items-center justify-center gap-2 transition-colors text-xs sm:text-sm animate-pulse" title="Ver oficinas que no han reportado"><i class="ph-fill ph-warning"></i> <span class="hidden sm:inline">Sin Reportar</span></button>
-                            <button onclick="descargarDatosSheets()" class="w-10 h-10 bg-blue-100 hover:bg-blue-200 text-blue-600 rounded-full shadow-sm flex items-center justify-center transition-colors" title="Actualizar Datos"><i class="ph ph-arrows-clockwise text-xl animate-spin-hover"></i></button>
-                            <button onclick="descargarExcelSeguro()" class="w-10 h-10 bg-green-600 hover:bg-green-700 text-white rounded-full shadow-md flex items-center justify-center transition-transform hover:scale-105" title="Descargar Base (Solo Administrador)"><i class="ph ph-file-xls text-xl"></i></button>
+                            <button onclick="abrirModalPendientes()" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2.5 rounded-xl shadow-md font-bold flex items-center justify-center gap-2 transition-colors text-xs sm:text-sm animate-pulse" title="Ver oficinas que no han reportado"><i class="ph-fill ph-warning"></i> <span class="hidden sm:inline">Sin Reportar</span></button>
+                            <button onclick="descargarDatosSheets()" class="w-[42px] h-[42px] bg-blue-100 hover:bg-blue-200 text-blue-600 rounded-xl shadow-sm flex items-center justify-center transition-colors" title="Actualizar Datos"><i class="ph ph-arrows-clockwise text-xl animate-spin-hover"></i></button>
+                            <button onclick="descargarExcelSeguro()" class="w-[42px] h-[42px] bg-green-600 hover:bg-green-700 text-white rounded-xl shadow-md flex items-center justify-center transition-transform hover:scale-105" title="Descargar Base (Solo Administrador)"><i class="ph ph-file-xls text-xl"></i></button>
                         </div>
                     </div>
                 </div>
 
+                <!-- TARJETAS DE MÉTRICAS (Alto Contraste) -->
                 <div class="grid grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4 mb-8">
-                    <div class="clay-box p-3 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center gap-3">
-                        <div class="bg-blue-100 p-2 sm:p-3 rounded-full text-primary shrink-0"><i class="ph ph-buildings text-xl sm:text-2xl"></i></div>
-                        <div><p class="text-[10px] sm:text-[11px] text-gray-500 font-bold uppercase">Fuerza Efectiva</p><h3 class="text-lg sm:text-xl font-bold text-gray-800" id="dash-fuerza-efectiva">0-0-0-0-0</h3></div>
+                    
+                    <div class="card-modern color-strip-dark p-3 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center gap-3">
+                        <div class="bg-blue-50 p-2 sm:p-3 rounded-xl text-primary shrink-0"><i class="ph-fill ph-buildings text-xl sm:text-2xl"></i></div>
+                        <div><p class="text-[10px] sm:text-[11px] text-gray-500 font-bold uppercase">Fuerza Efectiva</p><h3 class="text-lg sm:text-xl font-black text-gray-800" id="dash-fuerza-efectiva">0-0-0-0-0</h3></div>
                     </div>
-                    <div class="clay-box p-3 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center gap-3">
-                        <div class="bg-blue-50 p-2 sm:p-3 rounded-full text-blue-500 shrink-0"><i class="ph ph-list-numbers text-xl sm:text-2xl"></i></div>
-                        <div><p class="text-[10px] sm:text-[11px] text-gray-500 font-bold uppercase">Disponibles (Desg)</p><h3 class="text-lg sm:text-xl font-bold text-gray-800" id="dash-fuerza-disponible">0-0-0-0-0</h3></div>
+                    
+                    <div class="card-modern color-strip-blue p-3 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center gap-3">
+                        <div class="bg-blue-50 p-2 sm:p-3 rounded-xl text-blue-500 shrink-0"><i class="ph-fill ph-list-numbers text-xl sm:text-2xl"></i></div>
+                        <div><p class="text-[10px] sm:text-[11px] text-gray-500 font-bold uppercase">Disponibles (Desg)</p><h3 class="text-lg sm:text-xl font-black text-gray-800" id="dash-fuerza-disponible">0-0-0-0-0</h3></div>
                     </div>
-                    <div onclick="abrirModalDetalle('TODAS', 'DISPONIBLES')" class="clay-box p-3 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center gap-3 cursor-pointer hover:bg-green-50 transition-colors group">
-                        <div class="bg-green-100 p-2 sm:p-3 rounded-full text-accent shrink-0 group-hover:scale-110 transition-transform"><i class="ph-fill ph-users-three text-xl sm:text-2xl"></i></div>
-                        <div><p class="text-[10px] sm:text-[11px] text-gray-500 font-bold uppercase">T. Disponibles</p><h3 class="text-lg sm:text-xl font-bold text-gray-800" id="dash-total-disponible">0</h3><p class="text-[9px] text-green-500 mt-1 font-semibold flex items-center gap-1">Detalle <i class="ph ph-arrow-right"></i></p></div>
+                    
+                    <div onclick="abrirModalDetalle('TODAS', 'DISPONIBLES')" class="card-modern color-strip-emerald p-3 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center gap-3 cursor-pointer hover:bg-emerald-50 transition-colors group">
+                        <div class="bg-emerald-100 p-2 sm:p-3 rounded-xl text-emerald-600 shrink-0 group-hover:scale-110 transition-transform"><i class="ph-fill ph-users-three text-xl sm:text-2xl"></i></div>
+                        <div><p class="text-[10px] sm:text-[11px] text-gray-500 font-bold uppercase">T. Disponibles</p><h3 class="text-lg sm:text-xl font-black text-gray-800" id="dash-total-disponible">0</h3><p class="text-[9px] text-emerald-600 mt-1 font-bold flex items-center gap-1">Ver detalle <i class="ph ph-arrow-right"></i></p></div>
                     </div>
-                    <div onclick="abrirModalDetalle('TODAS', 'NOVEDADES')" class="clay-box p-3 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center gap-3 cursor-pointer hover:bg-red-50 transition-colors group">
-                        <div class="bg-red-100 p-2 sm:p-3 rounded-full text-red-500 shrink-0 group-hover:scale-110 transition-transform"><i class="ph-fill ph-warning-circle text-xl sm:text-2xl"></i></div>
-                        <div><p class="text-[10px] sm:text-[11px] text-gray-500 font-bold uppercase">T. Novedades</p><h3 class="text-lg sm:text-xl font-bold text-gray-800" id="dash-total-novedades">0</h3><p class="text-[9px] text-red-400 mt-1 font-semibold flex items-center gap-1">Detalle <i class="ph ph-arrow-right"></i></p></div>
+                    
+                    <div onclick="abrirModalDetalle('TODAS', 'NOVEDADES')" class="card-modern color-strip-red p-3 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center gap-3 cursor-pointer hover:bg-red-50 transition-colors group">
+                        <div class="bg-red-100 p-2 sm:p-3 rounded-xl text-red-600 shrink-0 group-hover:scale-110 transition-transform"><i class="ph-fill ph-warning-circle text-xl sm:text-2xl"></i></div>
+                        <div><p class="text-[10px] sm:text-[11px] text-gray-500 font-bold uppercase">T. Novedades</p><h3 class="text-lg sm:text-xl font-black text-gray-800" id="dash-total-novedades">0</h3><p class="text-[9px] text-red-600 mt-1 font-bold flex items-center gap-1">Ver detalle <i class="ph ph-arrow-right"></i></p></div>
                     </div>
-                    <div class="clay-box p-3 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center gap-3 relative overflow-hidden col-span-2 lg:col-span-1">
-                        <div class="absolute -right-3 -top-3 text-purple-50 opacity-50"><i class="ph-fill ph-target text-6xl"></i></div>
-                        <div class="bg-purple-50 p-2 sm:p-3 rounded-full text-purple-600 shrink-0 z-10"><i class="ph-fill ph-activity text-xl sm:text-2xl"></i></div>
+                    
+                    <div class="card-modern color-strip-purple p-3 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center gap-3 relative col-span-2 lg:col-span-1">
+                        <div class="absolute -right-3 -top-3 text-purple-50 opacity-50 pointer-events-none"><i class="ph-fill ph-target text-6xl"></i></div>
+                        <div class="bg-purple-100 p-2 sm:p-3 rounded-xl text-purple-600 shrink-0 z-10"><i class="ph-fill ph-activity text-xl sm:text-2xl"></i></div>
                         <div class="z-10 w-full">
                             <p class="text-[10px] sm:text-[11px] text-gray-500 font-bold uppercase">Índice Operativo</p>
                             <div class="flex items-end gap-1"><h3 class="text-lg sm:text-xl font-black text-gray-800" id="dash-indice-operatividad">0%</h3></div>
@@ -277,79 +275,84 @@
                 </div>
 
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-                    <div class="lg:col-span-2 clay-box overflow-hidden">
+                    <!-- Tabla de Estados -->
+                    <div class="lg:col-span-2 card-modern flex flex-col">
                         <div class="bg-gray-50 px-4 sm:px-6 py-4 border-b border-gray-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
                             <h3 class="font-bold text-gray-800 text-sm sm:text-base">Estado de Reportes por Oficina</h3>
                             <div class="relative w-full sm:w-64">
-                                <input type="text" id="buscador-oficina" onkeyup="filtrarOficinas()" placeholder="Buscar oficina..." class="w-full pl-8 pr-3 py-2 border border-gray-300 rounded-lg text-xs sm:text-sm focus:outline-none focus:ring-1 focus:ring-secondary">
+                                <input type="text" id="buscador-oficina" onkeyup="filtrarOficinas()" placeholder="Buscar oficina..." class="w-full pl-8 pr-3 py-2 border border-gray-300 rounded-lg text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-secondary">
                                 <i class="ph ph-magnifying-glass absolute left-2.5 top-2.5 text-gray-400 text-lg"></i>
                             </div>
                         </div>
-                        <div class="overflow-x-auto max-h-[500px]">
+                        <div class="overflow-x-auto max-h-[500px] flex-1">
                             <table class="w-full text-left border-collapse min-w-[700px]">
-                                <thead class="bg-white sticky top-0 border-b text-gray-500 text-xs uppercase tracking-wider shadow-sm z-10">
+                                <thead class="bg-white sticky top-0 border-b border-gray-200 text-gray-500 text-xs uppercase tracking-wider shadow-sm z-10">
                                     <tr>
-                                        <th class="px-3 py-3 font-semibold">Oficina</th>
-                                        <th class="px-2 py-3 font-semibold text-center">Estado de Envío</th>
-                                        <th class="px-2 py-3 font-semibold text-center text-blue-600">Disponibles</th>
-                                        <th class="px-2 py-3 font-semibold text-center text-blue-600">Detalle Disp.</th>
-                                        <th class="px-2 py-3 font-semibold text-center text-red-600">Novedades</th>
-                                        <th class="px-2 py-3 font-semibold text-center text-red-600">Detalle Nov.</th>
+                                        <th class="px-4 py-3 font-bold">Oficina</th>
+                                        <th class="px-2 py-3 font-bold text-center">Estado</th>
+                                        <th class="px-2 py-3 font-bold text-center text-blue-600">Disponibles</th>
+                                        <th class="px-2 py-3 font-bold text-center text-blue-600">Detalle</th>
+                                        <th class="px-2 py-3 font-bold text-center text-red-600">Novedades</th>
+                                        <th class="px-2 py-3 font-bold text-center text-red-600">Detalle</th>
                                     </tr>
                                 </thead>
-                                <tbody id="tbody-estado-oficinas" class="divide-y divide-gray-100 text-sm"></tbody>
+                                <tbody id="tbody-estado-oficinas" class="divide-y divide-gray-100 text-sm bg-white"></tbody>
                             </table>
                         </div>
                     </div>
-                    <div class="clay-box overflow-hidden flex flex-col">
+                    
+                    <!-- Lista de Novedades -->
+                    <div class="card-modern flex flex-col">
                         <div class="bg-gray-50 px-4 sm:px-6 py-4 border-b border-gray-200">
                             <h3 class="font-bold text-gray-800 text-sm sm:text-base">Consolidado Novedades</h3>
-                            <p class="text-[10px] text-gray-500">Clic para ver detalle específico</p>
+                            <p class="text-[10px] text-gray-500 font-medium">Clic en la novedad para ver personal</p>
                         </div>
-                        <div class="p-4 sm:p-6 flex-1 max-h-[400px] overflow-y-auto"><ul id="lista-novedades" class="space-y-3"></ul></div>
+                        <div class="p-4 sm:p-6 flex-1 max-h-[500px] overflow-y-auto bg-white"><ul id="lista-novedades" class="space-y-3"></ul></div>
                     </div>
                 </div>
             </div>
             
             <div class="text-center text-xs text-gray-400 pb-4 mt-auto">
-                &copy; 2026 DEVAL - Políticas de Copyright. <br class="sm:hidden"><span class="font-bold">Powered by GUTIC DEVAL</span>
+                &copy; 2026 DEVAL - Políticas de Seguridad Institucional. <br class="sm:hidden"><span class="font-bold">Powered by GUTIC DEVAL</span>
             </div>
         </main>
     </div>
 
-    <div id="modal-novedades" class="fixed inset-0 bg-gray-900 bg-opacity-60 z-50 hidden flex items-center justify-center backdrop-blur-sm p-4">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-5xl overflow-hidden fade-in flex flex-col max-h-[90vh]">
-            <div class="bg-gray-50 px-4 sm:px-6 py-3 border-b border-gray-200 flex justify-between items-center shrink-0">
+    <!-- MODAL DE DETALLES -->
+    <div id="modal-novedades" class="fixed inset-0 bg-gray-900/60 z-50 hidden flex items-center justify-center backdrop-blur-sm p-4">
+        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-5xl overflow-hidden fade-in flex flex-col max-h-[90vh]">
+            <div class="bg-gray-50 px-4 sm:px-6 py-4 border-b border-gray-200 flex justify-between items-center shrink-0">
                 <div class="flex items-center gap-3">
-                    <div id="modal-icono-contenedor" class="bg-red-100 text-red-500 p-2 rounded-lg shrink-0"><i id="modal-icono" class="ph-fill ph-users-three text-xl"></i></div>
+                    <div id="modal-icono-contenedor" class="bg-red-100 text-red-500 p-3 rounded-xl shrink-0"><i id="modal-icono" class="ph-fill ph-users-three text-2xl"></i></div>
                     <div>
-                        <h3 class="font-bold text-base sm:text-lg text-gray-800" id="modal-titulo">Personal</h3>
-                        <p class="text-[10px] sm:text-xs text-gray-600 font-bold font-mono bg-white border border-gray-200 px-2 py-0.5 rounded mt-0.5 inline-block shadow-sm" id="modal-desglose-grados">OF:0 - SUB:0 - PT:0 - AUX:0 - NU:0</p>
+                        <h3 class="font-black text-lg sm:text-xl text-gray-800 tracking-tight" id="modal-titulo">Personal</h3>
+                        <p class="text-[10px] sm:text-xs text-gray-600 font-bold font-mono bg-white border border-gray-200 px-2.5 py-0.5 rounded-md mt-1 inline-block shadow-sm" id="modal-desglose-grados">OF:0 - SUB:0 - PT:0 - AUX:0 - NU:0</p>
                     </div>
                 </div>
-                <button onclick="cerrarModalDetalle()" class="text-gray-400 hover:text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-full p-2 transition-colors"><i class="ph ph-x text-lg"></i></button>
+                <button onclick="cerrarModalDetalle()" class="text-gray-400 hover:text-gray-800 bg-gray-200 hover:bg-gray-300 rounded-full p-2.5 transition-colors"><i class="ph ph-x text-lg font-bold"></i></button>
             </div>
             <div class="p-0 overflow-y-auto flex-1">
                 <table class="w-full text-left border-collapse text-xs sm:text-sm min-w-[600px]">
-                    <thead class="bg-white sticky top-0 border-b border-gray-200 shadow-sm z-10">
-                        <tr class="text-gray-500 uppercase tracking-wider"><th class="px-4 py-3 font-semibold">Oficina</th><th class="px-4 py-3 font-semibold">Grado y Nombre</th><th class="px-4 py-3 font-semibold">Situación</th><th class="px-4 py-3 font-semibold">Observaciones</th></tr>
+                    <thead class="bg-gray-100 sticky top-0 border-b border-gray-200 shadow-sm z-10">
+                        <tr class="text-gray-600 uppercase tracking-wider font-bold"><th class="px-5 py-4">Oficina</th><th class="px-5 py-4">Grado y Nombre</th><th class="px-5 py-4">Situación</th><th class="px-5 py-4">Observaciones</th></tr>
                     </thead>
-                    <tbody id="tbody-modal-novedades" class="divide-y divide-gray-100"></tbody>
+                    <tbody id="tbody-modal-novedades" class="divide-y divide-gray-100 bg-white"></tbody>
                 </table>
             </div>
-            <div class="bg-gray-50 px-4 sm:px-6 py-3 border-t border-gray-200 text-right shrink-0">
-                <button onclick="cerrarModalDetalle()" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-2 px-6 rounded-lg transition-colors text-sm">Cerrar</button>
+            <div class="bg-gray-50 px-4 sm:px-6 py-4 border-t border-gray-200 text-right shrink-0">
+                <button onclick="cerrarModalDetalle()" class="bg-gray-800 hover:bg-gray-900 text-white font-bold py-2 px-8 rounded-xl transition-colors text-sm shadow-md">Cerrar Detalle</button>
             </div>
         </div>
     </div>
 
-    <div id="toast" class="fixed bottom-5 right-5 text-white px-4 sm:px-6 py-3 rounded-lg shadow-lg transform transition-all duration-500 translate-y-20 opacity-0 flex items-center gap-3 z-[60] text-sm font-medium">
+    <!-- TOAST -->
+    <div id="toast" class="fixed bottom-5 right-5 text-white px-5 sm:px-6 py-4 rounded-xl shadow-2xl transform transition-all duration-500 translate-y-20 opacity-0 flex items-center gap-3 z-[60] text-sm font-bold border border-white/20">
         <i id="toast-icon" class="text-xl sm:text-2xl"></i><span id="toast-message"></span>
     </div>
 
     <script>
-        // --- BASE DE DATOS LOCAL Y URL GOOGLE ---
-        const URL_SECRETA_GOOGLE = "https://script.google.com/macros/s/AKfycbzAKpNV4EzjWGftRcwjyETkwgQQNq9idg6JDSUzuwP_oTV-ozmyj3UQJqn3jl2jjfPfVQ/exec";
+        // --- URL GOOGLE ---
+        const URL_SECRETA_GOOGLE = "https://script.google.com/macros/s/AKfycbyOJimZnojiEFq_1RVspCBY4KCcV5Uj5gaSzEDSPM4brseLHWcOD1AGo7BFlUrbTUrV/exec";
         
         const msalConfig = {
             auth: { clientId: "9641b317-3b1d-4de0-afca-7e34be884804", authority: "https://login.microsoftonline.com/organizations", redirectUri: window.location.origin + window.location.pathname },
@@ -364,12 +367,12 @@
         // --- VARIABLES DE SEGURIDAD Y AUDITORÍA ---
         let correoUsuarioActual = ""; 
         let usuarioAuditoriaActual = "Desconocido";
-        let configDesbloqueadaGlobal = false; // Estado global dictado por Google Sheets
+        let configDesbloqueadaGlobal = false;
 
-        // ⚠️ ESTE ES EL ÚNICO CORREO QUE PODRÁ ABRIR/CERRAR LA CONFIGURACIÓN Y DESCARGAR EL EXCEL:
+        // ⚠️ EL ÚNICO ADMINISTRADOR AUTORIZADO (TÚ)
         const CORREOS_ADMINISTRADORES = ['omar.ramirez923@correo.policia.gov.co']; 
 
-        // --- SISTEMA DE INACTIVIDAD (Cierra sesión a los 5 minutos) ---
+        // --- SISTEMA DE INACTIVIDAD (5 MINUTOS) ---
         let tiempoInactividad;
         function resetearTemporizador() {
             clearTimeout(tiempoInactividad);
@@ -413,7 +416,6 @@
             const fechaActual = new Date();
             const formateador = new Intl.DateTimeFormat('es-CO', { timeZone: 'America/Bogota', year: 'numeric', month: '2-digit', day: '2-digit' });
             const partes = formateador.formatToParts(fechaActual);
-            
             const anio = partes.find(p => p.type === 'year').value.replace(/\D/g, '');
             const mes = partes.find(p => p.type === 'month').value.replace(/\D/g, '');
             const dia = partes.find(p => p.type === 'day').value.replace(/\D/g, '');
@@ -432,6 +434,26 @@
             actualizarDropdownsOficinas();
             actualizarGradosConfig();
         });
+
+        // --- SISTEMA DE MONITOREO EN TIEMPO REAL (RADAR SILENCIOSO) ---
+        let pingInterval;
+        function iniciarMonitoreoEnTiempoReal() {
+            clearInterval(pingInterval);
+            pingInterval = setInterval(() => {
+                if (correoUsuarioActual && !CORREOS_ADMINISTRADORES.includes(correoUsuarioActual)) {
+                    fetch(URL_SECRETA_GOOGLE + "?ping=true&t=" + new Date().getTime())
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.configAbierta !== undefined && data.configAbierta !== configDesbloqueadaGlobal) {
+                            configDesbloqueadaGlobal = data.configAbierta;
+                            aplicarPermisosVisuales();
+                            if (configDesbloqueadaGlobal) mostrarToast("El Administrador ha habilitado la Configuración", "info");
+                            else mostrarToast("El Administrador ha cerrado la Configuración", "error");
+                        }
+                    }).catch(e => { /* Silenciado intencionalmente */ });
+                }
+            }, 10000); // Revisa cada 10 segundos
+        }
 
         function sincronizarSilencioso(accion, payload) {
             mostrarToast('Actualizando base de datos...', 'info');
@@ -519,6 +541,7 @@
                                 personalBase[oficina] = [];
                             }
                             
+                            // ESCUDO DE DICCIONARIO
                             if (DICCIONARIO_OFICINAS[oficina]) {
                                 mapaTiposOficina[oficina] = DICCIONARIO_OFICINAS[oficina];
                             } else if (tipoOficinaDB && String(tipoOficinaDB).trim() !== '') {
@@ -558,6 +581,7 @@
                 layoutDOM.classList.add('flex');
                 
                 aplicarPermisosVisuales();
+                iniciarMonitoreoEnTiempoReal(); // Inicia el radar de la Configuración
                 
                 if (!document.getElementById('view-superior').classList.contains('hidden')) actualizarDashboard();
                 else if (!document.getElementById('view-config').classList.contains('hidden')) cargarPersonalConfig();
@@ -598,15 +622,15 @@
 
             listaOficinas.forEach((of) => {
                 optionsHTML += `<option value="${of}">${of}</option>`;
-                let badgeTipo = mapaTiposOficina[of] === 'ESPECIALIDADES' ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700';
+                let badgeTipo = mapaTiposOficina[of] === 'ESPECIALIDADES' ? 'bg-purple-100 text-purple-700 border-purple-200' : 'bg-blue-100 text-blue-700 border-blue-200';
                 tablaOficinasHTML += `
-                    <tr class="hover:bg-gray-50 border-b border-gray-100">
-                        <td class="p-3 font-semibold text-gray-800 uppercase">
-                            ${of} <br><span class="${badgeTipo} text-[9px] px-2 py-0.5 rounded-full font-bold mt-1 inline-block">${mapaTiposOficina[of] || 'PLANA MAYOR'}</span>
+                    <tr class="hover:bg-gray-50 border-b border-gray-100 transition-colors">
+                        <td class="p-3 font-bold text-gray-800 uppercase">
+                            ${of} <br><span class="${badgeTipo} border text-[9px] px-2 py-0.5 rounded-md font-bold mt-1 inline-block shadow-sm">${mapaTiposOficina[of] || 'PLANA MAYOR'}</span>
                         </td>
                         <td class="p-3 text-center whitespace-nowrap">
-                            <button onclick="editarOficina('${of}')" class="text-blue-500 hover:text-blue-700 p-1 mr-2 transition-transform hover:scale-110" title="Editar Nombre"><i class="ph ph-pencil-simple text-lg"></i></button>
-                            <button onclick="eliminarOficina('${of}')" class="text-red-500 hover:text-red-700 p-1 transition-transform hover:scale-110" title="Eliminar Oficina"><i class="ph ph-trash text-lg"></i></button>
+                            <button onclick="editarOficina('${of}')" class="text-blue-500 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 p-2 rounded-lg mr-2 transition-transform hover:scale-105 shadow-sm" title="Editar Nombre"><i class="ph ph-pencil-simple text-lg"></i></button>
+                            <button onclick="eliminarOficina('${of}')" class="text-red-500 hover:text-red-700 bg-red-50 hover:bg-red-100 p-2 rounded-lg transition-transform hover:scale-105 shadow-sm" title="Eliminar Oficina"><i class="ph ph-trash text-lg"></i></button>
                         </td>
                     </tr>
                 `;
@@ -698,18 +722,18 @@
 
             const personas = personalBase[of] || [];
             if (personas.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-gray-400 italic">No hay personal asignado.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-gray-400 font-medium">No hay personal asignado.</td></tr>`;
                 return;
             }
 
             personas.forEach((p, idx) => {
                 tbody.innerHTML += `
-                    <tr class="hover:bg-gray-50 border-b border-gray-50">
-                        <td class="p-3 font-semibold text-primary whitespace-nowrap"><span class="text-[10px] text-gray-500 font-bold block leading-none">${p.categoria}</span>${p.grado}</td>
-                        <td class="p-3 uppercase whitespace-nowrap">${p.apellidos} ${p.nombres}</td>
+                    <tr class="hover:bg-gray-50 border-b border-gray-100 transition-colors">
+                        <td class="p-3 font-bold text-primary whitespace-nowrap"><span class="text-[10px] text-gray-400 font-bold block leading-none">${p.categoria}</span>${p.grado}</td>
+                        <td class="p-3 font-semibold text-gray-700 uppercase whitespace-nowrap">${p.apellidos} ${p.nombres}</td>
                         <td class="p-3 text-center whitespace-nowrap">
-                            <button onclick="editarPersonaDeOficina('${of}', ${idx})" class="text-blue-500 hover:text-blue-700 p-1 mr-2 transition-transform hover:scale-110" title="Editar Rango/Nombres"><i class="ph ph-pencil-simple text-lg"></i></button>
-                            <button onclick="eliminarPersonaDeOficina('${of}', ${idx})" class="text-red-500 hover:text-red-700 p-1 transition-transform hover:scale-110" title="Dar de baja"><i class="ph ph-trash text-lg"></i></button>
+                            <button onclick="editarPersonaDeOficina('${of}', ${idx})" class="text-blue-500 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 p-2 rounded-lg mr-2 transition-transform hover:scale-105 shadow-sm" title="Editar Funcionario"><i class="ph ph-pencil-simple text-lg"></i></button>
+                            <button onclick="eliminarPersonaDeOficina('${of}', ${idx})" class="text-red-500 hover:text-red-700 bg-red-50 hover:bg-red-100 p-2 rounded-lg transition-transform hover:scale-105 shadow-sm" title="Eliminar Funcionario"><i class="ph ph-trash text-lg"></i></button>
                         </td>
                     </tr>
                 `;
@@ -797,19 +821,19 @@
                 opcionesNovedad.forEach(opt => opcionesHTML += `<option value="${opt.val}" ${opt.val === novedadActual ? 'selected' : ''}>${opt.text}</option>`);
 
                 tbody.innerHTML += `
-                    <tr class="hover:bg-gray-50 border-b border-gray-100" data-cat="${p.categoria}" data-grado="${p.grado}" data-apellidos="${p.apellidos}" data-nombres="${p.nombres}">
-                        <td class="p-2 sm:p-3 font-semibold text-primary text-xs sm:text-sm whitespace-nowrap"><span class="block text-[10px] text-gray-400 leading-none">${p.categoria}</span>${p.grado}</td>
-                        <td class="p-2 sm:p-3 font-medium text-gray-800 text-xs sm:text-sm uppercase min-w-[150px]">${p.apellidos} ${p.nombres}</td>
-                        <td class="p-2 min-w-[140px]"><select class="w-full p-2 border ${novedadActual === 'Stand by' ? 'border-orange-300 bg-orange-50' : 'border-gray-300 bg-white'} rounded text-xs font-semibold outline-none select-novedad-fila transition-colors">${opcionesHTML}</select></td>
-                        <td class="p-2"><input type="text" value="${obsActual}" class="w-full p-2 border border-gray-300 rounded text-xs outline-none input-obs-fila" placeholder="Nota (opcional)"></td>
+                    <tr class="hover:bg-gray-50 border-b border-gray-100 transition-colors" data-cat="${p.categoria}" data-grado="${p.grado}" data-apellidos="${p.apellidos}" data-nombres="${p.nombres}">
+                        <td class="p-2 sm:p-3 font-bold text-primary text-xs sm:text-sm whitespace-nowrap"><span class="block text-[10px] text-gray-400 leading-none">${p.categoria}</span>${p.grado}</td>
+                        <td class="p-2 sm:p-3 font-bold text-gray-700 text-xs sm:text-sm uppercase min-w-[150px]">${p.apellidos} ${p.nombres}</td>
+                        <td class="p-2 min-w-[140px]"><select class="w-full p-2.5 border ${novedadActual === 'Stand by' ? 'border-orange-300 bg-orange-50 text-orange-700' : 'border-gray-200 bg-white text-gray-700'} rounded-lg text-xs font-bold outline-none select-novedad-fila transition-colors shadow-sm cursor-pointer">${opcionesHTML}</select></td>
+                        <td class="p-2"><input type="text" value="${obsActual}" class="w-full p-2.5 border border-gray-200 rounded-lg text-xs font-medium text-gray-600 outline-none input-obs-fila shadow-sm" placeholder="Nota (opcional)"></td>
                     </tr>
                 `;
             });
             
             document.querySelectorAll('.select-novedad-fila').forEach(sel => {
                 sel.addEventListener('change', function() {
-                    if(this.value === 'Stand by') { this.classList.add('border-orange-300', 'bg-orange-50'); this.classList.remove('border-gray-300', 'bg-white'); } 
-                    else { this.classList.remove('border-orange-300', 'bg-orange-50'); this.classList.add('border-gray-300', 'bg-white'); }
+                    if(this.value === 'Stand by') { this.classList.add('border-orange-300', 'bg-orange-50', 'text-orange-700'); this.classList.remove('border-gray-200', 'bg-white', 'text-gray-700'); } 
+                    else { this.classList.remove('border-orange-300', 'bg-orange-50', 'text-orange-700'); this.classList.add('border-gray-200', 'bg-white', 'text-gray-700'); }
                 });
             });
         }
@@ -912,33 +936,33 @@
                     }
                 });
 
-                if (estaReportado && tienePersonal) estadoHTML = `<span class="bg-emerald-100 text-emerald-700 text-[10px] px-2 py-1 rounded-full font-bold">✅ Reportado</span>`;
-                else if (!tienePersonal) estadoHTML = `<span class="bg-gray-200 text-gray-500 text-[10px] px-2 py-1 rounded-full font-bold">Sin personal</span>`;
-                else estadoHTML = `<span class="bg-red-500 text-white text-[10px] px-2 py-1 rounded-full font-bold shadow-sm animate-pulse">⚠️ SIN REPORTAR</span>`;
+                if (estaReportado && tienePersonal) estadoHTML = `<span class="bg-emerald-100 text-emerald-700 border border-emerald-200 text-[10px] px-2.5 py-1 rounded-md font-bold shadow-sm">✅ Reportado</span>`;
+                else if (!tienePersonal) estadoHTML = `<span class="bg-gray-100 text-gray-500 border border-gray-200 text-[10px] px-2.5 py-1 rounded-md font-bold shadow-sm">Sin personal</span>`;
+                else estadoHTML = `<span class="bg-red-500 text-white border border-red-600 text-[10px] px-2.5 py-1 rounded-md font-bold shadow-sm animate-pulse">⚠️ SIN REPORTAR</span>`;
 
-                let dispNumHTML = `<span class="font-mono font-bold text-blue-600 text-[10px] sm:text-xs whitespace-nowrap">${dispOficina['OF']}-${dispOficina['SUB/MNE']}-${dispOficina['PATR']}-${dispOficina['AUX']}-${dispOficina['NU']}</span>`;
+                let dispNumHTML = `<span class="font-mono font-bold text-blue-700 text-[10px] sm:text-xs whitespace-nowrap">${dispOficina['OF']}-${dispOficina['SUB/MNE']}-${dispOficina['PATR']}-${dispOficina['AUX']}-${dispOficina['NU']}</span>`;
                 let novNumHTML = ''; let btnNovHTML = '';
 
                 if (estaReportado) {
                     novNumHTML = `<span class="font-mono font-bold text-red-600 text-[10px] sm:text-xs whitespace-nowrap">${novOficinaCateg['OF']}-${novOficinaCateg['SUB/MNE']}-${novOficinaCateg['PATR']}-${novOficinaCateg['AUX']}-${novOficinaCateg['NU']}</span>`;
-                    if (novOficina > 0) btnNovHTML = `<button onclick="abrirModalDetalle('${of}', 'NOVEDADES')" class="bg-red-50 hover:bg-red-100 text-red-600 font-bold px-2 py-1 rounded border border-red-200 transition-colors text-[10px] sm:text-xs flex items-center gap-1 mx-auto">${novOficina} Nov. <i class="ph ph-eye"></i></button>`;
-                    else btnNovHTML = `<span class="text-emerald-500 font-bold text-[10px] sm:text-xs">Sin Novedad</span>`;
+                    if (novOficina > 0) btnNovHTML = `<button onclick="abrirModalDetalle('${of}', 'NOVEDADES')" class="bg-red-50 hover:bg-red-100 text-red-600 font-bold px-2 py-1 rounded-lg border border-red-200 transition-colors text-[10px] sm:text-xs flex items-center gap-1 mx-auto shadow-sm">${novOficina} Nov. <i class="ph ph-eye"></i></button>`;
+                    else btnNovHTML = `<span class="text-emerald-600 font-bold text-[10px] sm:text-xs">Sin Novedad</span>`;
                 } else {
-                    novNumHTML = `<span class="font-mono font-bold text-gray-400 text-[10px] sm:text-xs whitespace-nowrap">--</span>`; btnNovHTML = `<span class="text-red-500 font-bold text-[10px] sm:text-xs bg-red-50 px-2 py-1 rounded border border-red-200">Pendiente</span>`;
+                    novNumHTML = `<span class="font-mono font-bold text-gray-400 text-[10px] sm:text-xs whitespace-nowrap">--</span>`; btnNovHTML = `<span class="text-red-500 font-bold text-[10px] sm:text-xs bg-red-50 px-2 py-1 rounded-lg border border-red-200">Pendiente</span>`;
                 }
                 
                 let btnDispHTML = '';
-                if (totDispOficina > 0) btnDispHTML = `<button onclick="abrirModalDetalle('${of}', 'DISPONIBLES')" class="bg-blue-50 hover:bg-blue-100 text-blue-600 font-bold px-2 py-1 rounded border border-blue-200 transition-colors text-[10px] sm:text-xs flex items-center gap-1 mx-auto">${totDispOficina} Disp. <i class="ph ph-eye"></i></button>`;
+                if (totDispOficina > 0) btnDispHTML = `<button onclick="abrirModalDetalle('${of}', 'DISPONIBLES')" class="bg-blue-50 hover:bg-blue-100 text-blue-600 font-bold px-2 py-1 rounded-lg border border-blue-200 transition-colors text-[10px] sm:text-xs flex items-center gap-1 mx-auto shadow-sm">${totDispOficina} Disp. <i class="ph ph-eye"></i></button>`;
                 else btnDispHTML = `<span class="text-gray-400 italic text-[10px] sm:text-xs">--</span>`;
 
                 tbodyEst.innerHTML += `
-                    <tr class="hover:bg-gray-50 border-b border-gray-100">
-                        <td class="px-2 sm:px-3 py-3 font-semibold text-gray-800 text-[10px] sm:text-xs uppercase whitespace-nowrap">${of}</td>
-                        <td class="px-2 sm:px-3 py-3 text-center whitespace-nowrap">${estadoHTML}</td>
-                        <td class="px-1 sm:px-2 py-3 text-center whitespace-nowrap">${dispNumHTML}</td>
-                        <td class="px-1 sm:px-2 py-3 text-center whitespace-nowrap">${btnDispHTML}</td>
-                        <td class="px-1 sm:px-2 py-3 text-center whitespace-nowrap">${novNumHTML}</td>
-                        <td class="px-1 sm:px-2 py-3 text-center whitespace-nowrap">${btnNovHTML}</td>
+                    <tr class="hover:bg-blue-50 transition-colors border-b border-gray-100">
+                        <td class="px-4 py-3 font-bold text-gray-800 text-[10px] sm:text-xs uppercase whitespace-nowrap">${of}</td>
+                        <td class="px-2 py-3 text-center whitespace-nowrap">${estadoHTML}</td>
+                        <td class="px-2 py-3 text-center whitespace-nowrap">${dispNumHTML}</td>
+                        <td class="px-2 py-3 text-center whitespace-nowrap">${btnDispHTML}</td>
+                        <td class="px-2 py-3 text-center whitespace-nowrap">${novNumHTML}</td>
+                        <td class="px-2 py-3 text-center whitespace-nowrap">${btnNovHTML}</td>
                     </tr>
                 `;
             });
@@ -953,33 +977,34 @@
             textoValor.textContent = pctOperatividad + '%'; barra.style.width = pctOperatividad + '%';
             
             if (pctOperatividad >= 80) {
-                barra.className = 'bg-emerald-500 h-1.5 rounded-full transition-all duration-1000'; textoValor.className = 'text-lg sm:text-xl font-black text-emerald-600'; textoDiagnostico.textContent = 'ESTADO ÓPTIMO'; textoDiagnostico.className = 'text-[9px] sm:text-[10px] mt-1 font-bold text-emerald-500';
+                barra.className = 'bg-emerald-500 h-1.5 rounded-full transition-all duration-1000'; textoValor.className = 'text-lg sm:text-xl font-black text-emerald-600'; textoDiagnostico.textContent = 'ESTADO ÓPTIMO'; textoDiagnostico.className = 'text-[9px] sm:text-[10px] mt-1 font-bold text-emerald-600';
             } else if (pctOperatividad >= 50) {
-                barra.className = 'bg-yellow-500 h-1.5 rounded-full transition-all duration-1000'; textoValor.className = 'text-lg sm:text-xl font-black text-yellow-600'; textoDiagnostico.textContent = 'ESTADO REGULAR'; textoDiagnostico.className = 'text-[9px] sm:text-[10px] mt-1 font-bold text-yellow-500';
+                barra.className = 'bg-yellow-500 h-1.5 rounded-full transition-all duration-1000'; textoValor.className = 'text-lg sm:text-xl font-black text-yellow-600'; textoDiagnostico.textContent = 'ESTADO REGULAR'; textoDiagnostico.className = 'text-[9px] sm:text-[10px] mt-1 font-bold text-yellow-600';
             } else {
-                barra.className = 'bg-red-500 h-1.5 rounded-full transition-all duration-1000'; textoValor.className = 'text-lg sm:text-xl font-black text-red-600'; textoDiagnostico.textContent = 'ESTADO CRÍTICO'; textoDiagnostico.className = 'text-[9px] sm:text-[10px] mt-1 font-bold text-red-500';
+                barra.className = 'bg-red-500 h-1.5 rounded-full transition-all duration-1000'; textoValor.className = 'text-lg sm:text-xl font-black text-red-600'; textoDiagnostico.textContent = 'ESTADO CRÍTICO'; textoDiagnostico.className = 'text-[9px] sm:text-[10px] mt-1 font-bold text-red-600';
             }
 
             const listaNov = document.getElementById('lista-novedades'); listaNov.innerHTML = '';
-            if (Object.keys(totales.novedadesMap).length === 0) { listaNov.innerHTML = `<div class="text-center text-gray-400 italic py-6 text-sm">No hay novedades registradas.</div>`; return; }
+            if (Object.keys(totales.novedadesMap).length === 0) { listaNov.innerHTML = `<div class="text-center text-gray-400 font-medium py-8 text-sm">No hay novedades registradas.</div>`; return; }
 
             for (const [tipo, cant] of Object.entries(totales.novedadesMap)) {
-                let icon = 'ph-info'; let color = 'bg-gray-100 text-gray-600';
-                if(tipo.includes('Vacaciones')) { icon = 'ph-airplane-tilt'; color = 'bg-blue-100 text-blue-600'; }
-                else if(tipo.includes('Médica') || tipo.includes('Excusa')) { icon = 'ph-first-aid'; color = 'bg-red-100 text-red-600'; }
-                else if(tipo.includes('Permiso')) { icon = 'ph-file-text'; color = 'bg-yellow-100 text-yellow-700'; }
-                else if(tipo.includes('Franquicia')) { icon = 'ph-sunglasses'; color = 'bg-orange-100 text-orange-600'; }
-                else if(tipo.includes('Estudio')) { icon = 'ph-books'; color = 'bg-purple-100 text-purple-600'; }
-                else if(tipo.includes('Ley Maria')) { icon = 'ph-baby'; color = 'bg-pink-100 text-pink-600'; }
-                else if(tipo.includes('Luto')) { icon = 'ph-flower-tulip'; color = 'bg-gray-800 text-white'; }
-                else if(tipo.includes('servicio')) { icon = 'ph-police-car'; color = 'bg-indigo-100 text-indigo-600'; }
+                let icon = 'ph-info'; let color = 'bg-gray-100 text-gray-600 border border-gray-200';
+                if(tipo.includes('Vacaciones')) { icon = 'ph-airplane-tilt'; color = 'bg-blue-50 text-blue-600 border border-blue-200'; }
+                else if(tipo.includes('Médica') || tipo.includes('Excusa')) { icon = 'ph-first-aid'; color = 'bg-red-50 text-red-600 border border-red-200'; }
+                else if(tipo.includes('Permiso')) { icon = 'ph-file-text'; color = 'bg-yellow-50 text-yellow-700 border border-yellow-200'; }
+                else if(tipo.includes('Franquicia')) { icon = 'ph-sunglasses'; color = 'bg-orange-50 text-orange-600 border border-orange-200'; }
+                else if(tipo.includes('Estudio')) { icon = 'ph-books'; color = 'bg-purple-50 text-purple-600 border border-purple-200'; }
+                else if(tipo.includes('Ley Maria')) { icon = 'ph-baby'; color = 'bg-pink-50 text-pink-600 border border-pink-200'; }
+                else if(tipo.includes('Luto')) { icon = 'ph-flower-tulip'; color = 'bg-slate-800 text-white border border-slate-700'; }
+                else if(tipo.includes('servicio')) { icon = 'ph-police-car'; color = 'bg-indigo-50 text-indigo-600 border border-indigo-200'; }
 
                 listaNov.innerHTML += `
-                    <li onclick="abrirModalDetalle('TODAS', '${tipo}')" class="flex items-center justify-between p-3 bg-gray-50 hover:bg-red-50 border border-gray-200 rounded-xl cursor-pointer transition-colors group shadow-sm">
-                        <div class="flex items-center gap-3">
-                            <div class="${color} p-2 rounded-lg group-hover:scale-110 transition-transform"><i class="ph-fill ${icon} text-lg"></i></div><span class="font-medium text-gray-700 text-xs sm:text-sm group-hover:text-red-700">${tipo}</span>
+                    <li onclick="abrirModalDetalle('TODAS', '${tipo}')" class="flex items-center justify-between p-3 sm:p-4 bg-white hover:bg-gray-50 border border-gray-200 rounded-xl cursor-pointer transition-all hover:shadow-md group">
+                        <div class="flex items-center gap-3 sm:gap-4">
+                            <div class="${color} p-2.5 rounded-xl group-hover:scale-110 transition-transform shadow-sm"><i class="ph-fill ${icon} text-lg"></i></div>
+                            <span class="font-bold text-gray-700 text-xs sm:text-sm group-hover:text-primary">${tipo}</span>
                         </div>
-                        <span class="bg-red-500 text-white font-bold text-xs px-2.5 py-1 rounded-full shadow-sm">${cant}</span>
+                        <span class="bg-gray-800 text-white font-black text-xs px-3 py-1.5 rounded-lg shadow-sm">${cant}</span>
                     </li>
                 `;
             }
@@ -1003,7 +1028,7 @@
         // --- SISTEMA DE PROTECCIÓN DE DESCARGA DE EXCEL ---
         function descargarExcelSeguro() {
             if (!CORREOS_ADMINISTRADORES.includes(correoUsuarioActual)) {
-                return mostrarToast("ACCESO DENEGADO: No tienes permisos para descargar la base de datos.", "error");
+                return mostrarToast("ACCESO DENEGADO: Solo el administrador puede descargar la base.", "error");
             }
             
             const fecha = document.getElementById('filtro-fecha-dashboard').value;
@@ -1040,9 +1065,9 @@
             const tbody = document.getElementById('tbody-modal-novedades'); const contenedorIco = document.getElementById('modal-icono-contenedor'); const icono = document.getElementById('modal-icono');
             tbody.innerHTML = '';
 
-            if (modoFiltro === 'DISPONIBLES') { titulo.textContent = filtroOficina === 'TODAS' ? "Personal Disponible (Total)" : `Disponibles en: ${filtroOficina}`; contenedorIco.className = "bg-blue-100 text-blue-600 p-2 rounded-lg shrink-0"; icono.className = "ph-fill ph-check-circle text-xl"; } 
-            else if (modoFiltro === 'NOVEDADES') { titulo.textContent = filtroOficina === 'TODAS' ? "Consolidado de Novedades" : `Novedades en: ${filtroOficina}`; contenedorIco.className = "bg-red-100 text-red-500 p-2 rounded-lg shrink-0"; icono.className = "ph-fill ph-users-three text-xl"; } 
-            else { titulo.textContent = `Detalle: ${modoFiltro}`; contenedorIco.className = "bg-red-100 text-red-500 p-2 rounded-lg shrink-0"; icono.className = "ph-fill ph-warning-circle text-xl"; }
+            if (modoFiltro === 'DISPONIBLES') { titulo.textContent = filtroOficina === 'TODAS' ? "Personal Disponible (Total)" : `Disponibles en: ${filtroOficina}`; contenedorIco.className = "bg-blue-100 text-blue-700 p-3 rounded-xl shrink-0"; icono.className = "ph-fill ph-check-circle text-2xl"; } 
+            else if (modoFiltro === 'NOVEDADES') { titulo.textContent = filtroOficina === 'TODAS' ? "Consolidado de Novedades" : `Novedades en: ${filtroOficina}`; contenedorIco.className = "bg-red-100 text-red-600 p-3 rounded-xl shrink-0"; icono.className = "ph-fill ph-users-three text-2xl"; } 
+            else { titulo.textContent = `Detalle: ${modoFiltro}`; contenedorIco.className = "bg-red-100 text-red-600 p-3 rounded-xl shrink-0"; icono.className = "ph-fill ph-warning-circle text-2xl"; }
 
             let filasInsertadas = 0; let breakdown = { OF:0, 'SUB/MNE':0, PATR:0, AUX:0, NU:0 };
 
@@ -1059,14 +1084,14 @@
 
                         if (incluir) {
                             filasInsertadas++; if (breakdown[p.categoria] !== undefined) breakdown[p.categoria]++;
-                            const colorBadge = (modoFiltro === 'DISPONIBLES' || p.novedad === 'En formacion') ? 'bg-blue-100 text-blue-700 border-blue-200' : 'bg-red-100 text-red-700 border-red-200';
+                            const colorBadge = (modoFiltro === 'DISPONIBLES' || p.novedad === 'En formacion') ? 'bg-blue-50 text-blue-700 border-blue-200' : 'bg-red-50 text-red-700 border-red-200';
 
                             tbody.innerHTML += `
                                 <tr class="hover:bg-gray-50 transition-colors border-b border-gray-100">
-                                    <td class="px-3 sm:px-4 py-3 font-bold text-gray-500 text-[10px] sm:text-xs uppercase whitespace-nowrap">${of}</td>
-                                    <td class="px-3 sm:px-4 py-3 font-semibold text-primary text-[10px] sm:text-xs whitespace-nowrap"><span class="text-gray-400 font-bold block leading-none text-[9px]">${p.categoria}</span>${p.grado} ${p.apellidos} ${p.nombres}</td>
-                                    <td class="px-3 sm:px-4 py-3 whitespace-nowrap"><span class="${colorBadge} font-bold text-[10px] sm:text-xs px-2 py-1 rounded-md border shadow-sm">${p.novedad}</span></td>
-                                    <td class="px-3 sm:px-4 py-3 text-gray-600 text-xs italic min-w-[150px]">${p.observaciones || 'Sin detalles'}</td>
+                                    <td class="px-5 py-3 font-bold text-gray-500 text-[10px] sm:text-xs uppercase whitespace-nowrap">${of}</td>
+                                    <td class="px-5 py-3 font-bold text-gray-800 text-[10px] sm:text-xs whitespace-nowrap"><span class="text-gray-400 font-bold block leading-none text-[9px]">${p.categoria}</span>${p.grado} ${p.apellidos} ${p.nombres}</td>
+                                    <td class="px-5 py-3 whitespace-nowrap"><span class="${colorBadge} border font-bold text-[10px] sm:text-xs px-2.5 py-1 rounded-md shadow-sm">${p.novedad}</span></td>
+                                    <td class="px-5 py-3 text-gray-600 text-xs font-medium min-w-[150px]">${p.observaciones || '--'}</td>
                                 </tr>
                             `;
                         }
@@ -1075,7 +1100,7 @@
             });
 
             desglose.textContent = `OF:${breakdown['OF']} - SUB:${breakdown['SUB/MNE']} - PT:${breakdown['PATR']} - AUX:${breakdown['AUX']} - NU:${breakdown['NU']}`;
-            if (filasInsertadas === 0) { tbody.innerHTML = `<tr><td colspan="4" class="p-8 text-center text-gray-400 italic text-sm">No hay personal para mostrar.</td></tr>`; desglose.textContent = "Sin datos"; }
+            if (filasInsertadas === 0) { tbody.innerHTML = `<tr><td colspan="4" class="p-8 text-center text-gray-400 font-medium text-sm">No hay personal para mostrar.</td></tr>`; desglose.textContent = "Sin datos"; }
             document.getElementById('modal-novedades').classList.remove('hidden');
         }
 
@@ -1088,7 +1113,7 @@
             const tbody = document.getElementById('tbody-modal-novedades'); const contenedorIco = document.getElementById('modal-icono-contenedor'); const icono = document.getElementById('modal-icono');
 
             titulo.textContent = "Oficinas Sin Reportar"; desglose.textContent = "Requieren atención inmediata";
-            contenedorIco.className = "bg-red-500 text-white p-2 rounded-lg shrink-0"; icono.className = "ph-fill ph-warning text-xl";
+            contenedorIco.className = "bg-red-500 text-white p-3 rounded-xl shrink-0 shadow-md"; icono.className = "ph-fill ph-warning text-2xl";
             tbody.innerHTML = ''; let faltantes = 0;
 
             const oficinasOrdenadas = [...oficinasAProcesar].sort((a, b) => a.localeCompare(b, 'es', {sensitivity: 'base'}));
@@ -1105,10 +1130,10 @@
                     faltantes++;
                     tbody.innerHTML += `
                         <tr class="hover:bg-red-50 transition-colors border-b border-gray-100">
-                            <td class="px-3 sm:px-4 py-3 font-bold text-gray-800 text-xs sm:text-sm uppercase whitespace-nowrap">${of}</td>
-                            <td class="px-3 sm:px-4 py-3 text-red-600 text-xs font-semibold">⚠️ Envío pendiente / Incompleto</td>
-                            <td class="px-3 sm:px-4 py-3 text-gray-400">--</td>
-                            <td class="px-3 sm:px-4 py-3 text-gray-400">--</td>
+                            <td class="px-5 py-4 font-black text-gray-800 text-xs sm:text-sm uppercase whitespace-nowrap">${of}</td>
+                            <td class="px-5 py-4 text-red-600 text-xs font-bold">⚠️ Envío pendiente / Incompleto</td>
+                            <td class="px-5 py-4 text-gray-400">--</td>
+                            <td class="px-5 py-4 text-gray-400">--</td>
                         </tr>
                     `;
                 }
